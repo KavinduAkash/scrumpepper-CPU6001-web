@@ -3,14 +3,23 @@ import {
 } from '@ant-design/icons';
 import { APP_PREFIX_PATH } from 'configs/AppConfig'
 
-const dashBoardNavTree = [{
-  key: 'home',
-  path: `${APP_PREFIX_PATH}/home`,
-  title: 'home',
-  icon: DashboardOutlined,
-  breadcrumb: false,
-  submenu: []
-},
+const dashBoardNavTree = [
+// {
+//   key: 'home',
+//   path: `${APP_PREFIX_PATH}/home`,
+//   title: 'home',
+//   icon: DashboardOutlined,
+//   breadcrumb: false,
+//   submenu: []
+// },
+  {
+    key: 'project',
+    path: `${APP_PREFIX_PATH}/project`,
+    title: 'project',
+    icon: DashboardOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
   {
   key: 'profile',
   path: `${APP_PREFIX_PATH}/profile`,
@@ -18,7 +27,7 @@ const dashBoardNavTree = [{
   icon: DashboardOutlined,
   breadcrumb: false,
   submenu: []
-  }
+  },
 ]
 
 const navigationConfig = [
