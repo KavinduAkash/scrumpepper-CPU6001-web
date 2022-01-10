@@ -22,8 +22,8 @@ const ProfileInfo = props => (
                         <Flex alignItems="center" mobileFlex={false} className="mb-3 text-md-left text-center">
                             <h2 className="mb-0 mt-md-0 mt-2">Ella Robinson</h2>
                             <div className="ml-md-3 mt-3 mt-md-0">
-                                <Button size="small" type="primary">Follow</Button>
-                                <Button size="small" className="ml-2">Message</Button>
+                                {/*<Button size="small" type="primary">Follow</Button>*/}
+                                <Button size="small" className="ml-2">Edit</Button>
                             </div>
                         </Flex>
                         <Row gutter="16">
