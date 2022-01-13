@@ -10,6 +10,8 @@ import {
     HomeOutlined,
     PhoneOutlined
 } from '@ant-design/icons';
+import {withRouter} from "react-router-dom";
+
 const ProfileInfo = props => (
     <Card>
         <Row justify="center">
@@ -155,6 +157,11 @@ const Group = () => (
 )
 
 export class Profile extends React.Component {
+
+    componentDidMount() {
+        this.props.history.push("/auth/login");
+    }
+
     render() {
         const avatarSize = 150;
         return (
@@ -184,4 +191,4 @@ export class Profile extends React.Component {
 }
 
 
-export default Profile
+export default withRouter(Profile)

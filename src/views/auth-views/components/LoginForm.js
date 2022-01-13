@@ -11,151 +11,175 @@ import {
 	hideAuthMessage,
 	authenticated
 } from 'redux/actions/Auth';
-import JwtAuthService from 'services/JwtAuthService'
-import { useHistory } from "react-router-dom";
 import { motion } from "framer-motion"
+import axios from "axios";
+import Cookies from 'js-cookie';
+import {withRouter} from "react-router-dom";
 
-export const LoginForm = (props) => {
-	let history = useHistory();
-
-	const { 
-		otherSignIn, 
-		showForgetPassword, 
-		hideAuthMessage,
-		onForgetPasswordClick,
-		showLoading,
-		extra,
-		loading,
-		showMessage,
-		message,
-		authenticated,
-		showAuthMessage,
-		token,
-		redirect,
-		allowRedirect
-	} = props
-
-	const onLogin = values => {
-		showLoading()
-		const fakeToken = 'fakeToken'
-		JwtAuthService.login(values).then(resp => {
-			authenticated(fakeToken)
-		}).then(e => {
-			showAuthMessage(e)
-		})
+class LoginForm extends React.Component{
+	state = {
+		username:"",
+		password:"",
+		showMessage:0,
+		message: "Invalid Credentials! Please enter correct credentials and try again",
+		loading:false
 	};
 
-	const onGoogleLogin = () => {
-		showLoading()
-	}
+	onChangeUsername = e => {
+		this.setState({username: e.target.value});
+	};
 
-	const onFacebookLogin = () => {
-		showLoading()
-	}
+	onChangePassword = e => {
+		this.setState({password: e.target.value});
+	};
 
-	useEffect(() => {
-		if (token !== null && allowRedirect) {
-			history.push(redirect)
-		}
-		if(showMessage) {
-			setTimeout(() => {
-			hideAuthMessage();
-		}, 3000);
-		}
-	});
-	
-	const renderOtherSignIn = (
-		<div>
-			<Divider>
-				<span className="text-muted font-size-base font-weight-normal">or connect with</span>
-			</Divider>
-			<div className="d-flex justify-content-center">
-				<Button 
-					onClick={() => onGoogleLogin()} 
-					className="mr-2" 
-					disabled={loading} 
-					icon={<CustomIcon svg={GoogleSVG}/>}
-				>
-					Google
-				</Button>
-				<Button 
-					onClick={() => onFacebookLogin()} 
-					icon={<CustomIcon svg={FacebookSVG}/>}
-					disabled={loading} 
-				>
-					Facebook
-				</Button>
+	onLogin = values => {
+		this.setState({loading: true});
+		let headers = {
+			'Content-Type':'application/x-www-form-urlencoded',
+			"Authorization": "Basic " + "VVNFUjo="
+		};
+		let method = "post";
+		let formData = new FormData();
+		formData.append('grant_type','password');
+		formData.append('username',this.state.username);
+		formData.append('password',this.state.password);
+
+		axios[method](`http://localhost:8080/v1/authorize`, method !== 'get'? formData : {headers: headers}, {headers: headers})
+			.then(async response => {
+
+				let user = response.data.user;
+				let accessToken = response.data.access_token;
+				let refreshToken = response.data.refresh_token;
+				Cookies.set('68e78905f4c', accessToken);
+				Cookies.set('68e75190f4c', refreshToken);
+				this.setState({loading: false});
+				this.props.history.push("/app/project");
+
+			}).catch(async error => {
+			this.setState({loading: false});
+
+				this.setState({showMessage:1});
+				setTimeout(() => {
+					this.setState({showMessage:0});
+				}, 2000);
+
+			this.props.showAuthMessage(error);
+			});
+	};
+
+	onGoogleLogin = () => {
+		showLoading()
+	};
+
+	onFacebookLogin = () => {
+		showLoading()
+	};
+
+	render() {
+
+
+		let renderOtherSignIn = (
+			<div>
+				<Divider>
+					<span className="text-muted font-size-base font-weight-normal">or connect with</span>
+				</Divider>
+				{/*<div className="d-flex justify-content-center">*/}
+				{/*	<Button*/}
+				{/*		onClick={() => onGoogleLogin()}*/}
+				{/*		className="mr-2"*/}
+				{/*		disabled={loading}*/}
+				{/*		icon={<CustomIcon svg={GoogleSVG}/>}*/}
+				{/*	>*/}
+				{/*		Google*/}
+				{/*	</Button>*/}
+				{/*	<Button*/}
+				{/*		onClick={() => onFacebookLogin()}*/}
+
+				{/*		icon={<CustomIcon svg={FacebookSVG}/>}*/}
+				{/*		disabled={loading}*/}
+				{/*	>*/}
+				{/*		Facebook*/}
+				{/*	</Button>*/}
+				{/*</div>*/}
 			</div>
-		</div>
-	)
+		)
 
-	return (
-		<>
-			<motion.div 
-				initial={{ opacity: 0, marginBottom: 0 }} 
-				animate={{ 
-					opacity: showMessage ? 1 : 0,
-					marginBottom: showMessage ? 20 : 0 
-				}}> 
-				<Alert type="error" showIcon message={message}></Alert>
-			</motion.div>
-			<Form 
-				layout="vertical" 
-				name="login-form"
-				onFinish={onLogin}
-			>
-				<Form.Item 
-					name="email" 
-					label="Email" 
-					rules={[
-						{ 
-							required: true,
-							message: 'Please input your email',
-						},
-						{ 
-							type: 'email',
-							message: 'Please enter a validate email!'
-						}
-					]}>
-					<Input prefix={<MailOutlined className="text-primary" />}/>
-				</Form.Item>
-				<Form.Item 
-					name="password" 
-					label={
-						<div className={`${showForgetPassword? 'd-flex justify-content-between w-100 align-items-center' : ''}`}>
-							<span>Password</span>
-							{
-								showForgetPassword && 
-								<span 
-									onClick={() => onForgetPasswordClick} 
-									className="cursor-pointer font-size-sm font-weight-normal text-muted"
-								>
-									Forget Password?
-								</span>
-							} 
-						</div>
-					} 
-					rules={[
-						{ 
-							required: true,
-							message: 'Please input your password',
-						}
-					]}
+		return (
+			<div>
+				<motion.div
+					style={{display:`${this.state.showMessage ? 'block' : 'none'}`}}
+					initial={{opacity: 0, marginBottom: 0}}
+					animate={{
+						opacity: this.state.showMessage ? 1 : 0,
+						marginBottom: this.state.showMessage ? 20 : 0
+					}}>
+					<Alert type="error" showIcon message={this.state.message}></Alert>
+				</motion.div>
+				<Form
+					layout="vertical"
+					name="login-form"
 				>
-					<Input.Password prefix={<LockOutlined className="text-primary" />}/>
-				</Form.Item>
-				<Form.Item>
-					<Button type="primary" htmlType="submit" block loading={loading}>
-						Sign In
-					</Button>
-				</Form.Item>
-				{
-					otherSignIn ? renderOtherSignIn : null
-				}
-				{ extra }
-			</Form>
-		</>
-	)
+					<Form.Item
+						name="email"
+						label="Email"
+						rules={[
+							{
+								required: true,
+								message: 'Please input your email',
+							},
+							{
+								type: 'email',
+								message: 'Please enter a validate email!'
+							}
+						]}>
+						<Input prefix={<MailOutlined className="text-primary"/>} onChange={this.onChangeUsername}/>
+					</Form.Item>
+					<Form.Item
+						name="password"
+						// label={
+							// <div
+							// 	className={`${showForgetPassword ? 'd-flex justify-content-between w-100 align-items-center' : ''}`}>
+							// 	<span>Password</span>
+							// 	{
+							// 		showForgetPassword &&
+							// 		<span
+							// 			onClick={() => onForgetPasswordClick}
+							// 			className="cursor-pointer font-size-sm font-weight-normal text-muted"
+							// 		>
+							// 		Forget Password?
+							// 	</span>
+							// 	}
+							// </div>
+						// }
+						rules={[
+							{
+								required: true,
+								message: 'Please input your password',
+							}
+						]}
+					>
+						<Input.Password prefix={<LockOutlined className="text-primary"/>} onChange={this.onChangePassword}/>
+					</Form.Item>
+					<Form.Item>
+						<Button
+							type="primary"
+							htmlType="submit"
+							block
+							loading={this.state.loading}
+							onClick={this.onLogin}
+						>
+							Sign In
+						</Button>
+					</Form.Item>
+					{/*{*/}
+					{/*	otherSignIn ? renderOtherSignIn : null*/}
+					{/*}*/}
+					{/*{extra}*/}
+				</Form>
+			</div>
+		)
+	}
 }
 
 LoginForm.propTypes = {
@@ -184,4 +208,4 @@ const mapDispatchToProps = {
 	authenticated
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LoginForm))
