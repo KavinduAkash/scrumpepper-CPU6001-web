@@ -1,8 +1,19 @@
 import React from "react";
 import { Row, Col, Button, Card, Avatar, Dropdown, Table, Menu, Tag } from 'antd';
 import './project.scss'
+import Cookies from "js-cookie";
+import {withRouter} from "react-router-dom";
+import {Profile} from "../profile";
 
 class Project extends React.Component {
+
+    componentDidMount() {
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+    }
 
     render() {
         return(
@@ -43,4 +54,4 @@ class Project extends React.Component {
 
 }
 
-export default Project;
+export default withRouter(Project)

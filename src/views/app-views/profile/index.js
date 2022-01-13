@@ -11,6 +11,7 @@ import {
     PhoneOutlined
 } from '@ant-design/icons';
 import {withRouter} from "react-router-dom";
+import Cookies from "js-cookie";
 
 const ProfileInfo = props => (
     <Card>
@@ -159,7 +160,11 @@ const Group = () => (
 export class Profile extends React.Component {
 
     componentDidMount() {
-        this.props.history.push("/auth/login");
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
     }
 
     render() {
