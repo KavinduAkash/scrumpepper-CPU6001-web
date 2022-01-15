@@ -19,7 +19,7 @@ const RegisterTwo = props => {
 				<Col xs={20} sm={20} md={24} lg={16}>
 					<div className="container d-flex flex-column justify-content-center h-100">
 						<Row justify="center">
-							<Col xs={24} sm={24} md={20} lg={12} xl={8}>
+							<Col xs={24} sm={24} md={14} lg={14} xl={10}>
 								<h1>Sign Up</h1>
 								<p>Already have an account? <a href="/auth/login-2">Sign In</a></p>
 								<div className="mt-4">
