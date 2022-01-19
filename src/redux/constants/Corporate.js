@@ -1,0 +1,1 @@
+export const STORE_CORPORATE_ID = 'STORE_CORPORATE_ID';

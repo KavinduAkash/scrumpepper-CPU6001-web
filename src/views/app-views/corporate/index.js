@@ -19,6 +19,9 @@ import { PlusOutlined } from '@ant-design/icons';
 import '../../../assets/less/custom-styles/sp-button.scss'
 import axios from "axios";
 import Cookies from "js-cookie";
+import * as corporate_actions from '../../../redux/actions/Corporate';
+import {connect} from "react-redux";
+import {withRouter} from "react-router-dom";
 
 const { Meta } = Card;
 
@@ -69,6 +72,7 @@ class Corporate extends React.Component{
         imageUrl: '',
         loading_button: false,
 
+        // create a corporate
         name: '',
         address: '',
         contactNumber1: '',
@@ -76,8 +80,40 @@ class Corporate extends React.Component{
         email: '',
         corporate_long: null,
 
+        // my corporates
+        my_corporates: []
+    };
 
+    componentDidMount() {
+        console.log("Corporates")
+        this.loadMyCorporates();
     }
+
+    loadMyCorporates = () => {
+
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        axios.get('http://localhost:8080/v1/corporate/my-corporates', {headers})
+            .then(res => {
+                console.log(res.data);
+                this.setState({my_corporates: res.data.body});
+            })
+            .catch(err => {
+                console.log(err)
+            });
+
+    };
+
+
 
     setVisible = e => {
         this.setState({visible: false})
@@ -208,6 +244,13 @@ class Corporate extends React.Component{
     };
 
 
+    onClickCorporateCard = value => {
+        console.log("XXXXXXXXXXXXXXXXXXX");
+        let corporateHandler = this.props.corporateHandler(value);
+        console.log("XXXXXXXXXXXXXXXXXXX ", corporateHandler);
+        this.props.history.push("/app/corporate/manage");
+    };
+
     render() {
         const uploadButton = (
             <div>
@@ -216,8 +259,83 @@ class Corporate extends React.Component{
             </div>
         );
 
+        let show_skeleton = true;
+        let skeleton = <Row>
+                <Col sm={24} md={12} lg = {6} xl={6}>
+                    <Card
+                        style={{ width: 300, marginTop: 16 }}
+                    >
+                        <Skeleton loading={true} avatar active>
+                            <Meta
+                                avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+                                title="Card title"
+                                description="This is the description"
+                            />
+                        </Skeleton>
+                    </Card>
+                </Col>
+                <Col sm={24} md={12} lg = {6} xl={6}>
+                    <Card
+                        style={{ width: 300, marginTop: 16 }}
+                    >
+                        <Skeleton loading={true} avatar active>
+                            <Meta
+                                avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+                                title="Card title"
+                                description="This is the description"
+                            />
+                        </Skeleton>
+                    </Card>
+                </Col>
+                <Col sm={24} md={12} lg = {6} xl={6}>
+                    <Card
+                        style={{ width: 300, marginTop: 16 }}
+                    >
+                        <Skeleton loading={true} avatar active>
+                            <Meta
+                                avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+                                title="Card title"
+                                description="This is the description"
+                            />
+                        </Skeleton>
+                    </Card>
+                </Col>
+            </Row>;
+
+        let my_corporate_list = [];
+        if(this.state.my_corporates!==null && this.state.my_corporates!=='' && this.state.my_corporates!==undefined) {
+            if(this.state.my_corporates.length!=0) {
+                show_skeleton = false;
+               this.state.my_corporates.map(val => {
+                   let x = <div>
+                       <div><span>Your Role: </span>{val.corporateAccessType}</div>
+                       <div><span>Status: </span>{val.corporate.statusType}</div>
+                   </div>
+
+                    let data = <Col sm={24} md={12} lg = {6} xl={6}>
+                        <Card
+                            style={{ width: 300, marginTop: 16 }}
+                            onClick={()=>this.onClickCorporateCard(val.corporate.id)}
+                        >
+                            <Skeleton loading={false} avatar active>
+                                <Meta
+                                    avatar={<Avatar src={val.corporate.corporateLogo} />}
+                                    title={val.corporate.name}
+                                    description={x}
+                                />
+                            </Skeleton>
+
+                        </Card>
+                    </Col>;
+                   my_corporate_list.push(data);
+                })
+            }
+        }
+
         return (
             <>
+
+                {/*=============================== create a corporate =================================*/}
                 <Modal
                     title="Create a corporate"
                     centered
@@ -338,6 +456,7 @@ class Corporate extends React.Component{
 
                 </Modal>
 
+                {/*=============================== corporates =================================*/}
                 <div>
 
                     <Row>
@@ -353,123 +472,13 @@ class Corporate extends React.Component{
                             </Button>
                         </Col>
                     </Row>
-                    <Row>
 
-                        <Col sm={24} md={12} lg = {6} xl={6}>
-                           <Card
-                               style={{ width: 300, marginTop: 16 }}
-                           >
-                               <Skeleton loading={true} avatar active>
-                                   <Meta
-                                       avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                       title="Card title"
-                                       description="This is the description"
-                                   />
-                               </Skeleton>
-                           </Card>
-                       </Col>
+                    {
+                        show_skeleton?
+                            skeleton:
+                            <Row>{my_corporate_list}</Row>
 
-                        <Col sm={24} md={12} lg = {6} xl={6}>
-                            <Card
-                                style={{ width: 300, marginTop: 16 }}
-                            >
-                                <Skeleton loading={true} avatar active>
-                                    <Meta
-                                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                        title="Card title"
-                                        description="This is the description"
-                                    />
-                                </Skeleton>
-                            </Card>
-                        </Col>
-
-                        <Col sm={24} md={12} lg = {6} xl={6}>
-                            <Card
-                                style={{ width: 300, marginTop: 16 }}
-                            >
-                                <Skeleton loading={true} avatar active>
-                                    <Meta
-                                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                        title="Card title"
-                                        description="This is the description"
-                                    />
-                                </Skeleton>
-                            </Card>
-                        </Col>
-
-                        <Col sm={24} md={12} lg = {6} xl={6}>
-                            <Card
-                                style={{ width: 300, marginTop: 16 }}
-                            >
-                                <Skeleton loading={true} avatar active>
-                                    <Meta
-                                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                        title="Card title"
-                                        description="This is the description"
-                                    />
-                                </Skeleton>
-                            </Card>
-                        </Col>
-
-                        <Col sm={24} md={12} lg = {6} xl={6}>
-                            <Card
-                                style={{ width: 300, marginTop: 16 }}
-                            >
-                                <Skeleton loading={true} avatar active>
-                                    <Meta
-                                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                        title="Card title"
-                                        description="This is the description"
-                                    />
-                                </Skeleton>
-                            </Card>
-                        </Col>
-
-                        <Col sm={24} md={12} lg = {6} xl={6}>
-                            <Card
-                                style={{ width: 300, marginTop: 16 }}
-                            >
-                                <Skeleton loading={true} avatar active>
-                                    <Meta
-                                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                        title="Card title"
-                                        description="This is the description"
-                                    />
-                                </Skeleton>
-                            </Card>
-                        </Col>
-
-                        <Col sm={24} md={12} lg = {6} xl={6}>
-                            <Card
-                                style={{ width: 300, marginTop: 16 }}
-                            >
-                                <Skeleton loading={true} avatar active>
-                                    <Meta
-                                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                        title="Card title"
-                                        description="This is the description"
-                                    />
-                                </Skeleton>
-                            </Card>
-                        </Col>
-
-                        <Col sm={24} md={12} lg = {6} xl={6}>
-                            <Card
-                                style={{ width: 300, marginTop: 16 }}
-                            >
-                                <Skeleton loading={true} avatar active>
-                                    <Meta
-                                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                        title="Card title"
-                                        description="This is the description"
-                                    />
-                                </Skeleton>
-                            </Card>
-                        </Col>
-
-
-
-                    </Row>
+                    }
 
 
                 </div>
@@ -479,4 +488,10 @@ class Corporate extends React.Component{
 
 }
 
-export default Corporate
+const mapDispatchToProps = (dispatch) => {
+    return {
+        corporateHandler: (data) => dispatch(corporate_actions.storeCorporateId(data)),
+    };
+};
+
+export default connect(null, mapDispatchToProps)(withRouter(Corporate))

@@ -2,6 +2,8 @@ import React, { lazy, Suspense } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Loading from 'components/shared-components/Loading';
 import { APP_PREFIX_PATH } from 'configs/AppConfig'
+import Corporate from "./corporate";
+import CorporateManagementView from "./corporate/CorporateManagement";
 
 export const AppViews = () => {
   return (
@@ -11,7 +13,8 @@ export const AppViews = () => {
         {/*<Redirect from={`${APP_PREFIX_PATH}`} to={`${APP_PREFIX_PATH}/home`} />*/}
         {/*<Redirect from={`${APP_PREFIX_PATH}`} to={`${APP_PREFIX_PATH}/profile`} />*/}
           <Route path={`${APP_PREFIX_PATH}/profile`} component={lazy(() => import(`./profile`))} />
-          <Route path={`${APP_PREFIX_PATH}/corporate`} component={lazy(() => import(`./corporate`))} />
+          <Route exact path={`${APP_PREFIX_PATH}/corporate`} component={Corporate} />
+          <Route path={`${APP_PREFIX_PATH}/corporate/manage`} component={CorporateManagementView} />
           <Route path={`${APP_PREFIX_PATH}/project`} component={lazy(() => import(`./project`))} />
       </Switch>
     </Suspense>
