@@ -8,8 +8,13 @@ const { Meta } = Card;
 class CorporateManagementView extends React.Component {
 
     render() {
+
+        console.log("XXXXXXXXXXXXXXXXXXX");
+        console.log(this.props.corporateReducer.corporate_id);
+
         return (
          <>
+             <div>{this.props.corporate_id}</div>
             <Row>
                <Col sm={24} md={24} lg={24} xl={24}>
                    <Card
@@ -30,7 +35,7 @@ class CorporateManagementView extends React.Component {
                                }}
                                src="https://joeschmoe.io/api/v1/random" />
                            }
-                           title={this.props.corporate_id.corporate_id}
+                           title={this.props.corporateReducer.corporate_id}
                            description="This is the description"
                        />
                    </Card>
@@ -43,7 +48,8 @@ class CorporateManagementView extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    corporate_id: state.corporateReducer,
+
+    corporateReducer: state.corporateReducer,
 });
 
 const mapDispatchToProps = (dispatch) => {

@@ -248,6 +248,10 @@ class Corporate extends React.Component{
         console.log("XXXXXXXXXXXXXXXXXXX");
         let corporateHandler = this.props.corporateHandler(value);
         console.log("XXXXXXXXXXXXXXXXXXX ", corporateHandler);
+        this.moveToCorporateMange();
+    };
+
+    moveToCorporateMange = () => {
         this.props.history.push("/app/corporate/manage");
     };
 
@@ -488,10 +492,14 @@ class Corporate extends React.Component{
 
 }
 
+const mapStateToProps = (state) => ({
+    corporateReducer: state.corporateReducer,
+});
+
 const mapDispatchToProps = (dispatch) => {
     return {
         corporateHandler: (data) => dispatch(corporate_actions.storeCorporateId(data)),
     };
 };
 
-export default connect(null, mapDispatchToProps)(withRouter(Corporate))
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Corporate))
