@@ -1,0 +1,1 @@
+export const SPINNER_HANDLER = 'SPINNER_HANDLER';
