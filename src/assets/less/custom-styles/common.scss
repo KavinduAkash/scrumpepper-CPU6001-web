@@ -12,3 +12,19 @@
     padding-left: 20px;
   }
 }
+
+.user-search-option {
+  .option-container {
+    display: flex;
+    .topic {
+      font-weight: bold;
+      font-size: 15px;
+    }
+    .description {
+      color: gray;
+      font-size: 13px;
+    }
+  }
+
+}
+
