@@ -18,11 +18,13 @@ import { UserOutlined, AppleOutlined, PlusOutlined } from '@ant-design/icons';
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import * as corporate_actions from "../../../../redux/actions/Corporate";
+import * as spinner_actions from "../../../../redux/actions/Spinner";
 import '../../../../assets/less/custom-styles/common.scss'
 import './corporatae-manage.scss'
 import Flex from 'components/shared-components/Flex'
 import Cookies from "js-cookie";
 import axios from "axios";
+import Loading from "../../../../components/shared-components/Loading";
 const { Meta } = Card;
 
 const size = 'small';
@@ -152,6 +154,7 @@ class CorporateManagementView extends React.Component {
         temporary_selected_employee_role: 'TEAM_MEMBER',
         temporary_selected_employees_list: [],
         temporary_selected_employees_list_x: [],
+        project_name: '',
 
     };
 
@@ -320,6 +323,52 @@ class CorporateManagementView extends React.Component {
         });
     };
 
+    onChangeProjectName = val => {
+      this.setState({
+          project_name: val.target.value
+      })
+    };
+
+    create_project = () => {
+        this.props.handleSpinner(true);
+        let project_members = [];
+        if(this.state.project_name!="") {
+            this.state.temporary_selected_employees_list.map(val=>{
+                let obj = {
+                    projectId: 0,
+                    corporateEmployeeId: val.member.id,
+                    scrumRole: val.role
+                }
+                project_members.push(obj);
+            });
+
+            let req_body={
+                corporateId: this.props.corporateReducer.corporate_id,
+                projectName: this.state.project_name,
+                projectMembers: project_members
+            }
+
+            let headers = {
+                'Content-Type':'application/json',
+                'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+            };
+
+            axios.post('http://localhost:8080/v1/project/create', req_body, {headers})
+                .then(res => {
+                    console.log(res.data);
+                    this.props.handleSpinner(false);
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.props.handleSpinner(false);
+                });
+
+
+        } else {
+            message.error('Please enter project name');
+        }
+    };
+
     render() {
 
         let options = [
@@ -393,6 +442,7 @@ class CorporateManagementView extends React.Component {
             );
         }
 
+        console.log("VVVVVVVVV: ", this.state.temporary_selected_employees_list);
 
             let temporary_selected_employees_list = [];
             this.state.temporary_selected_employees_list.map((val, index) => {
@@ -443,7 +493,7 @@ class CorporateManagementView extends React.Component {
                                      // rules={rules.corporate_name}
                                      hasFeedback
                                  >
-                                     <Input placeholder={'Project Name'} value={this.state.name} onChange={this.onChangeCorporateName} />
+                                     <Input placeholder={'Project Name'} value={this.state.project_name} onChange={this.onChangeProjectName} />
                                  </Form.Item>
                              </Col>
                          </Row>
@@ -481,7 +531,7 @@ class CorporateManagementView extends React.Component {
                                      type="primary"
                                      size={size}
                                      className={'sp-main-btn'}
-                                     onClick={this.openCorporateCreateModal}
+                                     onClick={this.create_project}
                                  >
                                      Create The Project
                                  </Button>
@@ -689,11 +739,13 @@ class CorporateManagementView extends React.Component {
 const mapStateToProps = (state) => ({
 
     corporateReducer: state.corporateReducer,
+
 });
 
 const mapDispatchToProps = (dispatch) => {
     return {
         // corporateHandler: (data) => dispatch(corporate_actions.storeCorporateId(data)),
+        handleSpinner: (data) => dispatch(spinner_actions.handlerSpinner(data))
     };
 };
 
