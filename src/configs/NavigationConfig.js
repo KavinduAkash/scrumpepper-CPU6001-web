@@ -53,22 +53,6 @@ const navigationConfig = [
 
 export const projectManagementNavTree = [
   {
-    key: 'Home',
-    path: `${APP_PREFIX_PATH}/project/home`,
-    title: 'Home',
-    icon: HomeOutlined,
-    breadcrumb: false,
-    submenu: []
-  },
-  {
-    key: 'SPP Poker',
-    path: `${APP_PREFIX_PATH}/project/spp-poker`,
-    title: 'SPP Poker',
-    icon: ClockCircleOutlined,
-    breadcrumb: false,
-    submenu: []
-  },
-  {
     key: 'Backlog',
     path: `${APP_PREFIX_PATH}/project/backlog`,
     title: 'Backlog',
@@ -81,6 +65,14 @@ export const projectManagementNavTree = [
     path: `${APP_PREFIX_PATH}/project/sprints`,
     title: 'Sprints',
     icon: RedoOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
+    {
+    key: 'SPP Poker',
+    path: `${APP_PREFIX_PATH}/project/spp-poker`,
+    title: 'SPP Poker',
+    icon: ClockCircleOutlined,
     breadcrumb: false,
     submenu: []
   },

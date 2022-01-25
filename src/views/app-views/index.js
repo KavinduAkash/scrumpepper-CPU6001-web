@@ -6,7 +6,6 @@ import Corporate from "./corporate";
 import CorporateManagementView from "./corporate/CorporateManagement";
 
 // project-views
-import ProjectHome from "./project/project-views/project-home";
 import ProjectSPPPoker from "./project/project-views/project-spp-poker";
 import ProjectBacklog from "./project/project-views/project-backlog";
 import ProjectSprints from "./project/project-views/project-sprints";
@@ -27,7 +26,6 @@ export const AppViews = () => {
           <Route exact path={`${APP_PREFIX_PATH}/corporate`} component={Corporate} />
           <Route path={`${APP_PREFIX_PATH}/corporate/manage`} component={CorporateManagementView} />
           <Route exact path={`${APP_PREFIX_PATH}/project`} component={lazy(() => import(`./project`))} />
-          <Route path={`${APP_PREFIX_PATH}/project/home`} component={ProjectHome} />
           <Route path={`${APP_PREFIX_PATH}/project/spp-poker`} component={ProjectSPPPoker} />
           <Route path={`${APP_PREFIX_PATH}/project/backlog`} component={ProjectBacklog} />
           <Route path={`${APP_PREFIX_PATH}/project/sprints`} component={ProjectSprints} />
