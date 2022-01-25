@@ -6,15 +6,15 @@ import Corporate from "./corporate";
 import CorporateManagementView from "./corporate/CorporateManagement";
 
 // project-views
-import ProjectHome from "./project/project-home/project-home";
-import ProjectSPPPoker from "./project/project-home/project-spp-poker";
-import ProjectBacklog from "./project/project-home/project-backlog";
-import ProjectSprints from "./project/project-home/project-sprints";
-import ProjectReports from "./project/project-home/project-reports";
-import ProjectTeam from "./project/project-home/project-teams";
-import ProjectNotifications from "./project/project-home/project-notifications";
-import ProjectDocs from "./project/project-home/project-docs";
-import ProjectSettings from "./project/project-home/project-settings";
+import ProjectHome from "./project/project-views/project-home";
+import ProjectSPPPoker from "./project/project-views/project-spp-poker";
+import ProjectBacklog from "./project/project-views/project-backlog";
+import ProjectSprints from "./project/project-views/project-sprints";
+import ProjectReports from "./project/project-views/project-reports";
+import ProjectTeam from "./project/project-views/project-teams";
+import ProjectNotifications from "./project/project-views/project-notifications";
+import ProjectDocs from "./project/project-views/project-docs";
+import ProjectSettings from "./project/project-views/project-settings";
 
 export const AppViews = () => {
   return (
