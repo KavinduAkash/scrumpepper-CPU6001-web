@@ -3,6 +3,7 @@ import {Avatar, Button, Card, Table, Tag, Tooltip} from "antd";
 import { RightCircleOutlined } from '@ant-design/icons';
 
 import './project-set.scss'
+import {withRouter} from "react-router-dom";
 
 const columns = [
     {
@@ -38,6 +39,11 @@ const columns = [
 ];
 
 class ProjectSet extends React.Component {
+
+    move_to_project_view = id => {
+        this.props.history.push('/app/project/view');
+    }
+
     render() {
 
         let logo = this.props.val.corporate.corporateLogo;
@@ -57,7 +63,7 @@ class ProjectSet extends React.Component {
                     {val.role}
                     </Tag>,
                     view: <Tooltip title="View">
-                        <Button shape="circle" icon={<RightCircleOutlined />} />
+                        <Button shape="circle" icon={<RightCircleOutlined />} onClick={()=>this.move_to_project_view(val.project.id)} />
                     </Tooltip>
                 }
 
@@ -87,4 +93,4 @@ class ProjectSet extends React.Component {
     }
 }
 
-export default ProjectSet;
+export default withRouter(ProjectSet);

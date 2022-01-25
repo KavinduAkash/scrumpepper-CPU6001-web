@@ -4,6 +4,7 @@ import Loading from 'components/shared-components/Loading';
 import { APP_PREFIX_PATH } from 'configs/AppConfig'
 import Corporate from "./corporate";
 import CorporateManagementView from "./corporate/CorporateManagement";
+import ProjectView from "./project/project-view";
 
 export const AppViews = () => {
   return (
@@ -15,7 +16,8 @@ export const AppViews = () => {
           <Route path={`${APP_PREFIX_PATH}/profile`} component={lazy(() => import(`./profile`))} />
           <Route exact path={`${APP_PREFIX_PATH}/corporate`} component={Corporate} />
           <Route path={`${APP_PREFIX_PATH}/corporate/manage`} component={CorporateManagementView} />
-          <Route path={`${APP_PREFIX_PATH}/project`} component={lazy(() => import(`./project`))} />
+          <Route exact path={`${APP_PREFIX_PATH}/project`} component={lazy(() => import(`./project`))} />
+          <Route path={`${APP_PREFIX_PATH}/project/view`} component={ProjectView} />
       </Switch>
     </Suspense>
   )

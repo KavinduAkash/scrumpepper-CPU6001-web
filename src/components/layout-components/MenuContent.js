@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, Grid } from "antd";
 import IntlMessage from "../util-components/IntlMessage";
 import Icon from "../util-components/Icon";
-import navigationConfig from "configs/NavigationConfig";
+import * as navigationConfig from '../../configs/NavigationConfig';
 import { connect } from "react-redux";
 import { SIDE_NAV_LIGHT, NAV_TYPE_SIDE } from "constants/ThemeConstant";
 import utils from 'utils'
@@ -36,7 +36,18 @@ const SideNavContent = (props) => {
 		if (isMobile) {
 			onMobileNavToggle(false)
 		}
-	}
+	};
+
+
+	// $&$&
+
+    let navigationBar = navigationConfig.dashBoardNavTree;
+    if(props.navigation==2) {
+        navigationBar = navigationConfig.projectManagementNavTree;
+    }
+
+
+
   return (
     <Menu
       theme={sideNavTheme === SIDE_NAV_LIGHT ? "light" : "dark"}
@@ -46,7 +57,8 @@ const SideNavContent = (props) => {
       defaultOpenKeys={setDefaultOpen(routeInfo?.key)}
       className={hideGroupTitle ? "hide-group-title" : ""}
     >
-      {navigationConfig.map((menu) =>
+
+      {navigationBar.map((menu) =>
         menu.submenu.length > 0 ? (
           <Menu.ItemGroup
             key={menu.key}
@@ -98,9 +110,16 @@ const SideNavContent = (props) => {
 
 const TopNavContent = (props) => {
   const { topNavColor, localization } = props;
+
+    let navigationBar = navigationConfig.dashBoardNavTree;
+    if(props.navigation==2) {
+        navigationBar = navigationConfig.projectManagementNavTree;
+    }
   return (
     <Menu mode="horizontal" style={{ backgroundColor: topNavColor }}>
-      {navigationConfig.map((menu) =>
+
+
+        {navigationBar.map((menu) =>
         menu.submenu.length > 0 ? (
           <SubMenu
             key={menu.key}
@@ -164,9 +183,10 @@ const MenuContent = (props) => {
   );
 };
 
-const mapStateToProps = ({ theme }) => {
+const mapStateToProps = ({ theme, navigationReducer }) => {
   const { sideNavTheme, topNavColor } = theme;
-  return { sideNavTheme, topNavColor };
+  const { navigation } = navigationReducer;
+  return { sideNavTheme, topNavColor, navigation };
 };
 
 export default connect(mapStateToProps, { onMobileNavToggle })(MenuContent);

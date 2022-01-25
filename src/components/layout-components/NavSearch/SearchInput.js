@@ -9,10 +9,11 @@ import {
 import { Link } from "react-router-dom";
 import { AutoComplete, Input } from 'antd';
 import IntlMessage from 'components/util-components/IntlMessage';
-import navigationConfig from "configs/NavigationConfig";
+import * as navigationConfig from "../../../configs/NavigationConfig";
 
 function getOptionList (navigationTree, optionTree) {
 	optionTree = optionTree ? optionTree : [];
+	console.log("GGGGGGGGGGGGGGG : ", navigationTree)
 	for ( const navItem of navigationTree ) {
 		if(navItem.submenu.length === 0) {
 			optionTree.push(navItem)
@@ -24,7 +25,7 @@ function getOptionList (navigationTree, optionTree) {
 	return optionTree 
 }
 
-const optionList = getOptionList(navigationConfig)
+const optionList = getOptionList(navigationConfig.dashBoardNavTree)
 
 const getCategoryIcon = category => {
 	switch (category) {

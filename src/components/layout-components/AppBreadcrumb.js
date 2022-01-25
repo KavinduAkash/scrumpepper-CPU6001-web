@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { Breadcrumb } from 'antd';
-import navigationConfig from "configs/NavigationConfig";
+import * as navigationConfig from "../../configs/NavigationConfig";
 import IntlMessage from 'components/util-components/IntlMessage';
 
 let breadcrumbData = { 
 	'/app' : <IntlMessage id="home" />
 };
 
-navigationConfig.forEach((elm, i) => {
+navigationConfig.dashBoardNavTree.forEach((elm, i) => {
 	const assignBreadcrumb = (obj) => breadcrumbData[obj.path] = <IntlMessage id={obj.title} />;
 	assignBreadcrumb(elm);
 	if (elm.submenu) {

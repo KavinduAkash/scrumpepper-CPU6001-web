@@ -1,9 +1,18 @@
 import { 
-  DashboardOutlined
+  DashboardOutlined,
+  HomeOutlined,
+  UnorderedListOutlined,
+  RedoOutlined,
+  AreaChartOutlined,
+  TeamOutlined,
+  SettingOutlined,
+  BookOutlined,
+  BellOutlined,
+  ClockCircleOutlined
 } from '@ant-design/icons';
 import { APP_PREFIX_PATH } from 'configs/AppConfig'
 
-const dashBoardNavTree = [
+export const dashBoardNavTree = [
 // {
 //   key: 'home',
 //   path: `${APP_PREFIX_PATH}/home`,
@@ -42,4 +51,77 @@ const navigationConfig = [
   ...dashBoardNavTree
 ]
 
-export default navigationConfig;
+export const projectManagementNavTree = [
+  {
+    key: 'Home',
+    path: `${APP_PREFIX_PATH}/project/view`,
+    title: 'Home',
+    icon: HomeOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
+  {
+    key: 'SPP Poker',
+    path: `${APP_PREFIX_PATH}/project/view`,
+    title: 'SPP Poker',
+    icon: ClockCircleOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
+  {
+    key: 'Backlog',
+    path: `${APP_PREFIX_PATH}/project/view`,
+    title: 'Backlog',
+    icon: UnorderedListOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
+  {
+    key: 'Sprints',
+    path: `${APP_PREFIX_PATH}/project/view`,
+    title: 'Sprints',
+    icon: RedoOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
+  {
+    key: 'Reports',
+    path: `${APP_PREFIX_PATH}/project/view`,
+    title: 'Reports',
+    icon: AreaChartOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
+  {
+    key: 'Team',
+    path: `${APP_PREFIX_PATH}/project/view`,
+    title: 'Team',
+    icon: TeamOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
+  {
+    key: 'Notifications',
+    path: `${APP_PREFIX_PATH}/project/view`,
+    title: 'Notifications',
+    icon: BellOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
+  {
+    key: 'Docs',
+    path: `${APP_PREFIX_PATH}/project/view`,
+    title: 'Docs',
+    icon: BookOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
+  {
+    key: 'Settings',
+    path: `${APP_PREFIX_PATH}/project/view`,
+    title: 'Settings',
+    icon: SettingOutlined,
+    breadcrumb: false,
+    submenu: []
+  },
+]

@@ -13,7 +13,7 @@ import {
   Grid,
 } from "antd";
 
-import navigationConfig from "configs/NavigationConfig";
+import * as navigationConfig from "../../configs/NavigationConfig";
 import { 
   SIDE_NAV_WIDTH, 
   SIDE_NAV_COLLAPSED_WIDTH,
@@ -29,7 +29,7 @@ const { Content } = Layout;
 const { useBreakpoint } = Grid;
 
 export const AppLayout = ({ navCollapsed, navType, location, direction }) => {
-  const currentRouteInfo = utils.getRouteInfo(navigationConfig, location.pathname)
+  const currentRouteInfo = utils.getRouteInfo(navigationConfig.dashBoardNavTree, location.pathname)
   const screens = utils.getBreakPoint(useBreakpoint());
   const isMobile = !screens.includes('lg')
   const isNavSide = navType === NAV_TYPE_SIDE
