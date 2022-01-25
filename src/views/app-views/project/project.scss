@@ -1,14 +1,22 @@
 .project-corporate-header {
   display: flex;
-  margin: 0;
   .project-corporate-header-logo {
-    width: 25px;
-    height: 25px;
-    background-color: grey;
-    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+    width: 30px;
+    height: 30px;
+    //box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+    margin: 5px;
+    border-radius: 50%;
     img {
       margin-left: auto;
       margin-right: auto;
     }
+    .ant-avatar {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  .corporate-header {
+    margin-top: auto!important;
+    margin-bottom: auto!important;
   }
 }

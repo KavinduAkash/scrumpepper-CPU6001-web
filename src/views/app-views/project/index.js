@@ -4,8 +4,14 @@ import './project.scss'
 import Cookies from "js-cookie";
 import {withRouter} from "react-router-dom";
 import {Profile} from "../profile";
+import ProjectSet from '../../../components/sp-componenets/project-component/project-set';
+import axios from "axios";
 
 class Project extends React.Component {
+
+    state = {
+        my_project: []
+    };
 
     componentDidMount() {
         if(Cookies.get('68e78905f4c')=="" ||
@@ -13,41 +19,39 @@ class Project extends React.Component {
             Cookies.get('68e78905f4c')==undefined) {
             this.props.history.push("/auth/login");
         }
+        this.load_projects();
+    }
+
+    load_projects = () => {
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        axios.get('http://localhost:8080/v1/project/my-projects', {headers})
+            .then(res => {
+                console.log(res.data);
+                this.setState({my_project: res.data.body});
+            })
+            .catch(err => {
+                console.log(err)
+            });
     }
 
     render() {
         return(
             <div>
-                <Row gutter={16}>
-                    <Col xs={24} sm={24} md={24} lg={24}>
-                        <Card>
-                            <div className="mt-3">
-                                <div className={'project-corporate-header'}>
-                                    <div className={'project-corporate-header-logo'}>
-                                        <img src="https://freepngimg.com/thumb/google/66893-guava-logo-google-plus-suite-png-image-high-quality.png" alt="" width={20}/>
-                                    </div>
-                                    <h4>Google</h4>
-                                </div>
-                            </div>
-                        </Card>
-                    </Col>
-                </Row>
-                <Row gutter={16}>
-                    <Col xs={24} sm={24} md={24} lg={24}>
-                        <Card>
-                            <div className="mt-3">
-                            </div>
-                        </Card>
-                    </Col>
-                </Row>
-                <Row gutter={16}>
-                    <Col xs={24} sm={24} md={24} lg={24}>
-                        <Card>
-                            <div className="mt-3">
-                            </div>
-                        </Card>
-                    </Col>
-                </Row>
+
+                {
+                    this.state.my_project.map(val=>
+                        <Row gutter={16}>
+                            <Col xs={24} sm={24} md={24} lg={24}>
+                                <ProjectSet val={val} />
+                            </Col>
+                        </Row>
+                    )
+                }
+
             </div>
         );
     }
