@@ -54,7 +54,7 @@ const navigationConfig = [
 export const projectManagementNavTree = [
   {
     key: 'Home',
-    path: `${APP_PREFIX_PATH}/project/view`,
+    path: `${APP_PREFIX_PATH}/project/home`,
     title: 'Home',
     icon: HomeOutlined,
     breadcrumb: false,
@@ -62,7 +62,7 @@ export const projectManagementNavTree = [
   },
   {
     key: 'SPP Poker',
-    path: `${APP_PREFIX_PATH}/project/view`,
+    path: `${APP_PREFIX_PATH}/project/spp-poker`,
     title: 'SPP Poker',
     icon: ClockCircleOutlined,
     breadcrumb: false,
@@ -70,7 +70,7 @@ export const projectManagementNavTree = [
   },
   {
     key: 'Backlog',
-    path: `${APP_PREFIX_PATH}/project/view`,
+    path: `${APP_PREFIX_PATH}/project/backlog`,
     title: 'Backlog',
     icon: UnorderedListOutlined,
     breadcrumb: false,
@@ -78,7 +78,7 @@ export const projectManagementNavTree = [
   },
   {
     key: 'Sprints',
-    path: `${APP_PREFIX_PATH}/project/view`,
+    path: `${APP_PREFIX_PATH}/project/sprints`,
     title: 'Sprints',
     icon: RedoOutlined,
     breadcrumb: false,
@@ -86,7 +86,7 @@ export const projectManagementNavTree = [
   },
   {
     key: 'Reports',
-    path: `${APP_PREFIX_PATH}/project/view`,
+    path: `${APP_PREFIX_PATH}/project/reports`,
     title: 'Reports',
     icon: AreaChartOutlined,
     breadcrumb: false,
@@ -94,7 +94,7 @@ export const projectManagementNavTree = [
   },
   {
     key: 'Team',
-    path: `${APP_PREFIX_PATH}/project/view`,
+    path: `${APP_PREFIX_PATH}/project/team`,
     title: 'Team',
     icon: TeamOutlined,
     breadcrumb: false,
@@ -102,7 +102,7 @@ export const projectManagementNavTree = [
   },
   {
     key: 'Notifications',
-    path: `${APP_PREFIX_PATH}/project/view`,
+    path: `${APP_PREFIX_PATH}/project/notifications`,
     title: 'Notifications',
     icon: BellOutlined,
     breadcrumb: false,
@@ -110,7 +110,7 @@ export const projectManagementNavTree = [
   },
   {
     key: 'Docs',
-    path: `${APP_PREFIX_PATH}/project/view`,
+    path: `${APP_PREFIX_PATH}/project/docs`,
     title: 'Docs',
     icon: BookOutlined,
     breadcrumb: false,
@@ -118,7 +118,7 @@ export const projectManagementNavTree = [
   },
   {
     key: 'Settings',
-    path: `${APP_PREFIX_PATH}/project/view`,
+    path: `${APP_PREFIX_PATH}/project/settings`,
     title: 'Settings',
     icon: SettingOutlined,
     breadcrumb: false,
