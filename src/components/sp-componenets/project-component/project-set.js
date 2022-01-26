@@ -4,6 +4,9 @@ import { RightCircleOutlined } from '@ant-design/icons';
 
 import './project-set.scss'
 import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
+import * as spinner_actions from "../../../redux/actions/Spinner";
+import * as navigation_actions from '../../../redux/actions/Navigation'
 
 const columns = [
     {
@@ -40,8 +43,13 @@ const columns = [
 
 class ProjectSet extends React.Component {
 
-    move_to_project_view = id => {
-        this.props.history.push('/app/project/view');
+     move_to_project_view = id => {
+         this.props.handleNavigation(2);
+         this.navigate_to_project_view();
+    }
+
+    navigate_to_project_view = () => {
+        this.props.history.push('/app/project/backlog');
     }
 
     render() {
@@ -93,4 +101,19 @@ class ProjectSet extends React.Component {
     }
 }
 
-export default withRouter(ProjectSet);
+const mapStateToProps = (state) => ({
+
+    corporateReducer: state.corporateReducer,
+
+});
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        // corporateHandler: (data) => dispatch(corporate_actions.storeCorporateId(data)),
+        handleSpinner: (data) => dispatch(spinner_actions.handlerSpinner(data)),
+        handleNavigation: (data) => dispatch(navigation_actions.handlerNavigation(data))
+    };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ProjectSet));

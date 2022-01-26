@@ -1,7 +1,7 @@
 import * as actions from '../constants/Navigation';
 
 const initState = {
-    navigation: 2
+    navigation: 1
 };
 
 const Navigation = (state = initState, action) => {

@@ -19,10 +19,11 @@ export const AppViews = () => {
   return (
     <Suspense fallback={<Loading cover="content"/>}>
       <Switch>
-        <Route path={`${APP_PREFIX_PATH}/home`} component={lazy(() => import(`./home`))} />
+        {/*<Route path={`${APP_PREFIX_PATH}/home`} component={lazy(() => import(`./home`))} />*/}
         {/*<Redirect from={`${APP_PREFIX_PATH}`} to={`${APP_PREFIX_PATH}/home`} />*/}
         {/*<Redirect from={`${APP_PREFIX_PATH}`} to={`${APP_PREFIX_PATH}/profile`} />*/}
-          <Route path={`${APP_PREFIX_PATH}/profile`} component={lazy(() => import(`./profile`))} />
+          <Route exact path={`${APP_PREFIX_PATH}`} component={lazy(() => import(`./project`))} />
+          <Route exact path={`${APP_PREFIX_PATH}/profile`} component={lazy(() => import(`./profile`))} />
           <Route exact path={`${APP_PREFIX_PATH}/corporate`} component={Corporate} />
           <Route path={`${APP_PREFIX_PATH}/corporate/manage`} component={CorporateManagementView} />
           <Route exact path={`${APP_PREFIX_PATH}/project`} component={lazy(() => import(`./project`))} />

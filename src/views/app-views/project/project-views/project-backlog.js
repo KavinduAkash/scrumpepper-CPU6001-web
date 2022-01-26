@@ -12,7 +12,7 @@ class ProjectBacklog extends React.Component {
                 <div>
                     <h3>Backlog</h3>
                 </div>
-                <UserStoryModal/>
+                {/*<UserStoryModal/>*/}
                 <div>
                     <BacklogTable />
                 </div>
