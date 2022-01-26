@@ -1,6 +1,7 @@
 import React from "react";
 import {Button, Col, Empty, Form, Input, InputNumber, Modal, Row, Select, Tabs, Tag} from "antd";
 import JoditEditor from "jodit-react";
+import TaskSetComponent from "../../sp-componenets/user-story-component/TaskSetComponent";
 
 const { Option } = Select;
 
@@ -63,7 +64,7 @@ class UserStoryModal extends React.Component {
                 footer={null}
             >
 
-                <Tabs defaultActiveKey="1">
+                <Tabs defaultActiveKey="2">
                     <TabPane
                         tab={
                             <span>
@@ -144,19 +145,22 @@ class UserStoryModal extends React.Component {
                         }
                         key="2"
                     >
-                        <Empty
-                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                            imageStyle={{
-                                height: 60,
-                            }}
-                            description={
-                                <span>
-                                    No <a href="#API">tasks</a> yet.
-                                </span>
-                            }
-                        >
-                            <Button type="primary">Create Now</Button>
-                        </Empty>,
+                        {/*<Empty*/}
+                        {/*    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"*/}
+                        {/*    imageStyle={{*/}
+                        {/*        height: 60,*/}
+                        {/*    }}*/}
+                        {/*    description={*/}
+                        {/*        <span>*/}
+                        {/*            No <a href="#API">tasks</a> yet.*/}
+                        {/*        </span>*/}
+                        {/*    }*/}
+                        {/*>*/}
+                        {/*    <Button type="primary">Create New</Button>*/}
+                        {/*</Empty>*/}
+
+                        <TaskSetComponent />
+
                     </TabPane>
 
                 </Tabs>

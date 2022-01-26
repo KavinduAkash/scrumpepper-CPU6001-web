@@ -1,0 +1,54 @@
+.sp-task {
+  background-color: #ECEFF1;
+  border: 1px solid #CFD8DC;
+  .sp-task-container {
+    display: flex;
+    padding: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+    .sp-task-ref {
+      vertical-align: middle;
+      div {
+        font-weight: bold;
+        color: #0e1b2c;
+        vertical-align: middle;
+        margin: auto;
+        line-height: 40px;
+      }
+    }
+    .sp-task-menu {
+      font-weight: bolder;
+      vertical-align: middle;
+      margin: auto;
+      line-height: 40px;
+      font-size: 20px;
+    }
+    .sp-task-user{
+      font-weight: bolder;
+      vertical-align: middle;
+      margin: auto;
+      line-height: 40px;
+      font-size: 15px;
+      background: #FAFAFA;
+      padding: 10px;
+      border: 1px solid #CFD8DC;
+      border-radius: 90%;
+    }
+    .sp-task-text {
+      vertical-align: middle;
+      .task-text {
+        font-weight: bold;
+        color: #0e1b2c;
+        vertical-align: middle;
+        margin: auto;
+        line-height: 40px;
+      }
+    }
+    .sp-task-status {
+      .ant-select-selector {
+        background: none;
+        font-weight: bolder;
+      }
+    }
+  }
+}
