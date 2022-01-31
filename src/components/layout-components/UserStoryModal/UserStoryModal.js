@@ -140,7 +140,7 @@ class UserStoryModal extends React.Component {
                         key="1"
                     >
 
-                        <Form>
+                        <div>
                             <Row>
                                 <Col sm={24} md={24} lg={4} xl={4}>
                                     User Story
@@ -207,7 +207,7 @@ class UserStoryModal extends React.Component {
                                             onClick={
                                                 user_story_id!=0?
                                                     ()=>this.onChangeUserStory("UPDATE") :
-                                                    this.onChangeUserStory("CREATE")}
+                                                    ()=>this.onChangeUserStory("CREATE")}
                                         >
                                             {
                                                 user_story_id==0?"Create":"Update"
@@ -216,7 +216,7 @@ class UserStoryModal extends React.Component {
                                     }
                                 </Col>
                             </Row>
-                        </Form>
+                        </div>
 
                     </TabPane>
 
