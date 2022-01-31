@@ -2,6 +2,8 @@ import React from "react";
 import {Button, Col, Empty, Form, Input, InputNumber, Modal, Row, Select, Tabs, Tag} from "antd";
 import JoditEditor from "jodit-react";
 import TaskSetComponent from "../../sp-componenets/user-story-component/TaskSetComponent";
+import Cookies from "js-cookie";
+import axios from "axios";
 
 const { Option } = Select;
 
@@ -42,29 +44,93 @@ function tagRender(props) {
 class UserStoryModal extends React.Component {
 
     state = {
-        content: ""
+        user_story_id: 0,
+        user_story: "",
+        content: "",
+        label: [],
+        priority: "MEDIUM"
+    }
+
+    componentDidMount() {
     }
 
     onChangeDescription = val => {
         this.setState({content: val})
-        console.log("Content : ", val);
+    }
+
+    closeModal = () => {
+        this.props.modal_controller(false);
+    }
+
+    onChangeUserStoryTitle = e => {
+        this.setState({user_story: e.target.value});
+    }
+
+    onChangeLabel = val => {
+        console.log(val)
+    }
+
+    onChangeUserStory = (val) => {
+        if(val=="CREATE") {
+            if(Cookies.get('68e78905f4c')=="" ||
+                Cookies.get('68e78905f4c')==null ||
+                Cookies.get('68e78905f4c')==undefined) {
+                this.props.history.push("/auth/login");
+            }
+
+            let headers = {
+                'Content-Type':'application/json',
+                'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+            };
+
+            let request_body = {
+                projectId: this.props.project_id,
+                userStoryId: this.state.user_story_id,
+                title: this.state.user_story,
+                description: this.state.content,
+                userStoryLabels: []
+            }
+
+            let method = "post";
+
+            axios[method](`http://localhost:8080/v1/user-story`, request_body, {headers: headers})
+                .then(async response => {
+
+                    if(response.data.success) {
+                        console.log("=========================================================");
+                        console.log(response.data.body);
+                    }
+
+                }).catch(async error => {
+                this.setState({loading: false});
+
+                this.setState({showMessage:1});
+                setTimeout(() => {
+                    this.setState({showMessage:0});
+                }, 2000);
+
+            });
+        } else {
+
+        }
     }
 
     render() {
 
+        let {user_story_id, user_story, content, label, priority} = this.state;
 
         return(
             <Modal
                 title={'New User Story'}
                 centered
                 // visible={this.state.visible}
-                visible={true}
-                // onCancel={() => this.setCreateProjectModalVisibility(false)}
+                visible={this.props.user_story_modal_visibility}
+                onCancel={this.closeModal}
                 width={1000}
                 footer={null}
             >
 
-                <Tabs defaultActiveKey="2">
+                <Tabs defaultActiveKey="1">
                     <TabPane
                         tab={
                             <span>
@@ -80,7 +146,7 @@ class UserStoryModal extends React.Component {
                                     User Story
                                 </Col>
                                 <Col sm={24} md={24} lg={20} xl={20}>
-                                    <Input.TextArea />
+                                    <Input.TextArea value={user_story} onChange={this.onChangeUserStoryTitle} />
                                 </Col>
                             </Row>
                             <br/>
@@ -92,7 +158,7 @@ class UserStoryModal extends React.Component {
 
                                     <JoditEditor
                                         ref={null}
-                                        value={this.state.content}
+                                        value={content}
                                         config={config}
                                         tabIndex={1} // tabIndex of textarea
                                         onBlur={newContent => this.onChangeDescription(newContent)} // preferred to use only this option to update the content for performance reasons
@@ -108,12 +174,13 @@ class UserStoryModal extends React.Component {
                                 </Col>
                                 <Col sm={24} md={24} lg={20} xl={20}>
                                     <Select
-                                        mode="multiple"
+                                        mode="tags"
                                         showArrow
                                         tagRender={tagRender}
-                                        defaultValue={['gold', 'cyan']}
+                                        // defaultValue={['gold', 'cyan']}
                                         style={{ width: '100%' }}
-                                        options={options}
+                                        options={label}
+                                        onChange={this.onChangeLabel}
                                     />
                                 </Col>
                             </Row>
@@ -123,13 +190,30 @@ class UserStoryModal extends React.Component {
                                     Priority
                                 </Col>
                                 <Col sm={24} md={24} lg={20} xl={20}>
-                                    <Select defaultValue="lucy" style={{ width: '100%' }}
+                                    <Select defaultValue="MEDIUM" style={{ width: '100%' }}
                                         // onChange={handleChange}
                                     >
-                                        <Option value="high">High</Option>
-                                        <Option value="medium">Medium</Option>
-                                        <Option value="low">Low</Option>
+                                        <Option value="HIGH">High</Option>
+                                        <Option value="MEDIUM">Medium</Option>
+                                        <Option value="LOW">Low</Option>
                                     </Select>
+                                </Col>
+                            </Row>
+                            <br/>
+                            <Row>
+                                <Col sm={24} md={24} lg={24} xl={24} className={'text-right'}>
+                                    {
+                                        <Button type="primary"
+                                            onClick={
+                                                user_story_id!=0?
+                                                    ()=>this.onChangeUserStory("UPDATE") :
+                                                    this.onChangeUserStory("CREATE")}
+                                        >
+                                            {
+                                                user_story_id==0?"Create":"Update"
+                                            }
+                                        </Button>
+                                    }
                                 </Col>
                             </Row>
                         </Form>

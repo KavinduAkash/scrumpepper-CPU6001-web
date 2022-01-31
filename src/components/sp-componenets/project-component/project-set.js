@@ -6,7 +6,9 @@ import './project-set.scss'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import * as spinner_actions from "../../../redux/actions/Spinner";
-import * as navigation_actions from '../../../redux/actions/Navigation'
+import * as navigation_actions from '../../../redux/actions/Navigation';
+import * as project_actions from '../../../redux/actions/Project';
+import * as corporate_actions from '../../../redux/actions/Corporate';
 
 const columns = [
     {
@@ -43,7 +45,9 @@ const columns = [
 
 class ProjectSet extends React.Component {
 
-     move_to_project_view = id => {
+     move_to_project_view = (project_id, corporate_id) => {
+         this.props.handleProjectId(project_id);
+         this.props.handleCorporate(corporate_id);
          this.props.handleNavigation(2);
          this.navigate_to_project_view();
     }
@@ -71,7 +75,7 @@ class ProjectSet extends React.Component {
                     {val.role}
                     </Tag>,
                     view: <Tooltip title="View">
-                        <Button shape="circle" icon={<RightCircleOutlined />} onClick={()=>this.move_to_project_view(val.project.id)} />
+                        <Button shape="circle" icon={<RightCircleOutlined />} onClick={()=>this.move_to_project_view(val.project.id, this.props.val.corporate.id)} />
                     </Tooltip>
                 }
 
@@ -109,9 +113,10 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        // corporateHandler: (data) => dispatch(corporate_actions.storeCorporateId(data)),
+        handleCorporate: (data) => dispatch(corporate_actions.storeCorporateId(data)),
         handleSpinner: (data) => dispatch(spinner_actions.handlerSpinner(data)),
-        handleNavigation: (data) => dispatch(navigation_actions.handlerNavigation(data))
+        handleNavigation: (data) => dispatch(navigation_actions.handlerNavigation(data)),
+        handleProjectId: (data) => dispatch(project_actions.handleProjectId(data))
     };
 };
 

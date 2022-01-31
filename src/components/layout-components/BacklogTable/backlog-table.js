@@ -113,11 +113,6 @@ class BacklogTable extends React.Component {
                         },
                     }}
                 />
-                <div>
-                    <Button block style={{backgroundColor: 'rgba(0, 0, 0, 0)', borderRadius: '0px', marginTop: '10px'}}>
-                        <PlusCircleOutlined /> New User Story
-                    </Button>
-                </div>
             </div>
         );
     }
