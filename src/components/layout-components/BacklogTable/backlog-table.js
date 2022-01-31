@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Table} from "antd";
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { MenuOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { MenuOutlined, SelectOutlined } from '@ant-design/icons';
 import { arrayMoveImmutable } from 'array-move';
 
 
@@ -16,41 +16,21 @@ const columns = [
         render: () => <DragHandle />,
     },
     {
-        title: 'Name',
-        dataIndex: 'name',
+        title: 'Edit',
+        dataIndex: 'edit',
         className: 'drag-visible',
     },
     {
-        title: 'Age',
-        dataIndex: 'age',
+        title: 'User Story',
+        dataIndex: 'user_story',
     },
     {
-        title: 'Address',
-        dataIndex: 'address',
-    },
-];
-
-const data = [
-    {
-        key: '1',
-        name: 'John Brown',
-        age: 32,
-        address: 'New York No. 1 Lake Park',
-        index: 0,
+        title: 'Status',
+        dataIndex: 'status',
     },
     {
-        key: '2',
-        name: 'Jim Green',
-        age: 42,
-        address: 'London No. 1 Lake Park',
-        index: 1,
-    },
-    {
-        key: '3',
-        name: 'Joe Black',
-        age: 32,
-        address: 'Sidney No. 1 Lake Park',
-        index: 2,
+        title: 'Priority',
+        dataIndex: 'priority',
     },
 ];
 
@@ -60,9 +40,35 @@ const SortableBody = SortableContainer(props => <tbody {...props} />);
 class BacklogTable extends React.Component {
 
     state = {
-        dataSource: data,
+        dataSource: [],
     };
 
+    componentDidMount() {
+        this.prepareData();
+    }
+
+    componentWillUnmount() {
+        this.prepareData()
+    }
+
+    prepareData = () => {
+        let user_stories = this.props.user_stories;
+        let data = [];
+        if(user_stories!=null && user_stories!='' && user_stories!=undefined) {
+            user_stories.map((r, i)=>{
+                let obj = {
+                    key: i+1,
+                    edit: <Button type={'link'}><SelectOutlined /></Button>,
+                    user_story: r.title,
+                    status: r.statusType,
+                    priority: "",
+                    index: i
+                }
+                data.push(obj);
+            })
+            this.setState({dataSource: data})
+        }
+    }
 
     onSortEnd = ({ oldIndex, newIndex }) => {
         const { dataSource } = this.state;
@@ -70,11 +76,9 @@ class BacklogTable extends React.Component {
             const newData = arrayMoveImmutable([].concat(dataSource), oldIndex, newIndex).filter(
                 el => !!el,
             );
-            console.log('Sorted items: ', newData);
             this.setState({ dataSource: newData });
         }
     };
-
 
     DraggableContainer = props => (
         <SortableBody
@@ -98,7 +102,6 @@ class BacklogTable extends React.Component {
 
     render() {
         const { dataSource } = this.state;
-
         return (
             <div>
                 <Table

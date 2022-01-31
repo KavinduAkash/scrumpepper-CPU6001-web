@@ -14,7 +14,8 @@ import { MenuOutlined, PlusCircleOutlined } from '@ant-design/icons';
 class ProjectBacklog extends React.Component {
 
     state = {
-      user_story_modal: false
+      user_story_modal: false,
+      user_stories: []
     };
 
     componentDidMount() {
@@ -40,8 +41,9 @@ class ProjectBacklog extends React.Component {
             .then(async response => {
 
                 if(response.data.success) {
-                    console.log("=========================================================");
-                    console.log(response.data.body);
+
+
+                    this.setState({user_stories: response.data.body})
                 }
 
             }).catch(async error => {
@@ -62,6 +64,9 @@ class ProjectBacklog extends React.Component {
     render() {
 
         let project_id = this.props.projectReducer.id;
+        let data = this.state.user_stories;
+
+        console.log("backlog: ", data);
 
         return(
             <div>
@@ -71,7 +76,12 @@ class ProjectBacklog extends React.Component {
                 </div>
                 <UserStoryModal user_story_modal_visibility={this.state.user_story_modal} project_id={project_id} modal_controller={this.onChangeUserStoryModal}/>
                 <div>
-                    <BacklogTable />
+
+                    {
+                        (data!=null & data!='' & data!=undefined)?
+                        data.length!=0?<BacklogTable user_stories={data} />
+                            :null:null
+                    }
                     <div>
                         <Button block style={{backgroundColor: 'rgba(0, 0, 0, 0)', borderRadius: '0px', marginTop: '10px'}}
                                 onClick={()=>this.onChangeUserStoryModal(true)}
