@@ -49,24 +49,30 @@ class UserStoryModal extends React.Component {
         content: "",
         label: [],
         priority: "MEDIUM",
-        project_name: ""
+        project_name: "",
+        isEdit: false
     }
 
     componentDidMount() {
-        console.log("Modal data: ", this.props.data);
-        this.prepareData(this.props.data);
+        this.prepareData(this.props.data, this.props.isEdit)
     }
 
-    prepareData = (data) => {
-        console.log("PP: ", this.props.project)
-        this.setState({
-            user_story_id: data.id,
-            user_story: data.title,
-            content: data.description,
-            label: [],
-            priority: "MEDIUM",
-            project_name: this.props.project.projectName
-        });
+    prepareData = (data, isEdit) => {
+        if(isEdit) {
+            this.setState({
+                user_story_id: data.id,
+                user_story: data.title,
+                content: data.description,
+                label: [],
+                priority: "MEDIUM",
+                project_name: this.props.project.projectName,
+                isEdit: isEdit
+            });
+        } else {
+            this.setState({
+                project_name: this.props.project.projectName,
+            });
+        }
     }
 
     onChangeDescription = val => {
@@ -112,8 +118,8 @@ class UserStoryModal extends React.Component {
                 .then(async response => {
 
                     if(response.data.success) {
-                        console.log("=========================================================");
                         console.log(response.data.body);
+                        this.prepareData(response.data.body, true);
                     }
 
                 }).catch(async error => {
@@ -126,7 +132,44 @@ class UserStoryModal extends React.Component {
 
             });
         } else {
+            if(Cookies.get('68e78905f4c')=="" ||
+                Cookies.get('68e78905f4c')==null ||
+                Cookies.get('68e78905f4c')==undefined) {
+                this.props.history.push("/auth/login");
+            }
 
+            let headers = {
+                'Content-Type':'application/json',
+                'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+            };
+
+            let request_body = {
+                projectId: this.props.project_id,
+                userStoryId: this.state.user_story_id,
+                title: this.state.user_story,
+                description: this.state.content,
+                userStoryLabels: []
+            }
+
+            let method = "post";
+
+            axios[method](`http://localhost:8080/v1/user-story`, request_body, {headers: headers})
+                .then(async response => {
+
+                    if(response.data.success) {
+                        console.log(response.data.body);
+                        this.prepareData(response.data.body, true);
+                    }
+
+                }).catch(async error => {
+                this.setState({loading: false});
+
+                this.setState({showMessage:1});
+                setTimeout(() => {
+                    this.setState({showMessage:0});
+                }, 2000);
+
+            });
         }
     }
 
@@ -136,7 +179,8 @@ class UserStoryModal extends React.Component {
 
         return(
             <Modal
-                title={`${this.state.project_name} -> ${(this.state.user_story.length>100)?`${this.state.user_story.slice(0, 97)}...`:this.state.user_story}`}
+                title={(this.state.isEdit && this.state.user_story!="")?`${this.state.project_name} -> ${(this.state.user_story.length>100)?`${this.state.user_story.slice(0, 97)}...`
+                    :this.state.user_story}`:`${this.state.project_name} -> New User story`}
                 centered
                 // visible={this.state.visible}
                 visible={this.props.user_story_modal_visibility}

@@ -16,7 +16,8 @@ class ProjectBacklog extends React.Component {
     state = {
       user_story_modal: false,
       user_stories: [],
-      selected_user_story: null
+      selected_user_story: null,
+      isEdit: false
     };
 
     componentDidMount() {
@@ -60,13 +61,19 @@ class ProjectBacklog extends React.Component {
 
     openEdit = (data, index) => {
         this.setState({
-            selected_user_story: data
+            selected_user_story: data,
+            isEdit: true
         })
         this.onChangeUserStoryModal(true);
     }
 
     onChangeUserStoryModal = val => {
       this.setState({user_story_modal: val});
+        if(!val) {
+            this.setState({isEdit: false});
+            this.load_backlog_data();
+        }
+
     };
 
     render() {
@@ -75,7 +82,7 @@ class ProjectBacklog extends React.Component {
         let project = this.props.projectReducer.project;
         let data = this.state.user_stories;
 
-        console.log("backlog: ", data);
+
 
         return(
             <div>
@@ -91,6 +98,7 @@ class ProjectBacklog extends React.Component {
                             modal_controller={this.onChangeUserStoryModal}
                             data={this.state.selected_user_story}
                             project={project}
+                            isEdit={this.state.isEdit}
                         />
                         :""
                 }
