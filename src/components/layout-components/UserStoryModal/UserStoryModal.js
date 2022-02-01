@@ -33,7 +33,7 @@ function tagRender(props) {
             onMouseDown={onPreventMouseDown}
             closable={closable}
             onClose={onClose}
-            style={{ marginRight: 3 }}
+            style={{ marginRight: 3, color: '#01579B', backgroundColor: '#E8EAF6'}}
         >
             {label}
         </Tag>
@@ -50,12 +50,53 @@ class UserStoryModal extends React.Component {
         label: [],
         priority: "MEDIUM",
         project_name: "",
-        isEdit: false
+        isEdit: false,
+        user_story_label: []
     }
 
     componentDidMount() {
+        this.loadProjectUserStoryLbl();
         this.prepareData(this.props.data, this.props.isEdit)
     }
+
+    loadProjectUserStoryLbl = () => {
+
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let method = "get";
+
+        axios[method](`http://localhost:8080/v1/user-story/get-project-lbl?id=${this.props.project.id}`, {headers: headers})
+            .then(async response => {
+
+                if(response.data.success) {
+                    console.log('lbl: ', response.data.body);
+                    let label_list = response.data.body;
+                    let lbl = [];
+                    label_list.map(val=>{
+                        lbl.push({value:val.lbl});
+                    });
+                    this.setState({label: lbl});
+                }
+
+            }).catch(async error => {
+            this.setState({loading: false});
+
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+
+        });
+    };
 
     prepareData = (data, isEdit) => {
         if(isEdit) {
@@ -88,7 +129,9 @@ class UserStoryModal extends React.Component {
     }
 
     onChangeLabel = val => {
-        console.log(val)
+        this.setState({
+            user_story_label: val
+        })
     }
 
     onChangeUserStory = (val) => {
@@ -175,7 +218,7 @@ class UserStoryModal extends React.Component {
 
     render() {
 
-        let {user_story_id, user_story, content, label, priority} = this.state;
+        let {user_story_id, user_story, content, label, priority, user_story_label} = this.state;
 
         return(
             <Modal
@@ -236,7 +279,7 @@ class UserStoryModal extends React.Component {
                                         mode="tags"
                                         showArrow
                                         tagRender={tagRender}
-                                        // defaultValue={['gold', 'cyan']}
+                                        defaultValue={user_story_label}
                                         style={{ width: '100%' }}
                                         options={label}
                                         onChange={this.onChangeLabel}
