@@ -106,6 +106,19 @@ class ProjectBacklog extends React.Component {
 
                     {
                         (data!=null & data!='' & data!=undefined)?
+                            data.length>6?<div>
+                                <Button block style={{backgroundColor: 'rgba(0, 0, 0, 0)', borderRadius: '0px', marginBottom: '10px'}}
+                                        onClick={()=>this.onChangeUserStoryModal(true)}
+                                >
+                                    <PlusCircleOutlined /> New User Story
+                                </Button>
+                            </div>
+                                :""
+                            :""
+                    }
+
+                    {
+                        (data!=null & data!='' & data!=undefined)?
                         data.length!=0?<BacklogTable user_stories={data} openEdit={this.openEdit} />
                             :null:null
                     }
