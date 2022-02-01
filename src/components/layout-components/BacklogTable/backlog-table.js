@@ -58,7 +58,7 @@ class BacklogTable extends React.Component {
             user_stories.map((r, i)=>{
                 let obj = {
                     key: i+1,
-                    edit: <Button type={'link'}><SelectOutlined /></Button>,
+                    edit: <Button type={'link'} onClick={()=>this.props.openEdit(r, i)}><SelectOutlined /></Button>,
                     user_story: r.title,
                     status: r.statusType,
                     priority: "",
@@ -76,6 +76,7 @@ class BacklogTable extends React.Component {
             const newData = arrayMoveImmutable([].concat(dataSource), oldIndex, newIndex).filter(
                 el => !!el,
             );
+            console.log(newData);
             this.setState({ dataSource: newData });
         }
     };

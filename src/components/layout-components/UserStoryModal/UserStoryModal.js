@@ -48,10 +48,25 @@ class UserStoryModal extends React.Component {
         user_story: "",
         content: "",
         label: [],
-        priority: "MEDIUM"
+        priority: "MEDIUM",
+        project_name: ""
     }
 
     componentDidMount() {
+        console.log("Modal data: ", this.props.data);
+        this.prepareData(this.props.data);
+    }
+
+    prepareData = (data) => {
+        console.log("PP: ", this.props.project)
+        this.setState({
+            user_story_id: data.id,
+            user_story: data.title,
+            content: data.description,
+            label: [],
+            priority: "MEDIUM",
+            project_name: this.props.project.projectName
+        });
     }
 
     onChangeDescription = val => {
@@ -121,7 +136,7 @@ class UserStoryModal extends React.Component {
 
         return(
             <Modal
-                title={'New User Story'}
+                title={`${this.state.project_name} -> ${(this.state.user_story.length>100)?`${this.state.user_story.slice(0, 97)}...`:this.state.user_story}`}
                 centered
                 // visible={this.state.visible}
                 visible={this.props.user_story_modal_visibility}

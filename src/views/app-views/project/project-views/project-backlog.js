@@ -15,7 +15,8 @@ class ProjectBacklog extends React.Component {
 
     state = {
       user_story_modal: false,
-      user_stories: []
+      user_stories: [],
+      selected_user_story: null
     };
 
     componentDidMount() {
@@ -57,6 +58,13 @@ class ProjectBacklog extends React.Component {
         });
     };
 
+    openEdit = (data, index) => {
+        this.setState({
+            selected_user_story: data
+        })
+        this.onChangeUserStoryModal(true);
+    }
+
     onChangeUserStoryModal = val => {
       this.setState({user_story_modal: val});
     };
@@ -64,6 +72,7 @@ class ProjectBacklog extends React.Component {
     render() {
 
         let project_id = this.props.projectReducer.id;
+        let project = this.props.projectReducer.project;
         let data = this.state.user_stories;
 
         console.log("backlog: ", data);
@@ -74,12 +83,22 @@ class ProjectBacklog extends React.Component {
                 <div>
                     <h3>Backlog</h3>
                 </div>
-                <UserStoryModal user_story_modal_visibility={this.state.user_story_modal} project_id={project_id} modal_controller={this.onChangeUserStoryModal}/>
+                {
+                    this.state.user_story_modal?
+                        <UserStoryModal
+                            user_story_modal_visibility={this.state.user_story_modal}
+                            project_id={project_id}
+                            modal_controller={this.onChangeUserStoryModal}
+                            data={this.state.selected_user_story}
+                            project={project}
+                        />
+                        :""
+                }
                 <div>
 
                     {
                         (data!=null & data!='' & data!=undefined)?
-                        data.length!=0?<BacklogTable user_stories={data} />
+                        data.length!=0?<BacklogTable user_stories={data} openEdit={this.openEdit} />
                             :null:null
                     }
                     <div>

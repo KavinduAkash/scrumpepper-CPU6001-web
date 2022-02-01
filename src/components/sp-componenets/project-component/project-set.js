@@ -45,8 +45,8 @@ const columns = [
 
 class ProjectSet extends React.Component {
 
-     move_to_project_view = (project_id, corporate_id) => {
-         this.props.handleProjectId(project_id);
+     move_to_project_view = (project, corporate_id) => {
+         this.props.handleProjectId(project);
          this.props.handleCorporate(corporate_id);
          this.props.handleNavigation(2);
          this.navigate_to_project_view();
@@ -75,7 +75,7 @@ class ProjectSet extends React.Component {
                     {val.role}
                     </Tag>,
                     view: <Tooltip title="View">
-                        <Button shape="circle" icon={<RightCircleOutlined />} onClick={()=>this.move_to_project_view(val.project.id, this.props.val.corporate.id)} />
+                        <Button shape="circle" icon={<RightCircleOutlined />} onClick={()=>this.move_to_project_view(val.project, this.props.val.corporate.id)} />
                     </Tooltip>
                 }
 
