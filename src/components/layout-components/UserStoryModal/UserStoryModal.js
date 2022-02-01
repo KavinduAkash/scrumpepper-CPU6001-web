@@ -100,12 +100,18 @@ class UserStoryModal extends React.Component {
 
     prepareData = (data, isEdit) => {
         if(isEdit) {
+
+            let label_list = [];
+            data.userStoryLbl.map(r=>{
+                label_list.push(r.lbl)
+            })
+
             this.setState({
                 user_story_id: data.id,
                 user_story: data.title,
                 content: data.description,
-                label: [],
-                priority: "MEDIUM",
+                user_story_label: label_list,
+                priority: data.priority,
                 project_name: this.props.project.projectName,
                 isEdit: isEdit
             });
@@ -152,7 +158,8 @@ class UserStoryModal extends React.Component {
                 userStoryId: this.state.user_story_id,
                 title: this.state.user_story,
                 description: this.state.content,
-                userStoryLabels: []
+                userStoryLabels: this.state.user_story_label,
+                priority: this.state.priority
             }
 
             let method = "post";
@@ -191,7 +198,8 @@ class UserStoryModal extends React.Component {
                 userStoryId: this.state.user_story_id,
                 title: this.state.user_story,
                 description: this.state.content,
-                userStoryLabels: []
+                userStoryLabels: this.state.user_story_label,
+                priority: this.state.priority
             }
 
             let method = "post";
