@@ -106,6 +106,8 @@ class UserStoryModal extends React.Component {
                 label_list.push(r.lbl)
             })
 
+            console.log("Lbl-list: ", label_list);
+
             this.setState({
                 user_story_id: data.id,
                 user_story: data.title,
@@ -287,7 +289,8 @@ class UserStoryModal extends React.Component {
                                         mode="tags"
                                         showArrow
                                         tagRender={tagRender}
-                                        defaultValue={user_story_label}
+                                        value={user_story_label}
+                                        // defaultValue={['XXXX', 'YYYY']}
                                         style={{ width: '100%' }}
                                         options={label}
                                         onChange={this.onChangeLabel}

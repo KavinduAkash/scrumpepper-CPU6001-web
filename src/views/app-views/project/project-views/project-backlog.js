@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import {Button, notification} from "antd";
 import { MenuOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import * as BaseUrl from '../../../../server/base_urls'
 
 class ProjectBacklog extends React.Component {
 
@@ -39,7 +40,7 @@ class ProjectBacklog extends React.Component {
 
         let method = "get";
 
-        axios[method](`http://localhost:8080/v1/user-story/get-project?id=${this.props.projectReducer.id}&corporate=${this.props.corporateReducer.corporate_id}`, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user-story/get-project?id=${this.props.projectReducer.id}&corporate=${this.props.corporateReducer.corporate_id}`, {headers: headers})
             .then(async response => {
 
                 if(response.data.success) {
@@ -50,7 +51,6 @@ class ProjectBacklog extends React.Component {
 
             }).catch(async error => {
             this.setState({loading: false});
-
             this.setState({showMessage:1});
             setTimeout(() => {
                 this.setState({showMessage:0});

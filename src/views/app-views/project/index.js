@@ -6,6 +6,7 @@ import {withRouter} from "react-router-dom";
 import {Profile} from "../profile";
 import ProjectSet from '../../../components/sp-componenets/project-component/project-set';
 import axios from "axios";
+import * as BaseUrl from '../../../server/base_urls'
 
 class Project extends React.Component {
 
@@ -28,7 +29,7 @@ class Project extends React.Component {
             'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
         };
 
-        axios.get('http://localhost:8080/v1/project/my-projects', {headers})
+        axios.get(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}project/my-projects`, {headers})
             .then(res => {
                 console.log(res.data);
                 this.setState({my_project: res.data.body});
