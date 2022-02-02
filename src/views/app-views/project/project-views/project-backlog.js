@@ -44,8 +44,7 @@ class ProjectBacklog extends React.Component {
             .then(async response => {
 
                 if(response.data.success) {
-
-
+                    this.setState({user_stories: []})
                     this.setState({user_stories: response.data.body})
                 }
 
@@ -71,8 +70,8 @@ class ProjectBacklog extends React.Component {
       this.setState({user_story_modal: val});
         if(!val) {
             this.setState({isEdit: false});
-            this.load_backlog_data();
         }
+        this.load_backlog_data();
 
     };
 
@@ -118,9 +117,9 @@ class ProjectBacklog extends React.Component {
                     }
 
                     {
-                        (data!=null & data!='' & data!=undefined)?
-                        data.length!=0?<BacklogTable user_stories={data} openEdit={this.openEdit} />
-                            :null:null
+                        (this.state.user_stories!=null & this.state.user_stories!='' & this.state.user_stories!=undefined)?
+                            this.state.user_stories?data.length!=0?<BacklogTable user_stories={this.state.user_stories} openEdit={this.openEdit} />
+                            :null:null:null
                     }
                     <div>
                         <Button block style={{backgroundColor: 'rgba(0, 0, 0, 0)', borderRadius: '0px', marginTop: '10px'}}

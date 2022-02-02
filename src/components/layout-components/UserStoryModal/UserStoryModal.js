@@ -4,6 +4,7 @@ import JoditEditor from "jodit-react";
 import TaskSetComponent from "../../sp-componenets/user-story-component/TaskSetComponent";
 import Cookies from "js-cookie";
 import axios from "axios";
+import * as Swal from "sweetalert2";
 
 const { Option } = Select;
 
@@ -78,7 +79,6 @@ class UserStoryModal extends React.Component {
             .then(async response => {
 
                 if(response.data.success) {
-                    console.log('lbl: ', response.data.body);
                     let label_list = response.data.body;
                     let lbl = [];
                     label_list.map(val=>{
@@ -98,6 +98,11 @@ class UserStoryModal extends React.Component {
         });
     };
 
+    prepareResponseData = (data, isEdit) => {
+        this.loadProjectUserStoryLbl();
+        this.prepareData(data, isEdit)
+    }
+
     prepareData = (data, isEdit) => {
         if(isEdit) {
 
@@ -106,6 +111,7 @@ class UserStoryModal extends React.Component {
                 label_list.push(r.lbl)
             })
 
+            console.log("prosp: Lbl-list: ", data);
             console.log("Lbl-list: ", label_list);
 
             this.setState({
@@ -170,8 +176,13 @@ class UserStoryModal extends React.Component {
                 .then(async response => {
 
                     if(response.data.success) {
-                        console.log(response.data.body);
-                        this.prepareData(response.data.body, true);
+                        this.prepareResponseData(response.data.body, true);
+
+                        Swal.fire(
+                            'Success',
+                            'User story created successfully!',
+                            'success'
+                        )
                     }
 
                 }).catch(async error => {
@@ -210,8 +221,14 @@ class UserStoryModal extends React.Component {
                 .then(async response => {
 
                     if(response.data.success) {
-                        console.log(response.data.body);
-                        this.prepareData(response.data.body, true);
+                        this.prepareResponseData(response.data.body, true);
+
+                        Swal.fire(
+                            'Success',
+                            'User story updated successfully!',
+                            'success'
+                        )
+
                     }
 
                 }).catch(async error => {
@@ -341,6 +358,7 @@ class UserStoryModal extends React.Component {
                             </span>
                         }
                         key="2"
+                        disabled={this.state.user_story_id<=0}
                     >
                         {/*<Empty*/}
                         {/*    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"*/}
