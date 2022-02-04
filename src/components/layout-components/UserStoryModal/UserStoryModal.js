@@ -5,6 +5,7 @@ import TaskSetComponent from "../../sp-componenets/user-story-component/TaskSetC
 import Cookies from "js-cookie";
 import axios from "axios";
 import * as Swal from "sweetalert2";
+import MemberManagementModal from "./MemberManagementModal";
 
 const { Option } = Select;
 
@@ -52,7 +53,10 @@ class UserStoryModal extends React.Component {
         priority: "MEDIUM",
         project_name: "",
         isEdit: false,
-        user_story_label: []
+        user_story_label: [],
+        tasks: [],
+        memberModal: false,
+        taskId: 0
     }
 
     componentDidMount() {
@@ -121,7 +125,8 @@ class UserStoryModal extends React.Component {
                 user_story_label: label_list,
                 priority: data.priority,
                 project_name: this.props.project.projectName,
-                isEdit: isEdit
+                isEdit: isEdit,
+                tasks: data.tasks
             });
         } else {
             this.setState({
@@ -243,11 +248,116 @@ class UserStoryModal extends React.Component {
         }
     }
 
+
+    // Task Management -------------------------------------------------------------------------------------------------
+
+    createTask = (taskLbl, title) => {
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let request_body = {
+            userStoryId: this.state.user_story_id,
+            title: title,
+            statusType: "TODO"
+        }
+
+        let method = "post";
+
+        axios[method](`http://localhost:8080/v1/task`, request_body, {headers: headers})
+            .then(async response => {
+
+                if(response.data.success) {
+                    let tasks = this.state.tasks;
+                    tasks.push(response.data.body);
+                    this.setState({tasks: tasks});
+                }
+
+            }).catch(async error => {
+            this.setState({loading: false});
+
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+
+        });
+    };
+
+    updateTask = (taskId, taskLbl, title) => {
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let request_body = {
+            taskId: taskId,
+            userStoryId: this.state.user_story_id,
+            title: title,
+            statusType: "TODO"
+        }
+
+        let method = "post";
+
+        axios[method](`http://localhost:8080/v1/task`, request_body, {headers: headers})
+            .then(async response => {
+
+                if(response.data.success) {
+                    let tasks = this.state.tasks;
+                    this.setState({tasks: tasks});
+                }
+
+            }).catch(async error => {
+            this.setState({loading: false});
+
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+
+        });
+    };
+
+    handleMembers = (taskId) => {
+        if(taskId!=0) {
+            this.setState({
+                memberModal: true,
+                taskId: taskId
+            })
+        } else {
+            this.setState({
+                memberModal: false,
+                taskId: taskId
+            })
+        }
+    }
+
+
+
+
+
+
+
     render() {
 
         let {user_story_id, user_story, content, label, priority, user_story_label} = this.state;
 
         return(
+            <div>
+
             <Modal
                 title={(this.state.isEdit && this.state.user_story!="")?`${this.state.project_name} -> ${(this.state.user_story.length>100)?`${this.state.user_story.slice(0, 97)}...`
                     :this.state.user_story}`:`${this.state.project_name} -> New User story`}
@@ -360,26 +470,37 @@ class UserStoryModal extends React.Component {
                         key="2"
                         disabled={this.state.user_story_id<=0}
                     >
-                        {/*<Empty*/}
-                        {/*    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"*/}
-                        {/*    imageStyle={{*/}
-                        {/*        height: 60,*/}
-                        {/*    }}*/}
-                        {/*    description={*/}
-                        {/*        <span>*/}
-                        {/*            No <a href="#API">tasks</a> yet.*/}
-                        {/*        </span>*/}
-                        {/*    }*/}
-                        {/*>*/}
-                        {/*    <Button type="primary">Create New</Button>*/}
-                        {/*</Empty>*/}
-
-                        <TaskSetComponent />
+                        {
+                            this.state.tasks.length==0?
+                                <Empty
+                                    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                    imageStyle={{
+                                        height: 60,
+                                    }}
+                                    description={
+                                        <span>
+                                    No <a href="#API">tasks</a> yet.
+                                </span>
+                                    }
+                                >
+                                    <Button
+                                        type="primary"
+                                        onClick={()=>this.createTask(null, null)}
+                                    >Create New</Button>
+                                </Empty>
+                                :
+                                <TaskSetComponent tasks={this.state.tasks} createTask={this.createTask} updateTask={this.updateTask} handleMembers={this.handleMembers} />
+                        }
 
                     </TabPane>
 
                 </Tabs>
             </Modal>
+                {
+                    (this.state.memberModal & this.state.taskId!=0)?<MemberManagementModal member_modal_visibility={true} taskId={this.state.taskId} handleMembers={this.handleMembers} />:null
+                }
+
+            </div>
             );
     }
 }

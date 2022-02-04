@@ -8,8 +8,17 @@ const { Option } = Select;
 class Task extends React.Component {
 
     state = {
+        task_id: 0,
         is_edit_text: false,
-        task_name: ""
+        task_name: "",
+        addMember: false
+    }
+
+    componentDidMount() {
+            this.setState({
+                task_id: this.props.task.id,
+                task_name: (this.props.task.title!=null & this.props.task.title!=undefined)?this.props.task.title:''
+            })
     }
 
     onClickEdit = val => {
@@ -18,6 +27,9 @@ class Task extends React.Component {
 
     onEditFocus = val => {
         this.setState({is_edit_text: val})
+        if(!val) {
+            this.handleTask();
+        }
     };
 
     onChangeTaskName = e => {
@@ -30,6 +42,18 @@ class Task extends React.Component {
         }
     }
 
+    handleTask = () => {
+        if(this.state.task_id==0) {
+            this.props.createTask(null, this.state.task_name);
+        } else {
+            this.props.updateTask(this.state.task_id, null, this.state.task_name);
+        }
+    }
+
+    openAddMember = () => {
+       this.props.memberModal(this.state.task_id);
+    }
+
     render() {
 
         let task_name = this.state.task_name
@@ -40,8 +64,8 @@ class Task extends React.Component {
         let is_edit_task = this.state.is_edit_text;
 
         let menu =  (<Menu>
-            <Menu.Item icon={<DeleteOutlined />} danger>
-                Remove
+            <Menu.Item>
+                <Input placeholder="Basic usage" />
             </Menu.Item>
         </Menu>);
 
@@ -63,11 +87,17 @@ class Task extends React.Component {
                         }
                     </Col>
                     <Col sm={4} md={4} lg={4} xl={4} className={'text-right'}>
-                        <Dropdown overlay={menu}>
-                            <a className={'sp-task-user'}>
-                                <UserAddOutlined />
-                            </a>
-                        </Dropdown>
+
+                        {
+                            this.state.addMember?
+                            <Select mode="tags" style={{ width: '100%' }} placeholder="Tags Mode">
+                            </Select>
+                            :
+                                <a className={'sp-task-user'} onClick={this.openAddMember}>
+                                    <UserAddOutlined />
+                                </a>
+                        }
+
                     </Col>
                     <Col sm={5} md={5} lg={5} xl={5} className={'sp-task-status text-right'}>
                             <Select defaultValue="todo" style={{ width: 150 }}
