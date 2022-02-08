@@ -13,7 +13,7 @@ class SprintEditModal extends React.Component {
             <Modal
                 title="Basic Modal" v
                 // visible={this.props.isEditVisible}
-                visible={true}
+                visible={false}
                 onCancel={this.onClose}
                 footer={false}
                 className={'sprint-edit-modal'}

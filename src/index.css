@@ -33,3 +33,7 @@ textarea {
 .ant-picker {
     border-radius: 0px!important;
 }
+
+.ant-layout {
+    min-width: 920px!important;
+}
