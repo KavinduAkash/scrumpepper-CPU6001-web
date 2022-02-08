@@ -2,7 +2,7 @@
   width: 100% !important;
   background-color: #e0e0e0!important;
   border-radius: 5px!important;
-  .header {
+  .sprint-container-header {
     padding: 10px 10px;
     .section1 {
       display: flex;
@@ -34,6 +34,36 @@
           margin: 0px;
         }
       }
+    }
+  }
+  .sprint-container-body {
+    padding: 10px 10px;
+    button {
+      border-radius: 0px!important;
+    }
+    table {
+      border-radius: 0px!important;
+      tbody {
+        border-radius: 0px!important;
+        tr {
+          border-radius: 0px!important;
+          td {
+            padding: 0.3px 15px !important;
+            border-radius: 0px!important;
+            .ant-select-selector {
+              border: 0px!important;
+              border-radius: 0px!important;
+            }
+          }
+        }
+      }
+    }
+  }
+  .sprint-container-footer{
+    button {
+      background-color: transparent!important;
+      border-radius: 0px!important;
+      border: none;
     }
   }
 }
