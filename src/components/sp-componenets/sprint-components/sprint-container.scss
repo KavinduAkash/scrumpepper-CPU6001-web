@@ -1,0 +1,39 @@
+.sprint-container {
+  width: 100% !important;
+  background-color: #e0e0e0!important;
+  border-radius: 5px!important;
+  .header {
+    padding: 10px 10px;
+    .section1 {
+      display: flex;
+      align-items: center;
+      .drop-arrow {
+        font-weight: bold!important;
+        padding: 5px;
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+      .title {
+        font-weight: bold!important;
+      }
+      .edit {
+        margin-left: 10px;
+      }
+    }
+    .section2 {
+      display: flex;
+      justify-content: end;
+      align-items: center;
+      .action-1 {
+        margin: 0px 2px;
+        a {
+          font-size: 20px;
+        }
+        button {
+          border-radius: 0px!important;
+          margin: 0px;
+        }
+      }
+    }
+  }
+}
