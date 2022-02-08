@@ -4,6 +4,7 @@ import './sprint-container.scss'
 import { CaretDownOutlined, EditOutlined, EllipsisOutlined, CheckCircleOutlined, SyncOutlined, ClockCircleOutlined, MenuOutlined, SelectOutlined, AlertOutlined, PlusOutlined } from '@ant-design/icons';
 import {SortableContainer, SortableElement, SortableHandle} from "react-sortable-hoc";
 import {arrayMoveImmutable} from "array-move";
+import SprintEditModal from "./sprint-edit-modal";
 const { SubMenu } = Menu;
 const { Option } = Select;
 const menu = (
@@ -161,53 +162,56 @@ class SprintContainer extends React.Component {
 
     render() {
         return (
-            <div className={'sprint-container'}>
-                {/*header*/}
-                <div className={'sprint-container-header'}>
-                    <Row>
-                       <Col xs={12} sm={12} md={12} lg={12} xl={12} className={'section1'}>
-                               <span className={'drop-arrow'}>{ <CaretDownOutlined /> }</span>
-                               <span className={'title'}>{`Sprint Name`}</span>
-                               <span className={'edit'}><Button type={'text'}><EditOutlined />Edit</Button></span>
-                       </Col>
-                       <Col xs={12} sm={12} md={12} lg={12} xl={12} className={'section2'}>
-                           <span><Tag icon={<ClockCircleOutlined />} color="default">{`${0}`}</Tag></span>
-                           <span><Tag icon={<SyncOutlined />} color="processing">{`${0}`}</Tag></span>
-                           <span><Tag icon={<CheckCircleOutlined />} color="success">{`${0}`}</Tag></span>
-                           <span className={'action-1'}><Button type="primary" size={'small'}>Start Sprint</Button></span>
-                           <span className={'action-1'}>
+            <div>
+                <SprintEditModal />
+                <div className={'sprint-container'}>
+                    {/*header*/}
+                    <div className={'sprint-container-header'}>
+                        <Row>
+                            <Col xs={12} sm={12} md={12} lg={12} xl={12} className={'section1'}>
+                                <span className={'drop-arrow'}>{ <CaretDownOutlined /> }</span>
+                                <span className={'title'}>{`Sprint Name`}</span>
+                                <span className={'edit'}><Button type={'text'}><EditOutlined />Edit</Button></span>
+                            </Col>
+                            <Col xs={12} sm={12} md={12} lg={12} xl={12} className={'section2'}>
+                                <span><Tag icon={<ClockCircleOutlined />} color="default">{`${0}`}</Tag></span>
+                                <span><Tag icon={<SyncOutlined />} color="processing">{`${0}`}</Tag></span>
+                                <span><Tag icon={<CheckCircleOutlined />} color="success">{`${0}`}</Tag></span>
+                                <span className={'action-1'}><Button type="primary" size={'small'}>Start Sprint</Button></span>
+                                <span className={'action-1'}>
                                <Dropdown overlay={menu}>
                                    <Button type={'text'} className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                                         <EllipsisOutlined />
                                    </Button>
                                </Dropdown>
                            </span>
-                       </Col>
-                    </Row>
-                </div>
+                            </Col>
+                        </Row>
+                    </div>
 
-                {/*body*/}
-                <div className={'sprint-container-body'}>
-                    <Table
-                        pagination={false}
-                        dataSource={this.state.dataSource}
-                        columns={columns}
-                        rowKey="index"
-                        components={{
-                            body: {
-                                wrapper: this.DraggableContainer,
-                                row: this.DraggableBodyRow,
-                            },
-                        }}
-                        showHeader={false}
-                    />
-                </div>
+                    {/*body*/}
+                    <div className={'sprint-container-body'}>
+                        <Table
+                            pagination={false}
+                            dataSource={this.state.dataSource}
+                            columns={columns}
+                            rowKey="index"
+                            components={{
+                                body: {
+                                    wrapper: this.DraggableContainer,
+                                    row: this.DraggableBodyRow,
+                                },
+                            }}
+                            showHeader={false}
+                        />
+                    </div>
 
-                {/*footer*/}
-                <div className={'sprint-container-footer'}>
-                    <Button>
-                        <PlusOutlined /> New User Story
-                    </Button>
+                    {/*footer*/}
+                    <div className={'sprint-container-footer'}>
+                        <Button>
+                            <PlusOutlined /> New User Story
+                        </Button>
+                    </div>
                 </div>
             </div>
         );

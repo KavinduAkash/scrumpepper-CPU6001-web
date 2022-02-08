@@ -19,3 +19,17 @@
 .loading .ant-spin {
   color: #3e79f7;
 }
+button {
+    border-radius: 0px!important;
+}
+input {
+    border-radius: 0px!important;
+}
+
+textarea {
+    border-radius: 0px!important;
+}
+
+.ant-picker {
+    border-radius: 0px!important;
+}

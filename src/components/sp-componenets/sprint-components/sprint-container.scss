@@ -1,4 +1,8 @@
 .sprint-container {
+  button {
+    border-radius: 0px!important;
+    margin: 0px;
+  }
   width: 100% !important;
   background-color: #e0e0e0!important;
   border-radius: 5px!important;
@@ -28,10 +32,6 @@
         margin: 0px 2px;
         a {
           font-size: 20px;
-        }
-        button {
-          border-radius: 0px!important;
-          margin: 0px;
         }
       }
     }
@@ -66,4 +66,10 @@
       border: none;
     }
   }
+}
+
+.ant-modal-content {
+  border-radius: 0px!important;
+}
+.sprint-edit-modal {
 }
