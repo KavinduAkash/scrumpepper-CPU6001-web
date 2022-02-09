@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Col, Dropdown, Menu, Row, Select, Table, Tag, Tooltip} from "antd";
 import './sprint-container.scss'
-import { CaretDownOutlined, EditOutlined, EllipsisOutlined, CheckCircleOutlined, SyncOutlined, ClockCircleOutlined, MenuOutlined, SelectOutlined, AlertOutlined, PlusOutlined, CaretRightOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, DeleteOutlined, EyeOutlined, UnorderedListOutlined, EditOutlined, EllipsisOutlined, CheckCircleOutlined, SyncOutlined, ClockCircleOutlined, MenuOutlined, SelectOutlined, AlertOutlined, PlusOutlined, CaretRightOutlined } from '@ant-design/icons';
 import {SortableContainer, SortableElement, SortableHandle} from "react-sortable-hoc";
 import {arrayMoveImmutable} from "array-move";
 import SprintEditModal from "./sprint-edit-modal";
@@ -9,18 +9,13 @@ const { SubMenu } = Menu;
 const { Option } = Select;
 const menu = (
     <Menu>
-        <Menu.ItemGroup title="Group title">
-            <Menu.Item>1st menu item</Menu.Item>
-            <Menu.Item>2nd menu item</Menu.Item>
+        <Menu.Item style={{color:'#1976D2'}}><EyeOutlined /> View</Menu.Item>
+        <Menu.ItemGroup title="Move to sprint">
+            <Menu.Item><ArrowRightOutlined /> Move to Sprint 1</Menu.Item>
+            <Menu.Item><ArrowRightOutlined /> Move to Sprint 2</Menu.Item>
+            <Menu.Item><ArrowRightOutlined /> Move to Sprint 3</Menu.Item>
         </Menu.ItemGroup>
-        <SubMenu title="sub menu">
-            <Menu.Item>3rd menu item</Menu.Item>
-            <Menu.Item>4th menu item</Menu.Item>
-        </SubMenu>
-        <SubMenu title="disabled sub menu" disabled>
-            <Menu.Item>5d menu item</Menu.Item>
-            <Menu.Item>6th menu item</Menu.Item>
-        </SubMenu>
+        <Menu.Item style={{color:'#AD1457'}}><DeleteOutlined /> Remove</Menu.Item>
     </Menu>
 );
 const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
@@ -63,14 +58,14 @@ const columns = [
 const SortableItem = SortableElement(props => <tr {...props} />);
 const SortableBody = SortableContainer(props => <tbody {...props} />);
 
-class SprintContainer extends React.Component {
+class BacklogContainer extends React.Component {
 
     state = {
         dataSource: [
             {
                 key: 1,
                 edit: <Button type={'link'}
-                              // onClick={()=>this.props.openEdit(r, i)}
+                    // onClick={()=>this.props.openEdit(r, i)}
                 >
                     <SelectOutlined />
                 </Button>,
@@ -84,7 +79,7 @@ class SprintContainer extends React.Component {
                 ,
                 status:
                     <Select defaultValue="lucy" style={{ width: 120 }}
-                            // onChange={handleChange}
+                        // onChange={handleChange}
                     >
                         <Option value="jack">Jack</Option>
                         <Option value="lucy">Lucy</Option>
@@ -115,7 +110,7 @@ class SprintContainer extends React.Component {
                 index: 1
             }
         ],
-        toggle: false
+        toggle: true
     }
 
 // Table ---------------------------------------------------------------------------------------------------------------
@@ -169,6 +164,68 @@ class SprintContainer extends React.Component {
 
 
     render() {
+
+
+
+
+        let userStories = this.props.user_stories;
+        let dataSource = [];
+        if(userStories!=null & userStories!='' & userStories!=undefined) {
+            userStories.map((r, i)=>{
+                let obj = {
+                    key: i,
+                    edit: <Button type={'link'}
+                        // onClick={()=>this.props.openEdit(r, i)}
+                    >
+                        <SelectOutlined />
+                    </Button>,
+                    user_story: r.title,
+                    priority:
+                    (r.priority=='HIGH')?
+                            <Tooltip placement="top" title={'Priority High 🤯'}>
+                                <span style={{color: 'red'}}>
+                                    <AlertOutlined />
+                                </span>
+                            </Tooltip>
+                            :(r.priority=='MEDIUM')?
+                        <Tooltip placement="top" title={'Priority Medium 🙂'}>
+                                <span style={{color: 'green'}}>
+                                    <AlertOutlined />
+                                </span>
+                        </Tooltip>
+                        :<Tooltip placement="top" title={'Priority low ☺️'}>
+                                <span style={{color: '#90CAF9'}}>
+                                    <AlertOutlined />
+                                </span>
+                        </Tooltip>
+                    ,
+                    status:
+                        <Select defaultValue="TODO" style={{ width: 120 }}
+                            // onChange={handleChange}
+                        >
+                            <Option value="TODO" style={{backgroundColor: '#CFD8DC'}}>Todo</Option>
+                            <Option value="PROCESSING" style={{backgroundColor: '#B3E5FC'}}>Processing</Option>
+                            <Option value="DONE" style={{backgroundColor: '#C8E6C9'}}>Done</Option>
+                        </Select>
+                    ,
+                    actions:
+                        <Dropdown overlay={menu}>
+                            <Button type={'text'} className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                                <EllipsisOutlined />
+                            </Button>
+                        </Dropdown>,
+                    index: 0
+                }
+                dataSource.push(obj);
+            })
+        }
+
+
+
+
+
+
+
         return (
             <div>
                 <div className={'sprint-container'}>
@@ -176,22 +233,11 @@ class SprintContainer extends React.Component {
                     <div className={'sprint-container-header'}>
                         <Row>
                             <Col xs={12} sm={12} md={12} lg={12} xl={12} className={'section1'}>
-                                <span className={'drop-arrow'}><Button type={'text'} onClick={this.toggle}>{ this.state.toggle?<CaretDownOutlined />:<CaretRightOutlined />}</Button></span>
-                                <span className={'title'}>{`${this.props.sprint.sprintName}`}</span>
-                                <span className={'edit'}><Button type={'text'} onClick={()=>this.props.updateSprint(this.props.sprint)}><EditOutlined />Edit</Button></span>
+                                {/*<span className={'drop-arrow'}><Button type={'text'} onClick={this.toggle}>{ this.state.toggle?<CaretDownOutlined />:<CaretRightOutlined />}</Button></span>*/}
+                                <span className={'title'}>{`${'Backlog'}`}</span>
                             </Col>
                             <Col xs={12} sm={12} md={12} lg={12} xl={12} className={'section2'}>
-                                <span><Tag icon={<ClockCircleOutlined />} color="default">{`${0}`}</Tag></span>
-                                <span><Tag icon={<SyncOutlined />} color="processing">{`${0}`}</Tag></span>
-                                <span><Tag icon={<CheckCircleOutlined />} color="success">{`${0}`}</Tag></span>
-                                <span className={'action-1'}><Button type="primary" size={'small'}>Start Sprint</Button></span>
-                                <span className={'action-1'}>
-                               <Dropdown overlay={menu}>
-                                   <Button type={'text'} className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                                        <EllipsisOutlined />
-                                   </Button>
-                               </Dropdown>
-                           </span>
+                                <span><Tag icon={<UnorderedListOutlined />} color="default">{`${0}`}</Tag></span>
                             </Col>
                         </Row>
                     </div>
@@ -202,7 +248,7 @@ class SprintContainer extends React.Component {
                             <div className={'sprint-container-body'}>
                                 <Table
                                     pagination={false}
-                                    dataSource={this.state.dataSource}
+                                    dataSource={dataSource}
                                     columns={columns}
                                     rowKey="index"
                                     components={{
@@ -234,4 +280,4 @@ class SprintContainer extends React.Component {
 
 }
 
-export default SprintContainer;
+export default BacklogContainer;

@@ -11,6 +11,7 @@ import axios from "axios";
 import {Button, notification} from "antd";
 import { MenuOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import * as BaseUrl from '../../../../server/base_urls'
+import BacklogContainer from "../../../../components/sp-componenets/sprint-components/backlog-container";
 
 class ProjectBacklog extends React.Component {
 
@@ -101,34 +102,39 @@ class ProjectBacklog extends React.Component {
                         />
                         :""
                 }
-                <div>
+                {/*<div>*/}
 
-                    {
-                        (data!=null & data!='' & data!=undefined)?
-                            data.length>6?<div>
-                                <Button block style={{backgroundColor: 'rgba(0, 0, 0, 0)', borderRadius: '0px', marginBottom: '10px'}}
-                                        onClick={()=>this.onChangeUserStoryModal(true)}
-                                >
-                                    <PlusCircleOutlined /> New User Story
-                                </Button>
-                            </div>
-                                :""
-                            :""
-                    }
+                {/*    {*/}
+                {/*        (data!=null & data!='' & data!=undefined)?*/}
+                {/*            data.length>6?<div>*/}
+                {/*                <Button block style={{backgroundColor: 'rgba(0, 0, 0, 0)', borderRadius: '0px', marginBottom: '10px'}}*/}
+                {/*                        onClick={()=>this.onChangeUserStoryModal(true)}*/}
+                {/*                >*/}
+                {/*                    <PlusCircleOutlined /> New User Story*/}
+                {/*                </Button>*/}
+                {/*            </div>*/}
+                {/*                :""*/}
+                {/*            :""*/}
+                {/*    }*/}
 
-                    {
-                        (this.state.user_stories!=null & this.state.user_stories!='' & this.state.user_stories!=undefined)?
-                            this.state.user_stories?data.length!=0?<BacklogTable user_stories={this.state.user_stories} openEdit={this.openEdit} />
-                            :null:null:null
-                    }
-                    <div>
-                        <Button block style={{backgroundColor: 'rgba(0, 0, 0, 0)', borderRadius: '0px', marginTop: '10px'}}
-                                onClick={()=>this.onChangeUserStoryModal(true)}
-                        >
-                            <PlusCircleOutlined /> New User Story
-                        </Button>
-                    </div>
-                </div>
+                {/*    {*/}
+                {/*        (this.state.user_stories!=null & this.state.user_stories!='' & this.state.user_stories!=undefined)?*/}
+                {/*            this.state.user_stories?data.length!=0?<BacklogTable user_stories={this.state.user_stories} openEdit={this.openEdit} />*/}
+                {/*            :null:null:null*/}
+                {/*    }*/}
+                {/*    <div>*/}
+                {/*        <Button block style={{backgroundColor: 'rgba(0, 0, 0, 0)', borderRadius: '0px', marginTop: '10px'}}*/}
+                {/*                onClick={()=>this.onChangeUserStoryModal(true)}*/}
+                {/*        >*/}
+                {/*            <PlusCircleOutlined /> New User Story*/}
+                {/*        </Button>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
+
+
+                <BacklogContainer user_stories={this.state.user_stories} />
+
+
             </div>
         );
     }
