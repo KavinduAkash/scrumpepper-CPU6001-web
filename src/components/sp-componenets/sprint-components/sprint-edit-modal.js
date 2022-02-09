@@ -17,6 +17,17 @@ class SprintEditModal extends React.Component {
         endDate: '',
     }
 
+    componentDidMount() {
+        if(this.props.sprint) {
+            this.setState({
+                name: this.props.sprint.sprintName,
+                goal: this.props.sprint.description,
+                startDate: this.props.sprint.startDate,
+                endDate: this.props.sprint.endDate,
+            })
+        }
+    }
+
     onClose = () => {
         this.cleanInputs();
         this.props.onClose(null, false);
@@ -91,6 +102,40 @@ class SprintEditModal extends React.Component {
 
 // Update --------------------------------------------------------------------------------------------------------------
     updateSprint = () => {
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let body = {
+            id: this.props.sprint?this.props.sprint.id:0,
+            projectId: this.props.projectId,
+            sprintName: this.state.name,
+            startDate: this.state.startDate,
+            endDate: this.state.endDate,
+            description: this.state.goal,
+        }
+
+        let method = "patch";
+
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}sprint/update`, body, {headers: headers})
+            .then(async response => {
+                if(response.status==200) {
+                    if(response.data.success) {
+                        message.success('Sprint updated successfully!');
+                        this.cleanInputs();
+                        this.onClose();
+                    }
+                }
+            }).catch(async error => {
+            message.error('Something went wrong!');
+        });
     }
 
     render() {

@@ -163,15 +163,14 @@ class SprintContainer extends React.Component {
     render() {
         return (
             <div>
-                <SprintEditModal />
                 <div className={'sprint-container'}>
                     {/*header*/}
                     <div className={'sprint-container-header'}>
                         <Row>
                             <Col xs={12} sm={12} md={12} lg={12} xl={12} className={'section1'}>
                                 <span className={'drop-arrow'}>{ <CaretDownOutlined /> }</span>
-                                <span className={'title'}>{`Sprint Name`}</span>
-                                <span className={'edit'}><Button type={'text'}><EditOutlined />Edit</Button></span>
+                                <span className={'title'}>{`${this.props.sprint.sprintName}`}</span>
+                                <span className={'edit'}><Button type={'text'} onClick={()=>this.props.updateSprint(this.props.sprint)}><EditOutlined />Edit</Button></span>
                             </Col>
                             <Col xs={12} sm={12} md={12} lg={12} xl={12} className={'section2'}>
                                 <span><Tag icon={<ClockCircleOutlined />} color="default">{`${0}`}</Tag></span>
