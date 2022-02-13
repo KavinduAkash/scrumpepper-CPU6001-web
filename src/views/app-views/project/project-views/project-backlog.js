@@ -8,7 +8,7 @@ import * as navigation_actions from "../../../../redux/actions/Navigation";
 import * as project_actions from "../../../../redux/actions/Project";
 import Cookies from "js-cookie";
 import axios from "axios";
-import {Button, notification} from "antd";
+import {message, Button, notification} from "antd";
 import { MenuOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import * as BaseUrl from '../../../../server/base_urls'
 import BacklogContainer from "../../../../components/sp-componenets/sprint-components/backlog-container";
@@ -18,11 +18,13 @@ class ProjectBacklog extends React.Component {
     state = {
       user_story_modal: false,
       user_stories: [],
+      sprints: [],
       selected_user_story: null,
       isEdit: false
     };
 
     componentDidMount() {
+        // this.get_sprint_data();
         this.load_backlog_data();
     }
 
@@ -75,6 +77,45 @@ class ProjectBacklog extends React.Component {
         this.load_backlog_data();
 
     };
+// Move to Sprint ------------------------------------------------------------------------------------------------------
+    move_to_sprint = (userStoryId, sprintId) => {
+
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let method = "patch";
+
+        let body = {
+            userStoryId: userStoryId,
+            sprintId: sprintId
+        }
+
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user-story/move`, body, {headers: headers})
+            .then(async response => {
+
+                if(response.data.success) {
+                    message.success('User story moved to sprint successfully');
+                    this.load_backlog_data();
+                }
+
+            }).catch(async error => {
+            this.setState({loading: false});
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+
+        });
+    };
+
 
     render() {
 
@@ -132,7 +173,7 @@ class ProjectBacklog extends React.Component {
                 {/*</div>*/}
 
 
-                <BacklogContainer user_stories={this.state.user_stories} />
+                <BacklogContainer user_stories={this.state.user_stories} move_user_story={this.move_to_sprint} />
 
 
             </div>
