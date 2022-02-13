@@ -173,7 +173,7 @@ class ProjectBacklog extends React.Component {
                 {/*</div>*/}
 
 
-                <BacklogContainer user_stories={this.state.user_stories} move_user_story={this.move_to_sprint} />
+                <BacklogContainer user_stories={this.state.user_stories} move_user_story={this.move_to_sprint} openEdit={this.openEdit} onChangeUserStoryModal={this.onChangeUserStoryModal} />
 
 
             </div>

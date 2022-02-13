@@ -177,7 +177,7 @@ class UserStoryModal extends React.Component {
 
             let method = "post";
 
-            axios[method](`http://localhost:8080/v1/user-story`, request_body, {headers: headers})
+            axios[method](`http://localhost:8080/v1/user-story?id=${this.props.current_sprint?this.props.current_sprint.id:0}`, request_body, {headers: headers})
                 .then(async response => {
 
                     if(response.data.success) {
@@ -222,7 +222,7 @@ class UserStoryModal extends React.Component {
 
             let method = "post";
 
-            axios[method](`http://localhost:8080/v1/user-story`, request_body, {headers: headers})
+            axios[method](`http://localhost:8080/v1/user-story?id=${this.props.current_sprint?this.props.current_sprint.id:0}`, request_body, {headers: headers})
                 .then(async response => {
 
                     if(response.data.success) {

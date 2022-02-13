@@ -11,6 +11,8 @@ import {connect} from "react-redux";
 import Cookies from "js-cookie";
 import axios from "axios";
 import * as BaseUrl from "../../../../server/base_urls";
+import * as Swal from "sweetalert2";
+import UserStoryModal from "../../../../components/layout-components/UserStoryModal/UserStoryModal";
 
 class ProjectSprints extends React.Component {
 
@@ -20,6 +22,8 @@ class ProjectSprints extends React.Component {
         sprint: null,
         sprint_list: [],
         loading: false,
+        user_story_modal: false,
+        current_sprint: null
     }
 
     componentDidMount() {
@@ -119,15 +123,144 @@ class ProjectSprints extends React.Component {
         });
     };
 
+// Create New User Story -----------------------------------------------------------------------------------------------
+    onChangeUserStory = (val) => {
+        if(val=="CREATE") {
+            if(Cookies.get('68e78905f4c')=="" ||
+                Cookies.get('68e78905f4c')==null ||
+                Cookies.get('68e78905f4c')==undefined) {
+                this.props.history.push("/auth/login");
+            }
+
+            let headers = {
+                'Content-Type':'application/json',
+                'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+            };
+
+            let request_body = {
+                projectId: this.props.project_id,
+                userStoryId: this.state.user_story_id,
+                title: this.state.user_story,
+                description: this.state.content,
+                userStoryLabels: this.state.user_story_label,
+                priority: this.state.priority
+            }
+
+            let method = "post";
+
+            axios[method](`http://localhost:8080/v1/user-story?id=${0}`, request_body, {headers: headers})
+                .then(async response => {
+
+                    if(response.data.success) {
+                        this.prepareResponseData(response.data.body, true);
+
+                        Swal.fire(
+                            'Success',
+                            'User story created successfully!',
+                            'success'
+                        )
+                    }
+
+                }).catch(async error => {
+                this.setState({loading: false});
+
+                this.setState({showMessage:1});
+                setTimeout(() => {
+                    this.setState({showMessage:0});
+                }, 2000);
+
+            });
+        } else {
+            if(Cookies.get('68e78905f4c')=="" ||
+                Cookies.get('68e78905f4c')==null ||
+                Cookies.get('68e78905f4c')==undefined) {
+                this.props.history.push("/auth/login");
+            }
+
+            let headers = {
+                'Content-Type':'application/json',
+                'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+            };
+
+            let request_body = {
+                projectId: this.props.project_id,
+                userStoryId: this.state.user_story_id,
+                title: this.state.user_story,
+                description: this.state.content,
+                userStoryLabels: this.state.user_story_label,
+                priority: this.state.priority
+            }
+
+            let method = "post";
+
+            axios[method](`http://localhost:8080/v1/user-story?id=${0}`, request_body, {headers: headers})
+                .then(async response => {
+
+                    if(response.data.success) {
+                        this.prepareResponseData(response.data.body, true);
+
+                        Swal.fire(
+                            'Success',
+                            'User story updated successfully!',
+                            'success'
+                        )
+
+                    }
+
+                }).catch(async error => {
+                this.setState({loading: false});
+
+                this.setState({showMessage:1});
+                setTimeout(() => {
+                    this.setState({showMessage:0});
+                }, 2000);
+
+            });
+        }
+    }
+
+// Control Modal -------------------------------------------------------------------------------------------------------
+    openEdit = (data, index, sprint) => {
+        this.setState({
+            selected_user_story: data,
+            isEdit: true,
+            current_sprint:sprint.id
+        })
+        this.onChangeUserStoryModal(true);
+    }
+
+    onChangeUserStoryModal = (val, sprint) => {
+        this.setState({user_story_modal: val});
+        this.setState({current_sprint: sprint});
+        if(!val) {
+            this.setState({isEdit: false});
+        }
+        this.getAllSprints();
+
+    };
 
     render() {
+        let project_id = this.props.projectReducer.id;
+        let project = this.props.projectReducer.project;
         return(
             <div>
+                {
+                    this.state.user_story_modal?
+                        <UserStoryModal
+                            user_story_modal_visibility={this.state.user_story_modal}
+                            project_id={project_id}
+                            modal_controller={this.onChangeUserStoryModal}
+                            data={this.state.selected_user_story}
+                            project={project}
+                            isEdit={this.state.isEdit}
+                            current_sprint={this.state.current_sprint}
+                        />
+                        :""
+                }
                 <h3>Sprints</h3>
                 <div>
-
                     {
-                        this.state.sprint_list.map((r, i)=><SprintContainer sprint={r} key={i} updateSprint={this.openSprintUpdateModal} move_user_story={this.move_to_sprint} />)
+                        this.state.sprint_list.map((r, i)=><SprintContainer sprint={r} key={i} updateSprint={this.openSprintUpdateModal} openEdit={this.openEdit} openNewUserStory={this.onChangeUserStoryModal} move_user_story={this.move_to_sprint} />)
                     }
                     <div>
                         <Button type="primary" onClick={this.openSprintCreateModal}><PlusOutlined />Create Sprint</Button>

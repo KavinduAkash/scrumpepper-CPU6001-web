@@ -184,7 +184,7 @@ class SprintContainer extends React.Component {
 
             let menu = (
                 <Menu>
-                    <Menu.Item style={{color:'#1976D2'}}><EyeOutlined /> View</Menu.Item>
+                    <Menu.Item style={{color:'#1976D2'}} onClick={()=>this.props.openEdit(r, i, this.props.sprint)}><EyeOutlined /> View</Menu.Item>
                     <Menu.ItemGroup title="Move to sprint">
                         {
                             isOtherSprints?r.otherSprints.map((rx, index)=><Menu.Item key={index} onClick={()=>this.props.move_user_story(r.id, rx.id)}><ArrowRightOutlined />Move to {rx.sprintName}</Menu.Item>):<Tag icon={<MinusCircleOutlined />} color="default">
@@ -199,7 +199,7 @@ class SprintContainer extends React.Component {
             let obj = {
                 key: i,
                 edit: <Button type={'link'}
-                    // onClick={()=>this.props.openEdit(r, i)}
+                    onClick={()=>this.props.openEdit(r, i, this.props.sprint)}
                 >
                     <SelectOutlined />
                 </Button>,
@@ -303,7 +303,9 @@ class SprintContainer extends React.Component {
                     {
                         this.state.toggle?
                             <div className={'sprint-container-footer'}>
-                                <Button>
+                                <Button
+                                    onClick={()=>this.props.openNewUserStory(true, this.props.sprint)}
+                                >
                                     <PlusOutlined /> New User Story
                                 </Button>
                             </div>

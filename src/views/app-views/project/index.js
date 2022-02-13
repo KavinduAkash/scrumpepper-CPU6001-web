@@ -7,6 +7,9 @@ import {Profile} from "../profile";
 import ProjectSet from '../../../components/sp-componenets/project-component/project-set';
 import axios from "axios";
 import * as BaseUrl from '../../../server/base_urls'
+import {connect} from "react-redux";
+import * as actionCreator from '../../../redux/actions/Navigation'
+
 
 class Project extends React.Component {
 
@@ -20,6 +23,7 @@ class Project extends React.Component {
             Cookies.get('68e78905f4c')==undefined) {
             this.props.history.push("/auth/login");
         }
+        this.props.changeNav(1);
         this.load_projects();
     }
 
@@ -59,4 +63,13 @@ class Project extends React.Component {
 
 }
 
-export default withRouter(Project)
+const mapStateToProps = (state) => ({
+});
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changeNav: (data) => dispatch(actionCreator.handlerNavigation(data)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Project));
