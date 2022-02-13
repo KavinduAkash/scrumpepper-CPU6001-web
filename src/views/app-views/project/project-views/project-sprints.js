@@ -80,6 +80,45 @@ class ProjectSprints extends React.Component {
         this.setState({sprint: p});
         this.handleModal('UPDATE', true);
     }
+// Move to Sprint ------------------------------------------------------------------------------------------------------
+    move_to_sprint = (userStoryId, sprintId) => {
+
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let method = "patch";
+
+        let body = {
+            userStoryId: userStoryId,
+            sprintId: sprintId
+        }
+
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user-story/move`, body, {headers: headers})
+            .then(async response => {
+
+                if(response.data.success) {
+                    message.success('User story moved to sprint successfully');
+                    this.getAllSprints();
+                }
+
+            }).catch(async error => {
+            this.setState({loading: false});
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+
+        });
+    };
+
 
     render() {
         return(
@@ -88,7 +127,7 @@ class ProjectSprints extends React.Component {
                 <div>
 
                     {
-                        this.state.sprint_list.map((r, i)=><SprintContainer sprint={r} key={i} updateSprint={this.openSprintUpdateModal} />)
+                        this.state.sprint_list.map((r, i)=><SprintContainer sprint={r} key={i} updateSprint={this.openSprintUpdateModal} move_user_story={this.move_to_sprint} />)
                     }
                     <div>
                         <Button type="primary" onClick={this.openSprintCreateModal}><PlusOutlined />Create Sprint</Button>
