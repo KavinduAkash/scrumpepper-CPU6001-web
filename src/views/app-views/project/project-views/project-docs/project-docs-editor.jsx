@@ -1,14 +1,21 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
 import * as innerRoutes from './docs-inner-routers';
-import {Form, Input} from "antd";
+import {Form, Input, message, Tag} from "antd";
 import * as spinner_actions from "../../../../../redux/actions/Spinner";
 import * as navigation_actions from "../../../../../redux/actions/Navigation";
 import * as project_actions from "../../../../../redux/actions/Project";
 import * as document_actions from "../../../../../redux/actions/Documents";
 import {connect} from "react-redux";
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'
+import 'react-quill/dist/quill.snow.css';
+import './docs-styles.scss';
+import {
+    SyncOutlined,
+} from '@ant-design/icons';
+import Cookies from "js-cookie";
+import axios from "axios";
+import * as BaseUrl from "../../../../../server/base_urls";
 
 const toolbarOptions = {toolbar: [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -35,7 +42,8 @@ class ProjectDocsEditor extends React.Component {
 
     state = {
         title: "",
-        value: ""
+        value: "",
+        saving: false
     }
 
     componentDidMount() {
@@ -45,8 +53,54 @@ class ProjectDocsEditor extends React.Component {
         })
     }
 
+    componentWillMount() {
+        setInterval(this.onSave, 10000);
+    }
+
     onChangeTitle = e => {
         this.setState({title: e.target.value});
+    }
+
+    setValue = e => {
+        this.setState({value: e});
+    }
+
+    onSave = () => {
+        this.setState({saving: true});
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let method = "patch";
+
+        let body = {
+            id: this.props.documentReducer.document.id,
+            name: this.state.name,
+            doc: this.state.value
+        }
+
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}docs/update`, body, {headers: headers})
+            .then(async response => {
+
+                if(response.data.success) {
+                    this.setState({saving: false});
+                }
+
+            }).catch(async error => {
+            this.setState({saving: false});
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+
+        });
     }
 
     offEditor = () => {
@@ -54,7 +108,7 @@ class ProjectDocsEditor extends React.Component {
     }
 
     render() {
-        let {title, value} = this.state;
+        let {title, value, saving} = this.state;
         return(
             <div>
                 <div>
@@ -73,6 +127,14 @@ class ProjectDocsEditor extends React.Component {
                     </Form>
                 </div>
                 <div>
+                    {
+                        saving?
+                        <Tag icon={<SyncOutlined spin />} color="processing">
+                            processing
+                        </Tag>
+                        :
+                        null
+                    }
                     <ReactQuill modules={toolbarOptions} theme="snow" value={value} onChange={this.setValue}/>
                 </div>
             </div>
