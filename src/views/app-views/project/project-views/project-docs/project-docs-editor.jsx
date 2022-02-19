@@ -82,7 +82,7 @@ class ProjectDocsEditor extends React.Component {
 
         let body = {
             id: this.props.documentReducer.document.id,
-            name: this.state.name,
+            name: this.state.title,
             doc: this.state.value
         }
 
