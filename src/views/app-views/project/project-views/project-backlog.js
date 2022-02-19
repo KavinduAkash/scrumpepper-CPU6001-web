@@ -43,7 +43,7 @@ class ProjectBacklog extends React.Component {
 
         let method = "get";
 
-        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user-story/get-project?id=${this.props.projectReducer.id}&corporate=${this.props.corporateReducer.corporate_id}`, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user-story/get-project?id=${this.props.projectReducer.project.uuid}&corporate=${this.props.corporateReducer.corporate_id}`, {headers: headers})
             .then(async response => {
 
                 if(response.data.success) {

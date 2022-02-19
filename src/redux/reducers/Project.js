@@ -1,4 +1,6 @@
 import * as actions from '../constants/Project';
+import {persistReducer} from "redux-persist";
+import storage from 'redux-persist/lib/storage';
 
 const initState = {
     id: 0,
@@ -18,5 +20,11 @@ const Project = (state = initState, action) => {
             return state;
     }
 }
+const persistConfig = {
+    keyPrefix: "scrum-",
+    key: "project",
+    storage
+}
 
-export default Project;
+export default persistReducer( persistConfig, Project )
+

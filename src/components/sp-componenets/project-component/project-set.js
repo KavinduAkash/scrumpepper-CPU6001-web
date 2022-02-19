@@ -49,11 +49,11 @@ class ProjectSet extends React.Component {
          this.props.handleProjectId(project);
          this.props.handleCorporate(corporate_id);
          this.props.handleNavigation(2);
-         this.navigate_to_project_view();
+         this.navigate_to_project_view(project.uuid);
     }
 
-    navigate_to_project_view = () => {
-        this.props.history.push('/app/project/backlog');
+    navigate_to_project_view = (ref) => {
+        this.props.history.push(`/app/project/backlog`);
     }
 
     render() {

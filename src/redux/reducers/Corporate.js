@@ -1,4 +1,6 @@
 import * as actions from '../constants/Corporate';
+import {persistReducer} from "redux-persist";
+import storage from 'redux-persist/lib/storage';
 
 const initState = {
     corporate_id: 0,
@@ -18,4 +20,11 @@ const corporate = (state = initState, action) => {
     }
 }
 
-export default corporate;
+
+const persistConfig = {
+    keyPrefix: "scrum-",
+    key: "corporate",
+    storage
+}
+
+export default persistReducer( persistConfig, corporate )
