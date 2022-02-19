@@ -48,7 +48,7 @@ class DocsModal extends React.Component {
 
                     if(response.data.success) {
                         this.setState({loading: false});
-                        message.success(response.data.message);
+                        message.success(response.data.msg);
                         this.props.navigateToEdit(response.data.body);
                     }
 
@@ -68,7 +68,7 @@ class DocsModal extends React.Component {
             <Modal
                 title="New Document"
                 visible={this.props.isEditVisible}
-                onCancel={()=>this.openEdit(false)}
+                onCancel={()=>this.props.openEdit(false)}
                 footer={false}
                 className={'sprint-edit-modal'}
             >
@@ -77,7 +77,7 @@ class DocsModal extends React.Component {
                         layout="vertical"
                     >
                         <Form.Item
-                            label="Note"
+                            label="Document Name"
                         >
                             <Input placeholder="Document Name..." value={this.state.name} onChange={this.onChangeName} />
                         </Form.Item>
