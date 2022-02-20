@@ -128,6 +128,7 @@ class SppPokerModal extends React.Component{
             .then(async response => {
                 if(response.data.success) {
                     message.success(`Chat Room ${type=="UPDATE"?"updated":"started"} successfully`);
+                    this.props.startRoom(response.data.body);
                 }
             }).catch(async error => {
             this.setState({loading: false});
