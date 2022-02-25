@@ -6,6 +6,8 @@ import SpinnerReducer from './Spinner';
 import NavigationReducer from './Navigation';
 import ProjectReducer from './Project';
 import Documents from "./Documents";
+import Poker from "./Poker";
+import User from "./User";
 
 const reducers = combineReducers({
     theme: Theme,
@@ -14,7 +16,9 @@ const reducers = combineReducers({
     spinnerReducer: SpinnerReducer,
     navigationReducer: NavigationReducer,
     projectReducer: ProjectReducer,
-    documentReducer: Documents
+    documentReducer: Documents,
+    pokerReducer: Poker,
+    userReducer: User
 });
 
 export default reducers;

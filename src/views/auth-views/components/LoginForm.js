@@ -11,6 +11,9 @@ import {
 	hideAuthMessage,
 	authenticated
 } from 'redux/actions/Auth';
+import {
+	storeUser
+} from '../../../redux/actions/User';
 import { motion } from "framer-motion"
 import axios from "axios";
 import Cookies from 'js-cookie';
@@ -49,6 +52,7 @@ class LoginForm extends React.Component{
 			.then(async response => {
 
 				let user = response.data.user;
+				this.props.storeUser(user);
 				let accessToken = response.data.access_token;
 				let refreshToken = response.data.refresh_token;
 				Cookies.set('68e78905f4c', accessToken);
@@ -205,7 +209,8 @@ const mapDispatchToProps = {
 	showAuthMessage,
 	showLoading,
 	hideAuthMessage,
-	authenticated
+	authenticated,
+	storeUser
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LoginForm))

@@ -25,6 +25,7 @@
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
+    "net": "^1.0.2",
     "rc-tween-one": "^2.7.3",
     "react": "^17.0.1",
     "react-apexcharts": "^1.3.7",
@@ -63,6 +64,8 @@
     "redux-thunk": "^2.4.1",
     "reqwest": "^2.0.5",
     "save": "^2.4.0",
+    "sockjs-client": "^1.5.2",
+    "stompjs": "^2.3.3",
     "sweetalert2": "^11.3.10",
     "web-vitals": "^0.2.4"
   },
