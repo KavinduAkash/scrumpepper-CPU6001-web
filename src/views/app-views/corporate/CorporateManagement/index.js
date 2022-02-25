@@ -12,7 +12,7 @@ import {
     Input,
     Tabs,
     Form,
-    Upload, Image, Select, message
+    Upload, Image, Select, message, Tag
 } from "antd";
 import { UserOutlined, AppleOutlined, PlusOutlined } from '@ant-design/icons';
 import {connect} from "react-redux";
@@ -135,6 +135,22 @@ const create_project_columns_employee = [
     }
 ];
 
+
+const add_new_corporate_employee_columns = [
+    {
+        title: 'User',
+        dataIndex: 'user',
+        key: 'user',
+        width: '80%',
+    },
+    {
+        title: '',
+        dataIndex: 'action',
+        key: 'action',
+        width: '20%',
+    }
+];
+
 class CorporateManagementView extends React.Component {
 
     state = {
@@ -146,6 +162,7 @@ class CorporateManagementView extends React.Component {
         corporate_employee_results:[],
 
         add_corporate_employee_modal: false,
+        add_corporate_employee_options: [],
 
         //create new project
         create_project_modal: false,
@@ -267,8 +284,78 @@ class CorporateManagementView extends React.Component {
 
     };
 
+    onSearchUsers = e => {
+        let value  = e.target.value;
+        let res = [];
+
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let req_obj = {
+        };
+
+        axios.post(`http://localhost:8080/v1/user/search?keyword=${value}&corporate=${this.props.corporateReducer.corporate_id}&project=${0}`, req_obj, {headers})
+            .then(res => {
+                console.log(res.data);
+                if(res.data.success) {
+                    this.setState({
+                        add_corporate_employee_options: res.data.body
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            });
+
+    };
+
+    sendInvitations = val => {
+        this.props.handleSpinner(true);
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        axios.post(`http://localhost:8080/v1/corporate/employee/create`, val, {headers})
+            .then(res => {
+                console.log(res.data);
+                if(res.data.success) {
+                    this.setState({
+                        add_corporate_employee_options: res.data.body
+                    })
+                }
+                this.props.handleSpinner(false);
+                this.setState({
+                    add_corporate_employee_modal: false,
+                    add_corporate_employee_options: []
+                })
+            })
+            .catch(err => {
+                this.props.handleSpinner(false);
+                console.log(err)
+            });
+    }
+
     setCreateProjectModalVisibility = value => {
         this.setState({create_project_modal: value});
+    };
+
+    addCorporateEmployeeModalVisibility = value => {
+        this.setState({add_corporate_employee_modal: value});
     };
 
 
@@ -371,19 +458,34 @@ class CorporateManagementView extends React.Component {
 
     render() {
 
+        let list_add_employee_options = [];
+        if(this.state.add_corporate_employee_options!=null && this.state.add_corporate_employee_options!="" && this.state.add_corporate_employee_options!= undefined) {
+            this.state.add_corporate_employee_options.map((result, index)=>{
+                let obj = {
+                    key: index,
+                    user: <div>
+                        <div>{`${result.firstName} ${result.lastName}`}</div>
+                        <div><span>{`${result.refNo}`}</span>{`${" | "}`}<span>{`${result.email}`}</span></div>
+                    </div>,
+                    action: (result.yourCorporate)? <Tag color="purple">Employee</Tag>
+                        :
+                        <Button
+                            type="primary"
+                            onClick={()=>this.sendInvitations({
+                                userId: result.id,
+                                corporateId: this.props.corporateReducer.corporate_id,
+                                email: result.email,
+                                accessType: 'CORPORATE_EMPLOYEE'
+                            })}
+                        >
+                            Send Invitation
+                        </Button>
+                };
+                list_add_employee_options.push(obj);
+            })
+        }
         let options = [
-            {
-                label: this.renderTitle('Libraries'),
-                options: [this.renderItem('AntDesign', 10000), this.renderItem('AntDesign UI', 10600)],
-            },
-            {
-                label: this.renderTitle('Solutions'),
-                options: [this.renderItem('AntDesign UI FAQ', 60100), this.renderItem('AntDesign FAQ', 30010)],
-            },
-            {
-                label: this.renderTitle('Articles'),
-                options: [this.renderItem('AntDesign design language', 100000)],
-            },
+
         ];
 
         let employees = [];
@@ -551,7 +653,31 @@ class CorporateManagementView extends React.Component {
 
 
 
+             <Modal
+                 title={`Add Corporate Employee`}
+                 centered
+                 visible={this.state.add_corporate_employee_modal}
+                 onCancel={() => this.addCorporateEmployeeModalVisibility(false)}
+                 width={600}
+                 footer={null}
+             >
+                    <div className={'text-center'}>
+                        <AutoComplete
+                            dropdownClassName="certain-category-search-dropdown"
+                            dropdownMatchSelectWidth={500}
+                            style={{ minWidth: '80%' }}
+                        >
+                            <Input.Search size="large" placeholder="input here" onChange={this.onSearchUsers}/>
+                        </AutoComplete>
 
+                        <Table dataSource={list_add_employee_options} columns={add_new_corporate_employee_columns}/>
+
+
+                    </div>
+
+
+
+             </Modal>
 
 
 
@@ -672,6 +798,17 @@ class CorporateManagementView extends React.Component {
                      key="2"
                  >
                      <Row>
+                             <Col sm={24} md={24} lg = {24} xl={24} className={'text-right'}>
+                                 <Button
+                                     type="primary"
+                                     icon={<PlusOutlined />}
+                                     size={size}
+                                     className={'sp-main-btn'}
+                                     onClick={()=>this.addCorporateEmployeeModalVisibility(true)}
+                                 >
+                                     Add Corporate Employee
+                                 </Button>
+                             </Col>
                          <Col sm={24} md={24} lg={24} xl={24} className={'text-center'}>
                              <AutoComplete
                                  dropdownClassName="certain-category-search-dropdown"
