@@ -57,7 +57,7 @@ class ProjectSppPokerPlay extends React.Component {
             connected: false,
             message: ''
         },
-        value: 0,
+        value: [],
         selected_value: -1
     }
 
@@ -172,8 +172,11 @@ class ProjectSppPokerPlay extends React.Component {
     onPrivateMessage = (payload)=>{
         console.log(payload);
         var payloadData = JSON.parse(payload.body);
+
+        console.log("VALUE: ", payloadData);
+
         this.setState({
-            value: payloadData.vote
+            value: payloadData.votes
         })
     }
 
@@ -220,12 +223,25 @@ class ProjectSppPokerPlay extends React.Component {
             cards.push(obj);
         });
 
+
+        let result_options = [];
+        if(this.state.value!=null) {
+            this.state.value.map((result, index)=>{
+                let obj = {
+                    key: index,
+                    name: `${result.firstName} ${result.lastName}`,
+                    vote: result.vote
+                }
+                result_options.push(obj);
+            })
+        }
+
         return(
             <div>
                 <div><span>All Poker Rooms</span><span>{`${" > "}`}</span><span style={{fontWeight: 'bold'}}>{this.state.ref}</span></div>
                 <br/>
                 <div>{`Connect: ${this.state.userData.connected}`}</div>
-                <div>{`value: ${this.state.value}`}</div>
+                {/*<div>{`value: ${this.state.value}`}</div>*/}
                 <br/>
                 <div>
                     <div>
@@ -296,7 +312,7 @@ class ProjectSppPokerPlay extends React.Component {
                             </span>
                         </div>
                         <div className={'vote-display-tbl'}>
-                            <Table dataSource={dataSource} columns={columns} />
+                            <Table dataSource={result_options} columns={columns} />
                         </div>
 m
                     </div>
