@@ -1,4 +1,4 @@
-import { 
+import {
   DashboardOutlined,
   HomeOutlined,
   UnorderedListOutlined,
@@ -8,7 +8,8 @@ import {
   SettingOutlined,
   BookOutlined,
   BellOutlined,
-  ClockCircleOutlined
+  ClockCircleOutlined,
+  MailOutlined
 } from '@ant-design/icons';
 import { APP_PREFIX_PATH } from 'configs/AppConfig'
 
@@ -44,6 +45,14 @@ export const dashBoardNavTree = [
   icon: DashboardOutlined,
   breadcrumb: false,
   submenu: []
+  },
+  {
+    key: 'invitations',
+    path: `${APP_PREFIX_PATH}/invitation`,
+    title: 'invitations',
+    icon: MailOutlined,
+    breadcrumb: false,
+    submenu: []
   },
 ]
 

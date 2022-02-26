@@ -97,7 +97,7 @@ class ProjectSet extends React.Component {
                             <h4 className={'corporate-header'}>{name}</h4>
                         </div>
                         <div>
-                            <Table header={false} dataSource={project_list} columns={columns} className={'project-set-tbl'} />;
+                            <Table header={false} dataSource={project_list} columns={columns} className={'project-set-tbl'} />
                         </div>
                     </div>
                 </Card>
