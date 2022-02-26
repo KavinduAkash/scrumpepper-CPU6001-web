@@ -186,7 +186,40 @@ class ProjectSppPokerPlay extends React.Component {
             status:"JOIN"
         };
         stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+        this.load_initial();
     }
+
+
+    load_initial = () => {
+        let headers = {
+            'Content-Type':'application/json',
+            // 'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let method = "post";
+
+        let body = {
+        }
+
+        axios[method](`http://localhost:8081/v1/votex/private-message-just-connect?ref=${this.state.ref}`, body, {headers: headers})
+            .then(async response => {
+                console.log(response);
+                if(response.data.success) {
+                    this.setState({
+                        value: response.data.body.votes
+                    })
+                }
+            }).catch(async error => {
+            this.setState({loading: false});
+
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+
+        });
+    }
+
 
     onError = (err) => {
         console.log(err);
