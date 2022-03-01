@@ -82,7 +82,18 @@ class ProjectSppPokerAll extends React.Component {
 
     start_room = (data) => {
         this.props.storePokerRoom(data);
+        // this.props.history.push(innerRoutes.inner_route_play);
+        this.load_all_rooms();
+        this.setState({
+            isEdit: false,
+            selectedRoom: null
+        })
+    }
+
+    start_room2 = (data) => {
+        this.props.storePokerRoom(data);
         this.props.history.push(innerRoutes.inner_route_play);
+        // this.load_all_rooms();
         this.setState({
             isEdit: false,
             selectedRoom: null
@@ -120,7 +131,7 @@ class ProjectSppPokerAll extends React.Component {
                 sdate: `${cd1} ${cd2}`,
                 edate: md!=null?`${md1} ${md2}`:"-",
                 note: result.note,
-                action: <Button type={'text'} onClick={()=>this.start_room(result)}>Join</Button>,
+                action: <Button type={'text'} onClick={()=>this.start_room2(result)}>Join</Button>,
             }
 
             room_list.push(obj);

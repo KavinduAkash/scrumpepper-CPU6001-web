@@ -20,19 +20,6 @@ const fib = [
     ]
 ]
 var stompClient =null;
-const dataSource = [
-    {
-        key: '1',
-        name: 'Mike',
-        vote: 5
-    },
-    {
-        key: '2',
-        name: 'John',
-        vote: 5
-    },
-];
-
 const columns = [
     {
         title: 'Name',
@@ -137,6 +124,8 @@ class ProjectSppPokerPlay extends React.Component {
 
                     this.setState({user_stories: response.data.body});
                     console.log("Room-s: ", response.data.body);
+
+
                 }
 
             }).catch(async error => {
@@ -269,6 +258,13 @@ class ProjectSppPokerPlay extends React.Component {
             })
         }
 
+
+        let userStories = this.state.user_stories;
+        let ccs = ""
+        if(userStories!=null & userStories!="" & userStories!=undefined) {
+            ccs = userStories[0].title;
+        }
+
         return(
             <div>
                 <div><span>All Poker Rooms</span><span>{`${" > "}`}</span><span style={{fontWeight: 'bold'}}>{this.state.ref}</span></div>
@@ -288,9 +284,16 @@ class ProjectSppPokerPlay extends React.Component {
                             <div className={'btn-panel'}>
                                 <Button type={'text'}><UnorderedListOutlined /></Button>
                             </div>
-                            <div className={'btn-panel-2'}>
-                                <Button type={'primary'}>Start</Button>
+                            {/*<div className={'btn-panel-2'}>*/}
+                            {/*    <Button type={'primary'}>Start</Button>*/}
+                            {/*</div>*/}
+
+                            <div>
+                                {
+                                    ccs
+                                }
                             </div>
+
                         </div>
                     </div>
 

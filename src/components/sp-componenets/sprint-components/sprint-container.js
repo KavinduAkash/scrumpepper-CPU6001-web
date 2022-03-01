@@ -5,6 +5,9 @@ import { CaretDownOutlined, MinusCircleOutlined, WarningOutlined, NodeIndexOutli
 import {SortableContainer, SortableElement, SortableHandle} from "react-sortable-hoc";
 import {arrayMoveImmutable} from "array-move";
 import SprintEditModal from "./sprint-edit-modal";
+import Cookies from "js-cookie";
+import axios from "axios";
+import * as Swal from "sweetalert2";
 const { SubMenu } = Menu;
 const { Option } = Select;
 const menu = (
@@ -71,6 +74,7 @@ const SortableBody = SortableContainer(props => <tbody {...props} />);
 class SprintContainer extends React.Component {
 
     state = {
+        loading: false,
         dataSource: [
             {
                 key: 1,
@@ -170,8 +174,40 @@ class SprintContainer extends React.Component {
         });
     };
 
-//----------------------------------------------------------------------------------------------------------------------
+// Start sprint --------------------------------------------------------------------------------------------------------
+    startSprint = () => {
+        this.setState({loading: true});
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+        let request_body = {}
+        let method = "patch";
+        axios[method](`http://localhost:8080/v1/sprint/start?id=${this.props.sprint.id}`, request_body, {headers: headers})
+            .then(async response => {
+                if(response.data.success) {
+                    this.props.loadSprints();
+                    Swal.fire(
+                        'Success',
+                        'Sprint started successfully!',
+                        'success'
+                    )
+                }
+                this.setState({loading: false});
+            }).catch(async error => {
+            this.setState({loading: false});
 
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+        });
+    }
 
     render() {
 
@@ -266,7 +302,12 @@ class SprintContainer extends React.Component {
                                 <span><Tag icon={<ClockCircleOutlined />} color="default">{`${todo}`}</Tag></span>
                                 <span><Tag icon={<SyncOutlined />} color="processing">{`${process}`}</Tag></span>
                                 <span><Tag icon={<CheckCircleOutlined />} color="success">{`${done}`}</Tag></span>
-                                <span className={'action-1'}><Button type="primary" size={'small'}>Start Sprint</Button></span>
+                                {
+                                    this.props.sprint.statusType=="TODO"?
+                                    <span className={'action-1'}><Button type="primary" size={'small'} onClick={this.startSprint}>Start Sprint</Button></span>:
+                                        this.props.sprint.statusType=="PROCESSING"?"PROCESSING":""
+                                }
+
                                 <span className={'action-1'}>
                                <Dropdown overlay={menu}>
                                    <Button type={'text'} className="ant-dropdown-link" onClick={e => e.preventDefault()}>
@@ -312,6 +353,17 @@ class SprintContainer extends React.Component {
                             :null
                     }
                 </div>
+
+                {
+                    this.state.loading?
+                        <div className="loading-overlay-2">
+                            <div className="bounce-loader">
+                                <img src={'/img/preloader.gif'} alt=""/>
+                            </div>
+                        </div>
+                        :null
+                }
+
             </div>
         );
     }

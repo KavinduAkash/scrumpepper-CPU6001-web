@@ -260,7 +260,7 @@ class ProjectSprints extends React.Component {
                 <h3>Sprints</h3>
                 <div>
                     {
-                        this.state.sprint_list.map((r, i)=><SprintContainer sprint={r} key={i} updateSprint={this.openSprintUpdateModal} openEdit={this.openEdit} openNewUserStory={this.onChangeUserStoryModal} move_user_story={this.move_to_sprint} />)
+                        this.state.sprint_list.map((r, i)=><SprintContainer sprint={r} key={i} updateSprint={this.openSprintUpdateModal} openEdit={this.openEdit} openNewUserStory={this.onChangeUserStoryModal} move_user_story={this.move_to_sprint} loadSprints={this.getAllSprints} />)
                     }
                     <div>
                         <Button type="primary" onClick={this.openSprintCreateModal}><PlusOutlined />Create Sprint</Button>
