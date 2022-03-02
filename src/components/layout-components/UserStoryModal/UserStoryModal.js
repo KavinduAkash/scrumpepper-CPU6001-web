@@ -49,6 +49,7 @@ class UserStoryModal extends React.Component {
         user_story_id: 0,
         user_story: "",
         content: "",
+        storyPoints: 0,
         label: [],
         priority: "MEDIUM",
         project_name: "",
@@ -56,7 +57,9 @@ class UserStoryModal extends React.Component {
         user_story_label: [],
         tasks: [],
         memberModal: false,
-        taskId: 0
+        taskId: 0,
+
+        loading: false
     }
 
     componentDidMount() {
@@ -126,7 +129,8 @@ class UserStoryModal extends React.Component {
                 priority: data.priority,
                 project_name: this.props.project.projectName,
                 isEdit: isEdit,
-                tasks: data.tasks
+                tasks: data.tasks,
+                storyPoints: data.points
             });
         } else {
             this.setState({
@@ -145,6 +149,10 @@ class UserStoryModal extends React.Component {
 
     onChangeUserStoryTitle = e => {
         this.setState({user_story: e.target.value});
+    }
+
+    onChangeUserStoryPoints = e => {
+        this.setState({storyPoints: e.target.value});
     }
 
     onChangeLabel = val => {
@@ -172,7 +180,8 @@ class UserStoryModal extends React.Component {
                 title: this.state.user_story,
                 description: this.state.content,
                 userStoryLabels: this.state.user_story_label,
-                priority: this.state.priority
+                priority: this.state.priority,
+                points: this.state.storyPoints
             }
 
             let method = "post";
@@ -217,7 +226,8 @@ class UserStoryModal extends React.Component {
                 title: this.state.user_story,
                 description: this.state.content,
                 userStoryLabels: this.state.user_story_label,
-                priority: this.state.priority
+                priority: this.state.priority,
+                points: this.state.storyPoints
             }
 
             let method = "post";
@@ -345,15 +355,43 @@ class UserStoryModal extends React.Component {
         }
     }
 
+    updateTaskStatus = (taskId, status) => {
+        this.setState({loading: true});
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
 
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
 
+        let request_body = {}
 
+        let method = "patch";
 
+        axios[method](`http://localhost:8080/v1/task/status?id=${taskId}&status=${status}`, request_body, {headers: headers})
+            .then(async response => {
+                if(response.data.success) {
+                    this.setState({tasks: response.data.body});
+                    this.setState({loading: false});
+                }
 
+            }).catch(async error => {
+            this.setState({loading: false});
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+
+        });
+    }
 
     render() {
 
-        let {user_story_id, user_story, content, label, priority, user_story_label} = this.state;
+        let {user_story_id, user_story, content, label, priority, user_story_label, storyPoints} = this.state;
 
         return(
             <div>
@@ -406,6 +444,16 @@ class UserStoryModal extends React.Component {
 
                                 </Col>
                             </Row>
+                            <br/>
+                            <Row>
+                                <Col sm={24} md={24} lg={4} xl={4}>
+                                    Story points
+                                </Col>
+                                <Col sm={24} md={24} lg={20} xl={20}>
+                                    <Input value={storyPoints} onChange={this.onChangeUserStoryPoints} />
+                                </Col>
+                            </Row>
+
                             <br/>
                             <Row>
                                 <Col sm={24} md={24} lg={4} xl={4}>
@@ -489,7 +537,7 @@ class UserStoryModal extends React.Component {
                                     >Create New</Button>
                                 </Empty>
                                 :
-                                <TaskSetComponent tasks={this.state.tasks} createTask={this.createTask} updateTask={this.updateTask} handleMembers={this.handleMembers} />
+                                <TaskSetComponent tasks={this.state.tasks} createTask={this.createTask} updateTask={this.updateTask} handleMembers={this.handleMembers} updateTaskStatus={this.updateTaskStatus} />
                         }
 
                     </TabPane>
@@ -499,6 +547,19 @@ class UserStoryModal extends React.Component {
                 {
                     (this.state.memberModal & this.state.taskId!=0)?<MemberManagementModal member_modal_visibility={true} taskId={this.state.taskId} handleMembers={this.handleMembers} />:null
                 }
+
+
+
+                {
+                    this.state.loading?
+                        <div className="loading-overlay-2">
+                            <div className="bounce-loader">
+                                <img src={'/img/preloader.gif'} alt=""/>
+                            </div>
+                        </div>
+                        :null
+                }
+
 
             </div>
             );

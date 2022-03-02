@@ -17,9 +17,25 @@ class TaskSetComponent extends React.Component{
         this.props.handleMembers(taskId);
     }
 
+    updateTaskStatus = (taskId, status) => {
+        this.props.updateTaskStatus(taskId, status);
+    }
+
     render() {
 
         let { tasks } = this.props;
+
+        // task progress calculation
+        let tasksCount = tasks.length;
+        let doneTasksCount = 0;
+        tasks.map((result, index)=>{
+            if(result.statusType=="COMPLETED") {
+                doneTasksCount = doneTasksCount + 1;
+            }
+        });
+        let donePercentage = ((doneTasksCount/tasksCount)*100);
+
+        console.log("Prasentage: ", donePercentage);
 
         console.log("TASK-LIST: ", tasks);
 
@@ -34,7 +50,7 @@ class TaskSetComponent extends React.Component{
                             '0%': '#AB47BC',
                             '100%': '#304FFE',
                         }}
-                        percent={59.9}
+                        percent={ donePercentage }
                     />
                 </div>
                 <br/>
@@ -47,7 +63,7 @@ class TaskSetComponent extends React.Component{
                     </div>
                     {
                         tasks.map((r, i)=>
-                            <Task task={r} createTask={this.createTask} updateTask={this.updateTask} memberModal={this.memberModal} />
+                            <Task task={r} createTask={this.createTask} updateTask={this.updateTask} memberModal={this.memberModal} updateTaskStatus={this.updateTaskStatus} />
                         )
                     }
                 </div>

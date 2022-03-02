@@ -11,14 +11,26 @@ class Task extends React.Component {
         task_id: 0,
         is_edit_text: false,
         task_name: "",
-        addMember: false
+        addMember: false,
+        taskStatus: "TODO"
     }
 
     componentDidMount() {
             this.setState({
                 task_id: this.props.task.id,
-                task_name: (this.props.task.title!=null & this.props.task.title!=undefined)?this.props.task.title:''
+                task_name: (this.props.task.title!=null & this.props.task.title!=undefined)?this.props.task.title:'',
+                taskStatus: this.props.task.statusType
             })
+        console.log("Task Status: ", this.props.task.statusType);
+    }
+
+    componentWillMount() {
+        this.setState({
+            task_id: this.props.task.id,
+            task_name: (this.props.task.title!=null & this.props.task.title!=undefined)?this.props.task.title:'',
+            taskStatus: this.props.task.statusType
+        })
+        console.log("Task Status2: ", this.props.task.statusType);
     }
 
     onClickEdit = val => {
@@ -54,9 +66,16 @@ class Task extends React.Component {
        this.props.memberModal(this.state.task_id);
     }
 
+    onChangeTaskStatus = e => {
+        this.setState({taskStatus: e})
+        this.props.updateTaskStatus(this.state.task_id, e);
+    }
+
     render() {
 
-        let task_name = this.state.task_name
+        let task_name = this.state.task_name;
+        let task_status = this.state.taskStatus;
+        console.log("Status: ", task_status);
         let task_name_text = (this.state.task_name).slice(0,50)
         if(task_name_text.length>50) {
             task_name_text = (this.state.task_name).slice(0,47) + "..."
@@ -100,13 +119,13 @@ class Task extends React.Component {
 
                     </Col>
                     <Col sm={5} md={5} lg={5} xl={5} className={'sp-task-status text-right'}>
-                            <Select defaultValue="todo" style={{ width: 150 }}
-                                // onChange={handleChange}
+                            <Select value={task_status} style={{ width: 150 }}
+                                onChange={this.onChangeTaskStatus}
                                     className={'text-left'}
                             >
-                                <Option value="todo">TO DO</Option>
-                                <Option value="inprogress">IN PROGRESS</Option>
-                                <Option value="done">DONE</Option>
+                                <Option value="TODO">TO DO</Option>
+                                <Option value="PROCESSING">IN PROGRESS</Option>
+                                <Option value="COMPLETED">DONE</Option>
                             </Select>
                     </Col>
                     <Col sm={1} md={1} lg={1} xl={1} className={'text-right'}>
