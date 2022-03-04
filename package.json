@@ -30,7 +30,7 @@
     "react": "^17.0.1",
     "react-apexcharts": "^1.3.7",
     "react-beautiful-dnd": "^13.0.0",
-    "react-chartjs-2": "^2.11.1",
+    "react-chartjs-2": "^2.11.2",
     "react-color": "^2.19.3",
     "react-copy-to-clipboard": "^5.0.2",
     "react-css-theme-switcher": "^0.1.5",

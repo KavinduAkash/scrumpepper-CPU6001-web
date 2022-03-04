@@ -29,6 +29,7 @@ export const SideNav = ({navCollapsed, sideNavTheme, routeInfo, hideGroupTitle, 
       className={`side-nav ${sideNavTheme === SIDE_NAV_DARK? 'side-nav-dark' : ''}`} 
       width={SIDE_NAV_WIDTH} 
       collapsed={navCollapsed}
+      style={{overflowY: 'auto'}}
     >
 
       {

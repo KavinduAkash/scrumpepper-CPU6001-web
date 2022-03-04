@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Form, Input, Modal} from "antd";
+import {Button, Form, Input, Modal, Select} from "antd";
 import { DatePicker, message } from 'antd';
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -8,6 +8,22 @@ import moment from "moment";
 const { RangePicker } = DatePicker;
 const key = 'updatable';
 
+const { Option } = Select;
+
+function formatDate(date) {
+    var d = date,
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
 class SprintEditModal extends React.Component {
 
     state = {
@@ -15,6 +31,7 @@ class SprintEditModal extends React.Component {
         goal: '',
         startDate: '',
         endDate: '',
+        duration: '1w'
     }
 
     componentDidMount() {
@@ -53,6 +70,38 @@ class SprintEditModal extends React.Component {
             });
         }
     };
+
+    onChangeDate = (data, dateString) => {
+        console.log("DateString: ", dateString);
+        this.setState({startDate: dateString});
+    }
+
+    onChangeSprintTime = e => {
+        console.log("time: ", e);
+        if(this.state.startDate!=null & this.state.startDate!=undefined & this.state.startDate!="") {
+            let split = (this.state.startDate).split(" ");
+            let parts=split[0].split("-");
+            let mydate = new Date(parts[0], parts[1] - 1, parts[2]);
+            switch (e) {
+                case "1w":
+                    mydate.setDate(mydate.getDate() + 7);
+                    break;
+                case "2w":
+                    mydate.setDate(mydate.getDate() + 14);
+                    break;
+                case "3w":
+                    mydate.setDate(mydate.getDate() + 21);
+                    break;
+                case "4w":
+                    mydate.setDate(mydate.getDate() + 28);
+                    break;
+            }
+            let date = formatDate(mydate);
+            this.setState({duration: e, endDate: date})
+        } else {
+            this.setState({duration: e})
+        }
+    }
 
     cleanInputs = () => {
         this.setState({
@@ -144,13 +193,12 @@ class SprintEditModal extends React.Component {
         let type = this.props.type;
 
         // Date Range
-        let dateRange = null;
+        let startDate = null;
         if (this.state.startDate !== null && this.state.startDate !== undefined && this.state.startDate !== "") {
             let startdate = this.state.startDate;
-            let enddate = this.state.endDate;
-            dateRange = [moment(startdate), moment(enddate)];
+            startDate = moment(startdate);
         } else {
-            dateRange = null;
+            startDate = null;
         }
 
         return(
@@ -180,10 +228,26 @@ class SprintEditModal extends React.Component {
                         <Input.TextArea placeholder="input placeholder" value={this.state.goal} onChange={this.onChangeGoal} />
                     </Form.Item>
                     <Form.Item
-                        label="Sprint Duration"
+                        label="Sprint Start"
                         // tooltip="This is a required field"
                     >
-                        <RangePicker value={dateRange} onChange={this.onChangeDateRange} />
+                        {/*<RangePicker value={dateRange} onChange={this.onChangeDateRange} />*/}
+                        <DatePicker value={startDate} onChange={this.onChangeDate} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Sprint Duration"
+                    >
+                        <Select value={this.state.duration} style={{ width: 120 }} onChange={this.onChangeSprintTime}>
+                            <Option value="1w">1 Week</Option>
+                            <Option value="2w">2 Weeks</Option>
+                            <Option value="3w">3 Weeks</Option>
+                            <Option value="4w">4 Weeks</Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        label="Sprint EndDate"
+                    >
+                        {this.state.endDate}
                     </Form.Item>
                     <Form.Item className={'text-right'}>
                         {

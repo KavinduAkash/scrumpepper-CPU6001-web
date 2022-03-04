@@ -209,6 +209,43 @@ class SprintContainer extends React.Component {
         });
     }
 
+    onChangeUserStoryStatus = (e, i) => {
+        this.setState({loading: true});
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+        let request_body = {
+            userStoryId: i,
+            status: e
+        }
+        let method = "patch";
+        axios[method](`http://localhost:8080/v1/user-story`, request_body, {headers: headers})
+            .then(async response => {
+                if(response.data.success) {
+                    this.props.loadSprints();
+                    Swal.fire(
+                        'Success',
+                        'Sprint started successfully!',
+                        'success'
+                    )
+                }
+                this.setState({loading: false});
+            }).catch(async error => {
+            this.setState({loading: false});
+
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+        });
+    }
+
     render() {
 
         let dataSource = [];
@@ -261,11 +298,11 @@ class SprintContainer extends React.Component {
                 ,
                 status:
                     <Select defaultValue={r.statusType} style={{ width: 120 }}
-                        // onChange={handleChange}
+                        onChange={(value)=>this.onChangeUserStoryStatus(value, r.id)}
                     >
                         <Option value="TODO" style={{backgroundColor: '#CFD8DC'}}>Todo</Option>
                         <Option value="PROCESSING" style={{backgroundColor: '#B3E5FC'}}>Processing</Option>
-                        <Option value="DONE" style={{backgroundColor: '#C8E6C9'}}>Done</Option>
+                        <Option value="COMPLETED" style={{backgroundColor: '#C8E6C9'}}>Done</Option>
                     </Select>
                 ,
                 sprint: <span>{r.sprint!=null?r.sprint.sprintName:<Tooltip placement="top" title={'No assigned sprint yet ⚠️'}><WarningOutlined /></Tooltip>}

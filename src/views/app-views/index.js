@@ -9,7 +9,9 @@ import CorporateManagementView from "./corporate/CorporateManagement";
 import ProjectSPPPoker from "./project/project-views/project-spp-poker";
 import ProjectBacklog from "./project/project-views/project-backlog";
 import ProjectSprints from "./project/project-views/project-sprints";
-import ProjectReports from "./project/project-views/project-reports";
+import ProjectReportsBurnup from "./project/project-views/project-reports-burnup";
+import ProjectReportsBurndown from "./project/project-views/project-report-burndown";
+import ProjectReportsVelocity from "./project/project-views/project-report-velocity";
 import ProjectTeam from "./project/project-views/project-teams";
 import ProjectNotifications from "./project/project-views/project-notifications";
 import ProjectDocs from "./project/project-views/project-docs";
@@ -31,7 +33,9 @@ export const AppViews = () => {
           <Route path={`${APP_PREFIX_PATH}/project/spp-poker`} component={ProjectSPPPoker} />
           <Route path={`${APP_PREFIX_PATH}/project/backlog`} component={ProjectBacklog} />
           <Route path={`${APP_PREFIX_PATH}/project/sprints`} component={ProjectSprints} />
-          <Route path={`${APP_PREFIX_PATH}/project/reports`} component={ProjectReports} />
+          <Route path={`${APP_PREFIX_PATH}/project/reports-burnup`} component={ProjectReportsBurnup} />
+          <Route path={`${APP_PREFIX_PATH}/project/reports-burndown`} component={ProjectReportsBurndown} />
+          <Route path={`${APP_PREFIX_PATH}/project/reports-velocity`} component={ProjectReportsVelocity} />
           <Route path={`${APP_PREFIX_PATH}/project/team`} component={ProjectTeam} />
           <Route path={`${APP_PREFIX_PATH}/project/notifications`} component={ProjectNotifications} />
           <Route path={`${APP_PREFIX_PATH}/project/docs`} component={ProjectDocs} />

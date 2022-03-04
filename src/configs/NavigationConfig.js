@@ -62,67 +62,119 @@ const navigationConfig = [
 
 export const projectManagementNavTree = [
   {
-    key: 'Backlog',
-    path: `${APP_PREFIX_PATH}/project/backlog`,
-    title: 'Backlog',
+    key: 'User Story',
+    path: ``,
+    title: 'User Story',
     icon: UnorderedListOutlined,
     breadcrumb: false,
-    submenu: []
-  },
-  {
-    key: 'Sprints',
-    path: `${APP_PREFIX_PATH}/project/sprints`,
-    title: 'Sprints',
-    icon: RedoOutlined,
-    breadcrumb: false,
-    submenu: []
+    submenu: [
+      {
+        key: 'Backlog',
+        path: `${APP_PREFIX_PATH}/project/backlog`,
+        title: 'Backlog',
+        icon: UnorderedListOutlined,
+        breadcrumb: false,
+        submenu: []
+      },
+      {
+        key: 'Sprints',
+        path: `${APP_PREFIX_PATH}/project/sprints`,
+        title: 'Sprints',
+        icon: RedoOutlined,
+        breadcrumb: false,
+        submenu: []
+      },
+    ]
   },
     {
-    key: 'SPP Poker',
-    path: `${APP_PREFIX_PATH}/project/spp-poker`,
-    title: 'SPP Poker',
+    key: 'Estimations',
+    path: ``,
+    title: 'Estimations',
     icon: ClockCircleOutlined,
-    breadcrumb: false,
-    submenu: []
+    breadcrumb: true,
+    submenu: [
+      {
+        key: 'SPP Poker',
+        path: `${APP_PREFIX_PATH}/project/spp-poker`,
+        title: 'SPP Poker',
+        icon: ClockCircleOutlined,
+        breadcrumb: false,
+        submenu: []
+      },
+    ]
   },
   {
     key: 'Reports',
-    path: `${APP_PREFIX_PATH}/project/reports`,
+    path: ``,
     title: 'Reports',
     icon: AreaChartOutlined,
-    breadcrumb: false,
-    submenu: []
+    breadcrumb: true,
+    submenu: [
+      {
+        key: 'Burn Up Chart',
+        path: `${APP_PREFIX_PATH}/project/reports-burnup`,
+        title: 'Burn Up',
+        icon: AreaChartOutlined,
+        breadcrumb: false,
+        submenu: []
+      },
+      {
+        key: 'Burn Down Chart',
+        path: `${APP_PREFIX_PATH}/project/reports-burndown`,
+        title: 'Burn Down',
+        icon: AreaChartOutlined,
+        breadcrumb: false,
+        submenu: []
+      },
+      {
+        key: 'Velocity',
+        path: `${APP_PREFIX_PATH}/project/reports-velocity`,
+        title: 'Sprint Velocity',
+        icon: AreaChartOutlined,
+        breadcrumb: false,
+        submenu: []
+      }
+    ]
   },
   {
-    key: 'Team',
-    path: `${APP_PREFIX_PATH}/project/team`,
-    title: 'Team',
+    key: 'Other',
+    path: ``,
+    title: 'Other',
     icon: TeamOutlined,
-    breadcrumb: false,
-    submenu: []
-  },
-  {
-    key: 'Notifications',
-    path: `${APP_PREFIX_PATH}/project/notifications`,
-    title: 'Notifications',
-    icon: BellOutlined,
-    breadcrumb: false,
-    submenu: []
-  },
-  {
-    key: 'Docs',
-    path: `${APP_PREFIX_PATH}/project/docs`,
-    title: 'Docs',
-    icon: BookOutlined,
-    breadcrumb: false,
-    submenu: []
-  },
-  {
-    key: 'Settings',
-    path: `${APP_PREFIX_PATH}/project/settings`,
-    title: 'Settings',
-    icon: SettingOutlined,
-    breadcrumb: false,
-    submenu: []
+    breadcrumb: true,
+    submenu: [
+      {
+        key: 'Team',
+        path: `${APP_PREFIX_PATH}/project/team`,
+        title: 'Team',
+        icon: TeamOutlined,
+        breadcrumb: false,
+        submenu: []
+      },
+      {
+        key: 'Notifications',
+        path: `${APP_PREFIX_PATH}/project/notifications`,
+        title: 'Notifications',
+        icon: BellOutlined,
+        breadcrumb: false,
+        submenu: []
+      },
+      {
+        key: 'Docs',
+        path: `${APP_PREFIX_PATH}/project/docs`,
+        title: 'Docs',
+        icon: BookOutlined,
+        breadcrumb: false,
+        submenu: []
+      },
+      {
+        key: 'Settings',
+        path: `${APP_PREFIX_PATH}/project/settings`,
+        title: 'Settings',
+        icon: SettingOutlined,
+        breadcrumb: false,
+        submenu: []
+      },
+    ]
   },
 ]
