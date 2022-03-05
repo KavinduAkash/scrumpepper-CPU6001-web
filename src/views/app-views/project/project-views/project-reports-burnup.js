@@ -19,6 +19,10 @@ import * as spinner_actions from "../../../../redux/actions/Spinner";
 import * as navigation_actions from "../../../../redux/actions/Navigation";
 import * as project_actions from "../../../../redux/actions/Project";
 import {connect} from "react-redux";
+import {message, Select} from "antd";
+import * as BaseUrl from "../../../../server/base_urls";
+
+const { Option } = Select;
 
 // ChartJS.register(
 //     CategoryScale,
@@ -88,13 +92,65 @@ class ProjectReportsBurnup extends React.Component {
         burnDown: null,
         burnUp: null,
         velocity: null,
+        sprints: [],
+        selectedSprint: 0
     }
 
     componentDidMount() {
-        this.loadBurnUp();
+        this.getAllSprints();
     }
 
-    loadBurnUp = () => {
+
+    onChangeSprint = e => {
+        this.setState({
+            selectedSprint: e
+        })
+        this.loadBurnUp(e);
+    }
+    getAllSprints = () => {
+        this.setState({loading: true});
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let method = "get";
+
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}sprint/get?project=${this.props.projectReducer.id}`, {headers: headers})
+            .then(async response => {
+                if(response.status==200) {
+                    if(response.data.success) {
+                        this.setState({
+                            sprints: response.data.body,
+                        })
+                        if(response.data.body!=null) {
+                            if(response.data.body.length>0) {
+                                this.setState({
+                                    selectedSprint: response.data.body[0].id
+                                })
+                                this.loadBurnUp(response.data.body[0].id);
+                            }
+                        }
+                        this.setState({loading: false});
+                    } else {
+                        message.error(response.msg);
+                        this.setState({loading: false});
+                    }
+                }
+            })
+            .catch(async error => {
+                this.setState({loading: false});
+                message.error('Something went wrong!');
+            });
+    }
+
+    loadBurnUp = (id) => {
         if(Cookies.get('68e78905f4c')=="" ||
             Cookies.get('68e78905f4c')==null ||
             Cookies.get('68e78905f4c')==undefined) {
@@ -106,7 +162,7 @@ class ProjectReportsBurnup extends React.Component {
         };
         let request_body = {}
         let method = "get";
-        axios[method](`http://localhost:8080/v1/project-report/burnup/12`, request_body, {headers: headers})
+        axios[method](`http://localhost:8080/v1/project-report/burnup/${id}`, request_body, {headers: headers})
             .then(async response => {
                 if(response.data.success) {
                     this.setState({burnUp: response.data.body});
@@ -173,6 +229,17 @@ class ProjectReportsBurnup extends React.Component {
                 this is project reports
                 <div>
                     <h3>Burn up</h3>
+                    <br/>
+                    <div>
+                        <Select value={this.state.selectedSprint} style={{ width: 120 }}
+                                onChange={this.onChangeSprint}
+                        >
+                            {
+                                this.state.sprints.map((result, index)=><Option value={result.id}>{result.sprintName}</Option>)
+                            }
+                        </Select>
+                    </div>
+                    <br/>
                     {
                         burnUpData!=null?<Line options={options} data={burnUpData} />:null
                     }

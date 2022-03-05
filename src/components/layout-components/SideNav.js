@@ -12,8 +12,8 @@ import * as navigation_actions from "../../redux/actions/Navigation";
 
 const { Sider } = Layout;
 
-export const SideNav = ({navCollapsed, sideNavTheme, routeInfo, hideGroupTitle, localization = true, navigation, handleNavigation, history }) => {
-  const props = { sideNavTheme, routeInfo , hideGroupTitle, localization, navigation, handleNavigation, history}
+export const SideNav = ({navCollapsed, sideNavTheme, routeInfo, hideGroupTitle, localization = true, navigation, handleNavigation, history, project }) => {
+  const props = { sideNavTheme, routeInfo , hideGroupTitle, localization, navigation, handleNavigation, history, project}
 
   const move_to_back = () => {
     handleNavigation(1);
@@ -26,10 +26,11 @@ export const SideNav = ({navCollapsed, sideNavTheme, routeInfo, hideGroupTitle, 
 
   return (
     <Sider 
-      className={`side-nav ${sideNavTheme === SIDE_NAV_DARK? 'side-nav-dark' : ''}`} 
-      width={SIDE_NAV_WIDTH} 
+      // className={`side-nav ${sideNavTheme === SIDE_NAV_DARK? 'side-nav-dark' : ''}`}
+      className={`side-nav`}
+      width={SIDE_NAV_WIDTH}
       collapsed={navCollapsed}
-      style={{overflowY: 'auto'}}
+      style={{overflowY: 'auto', boxShadow: '10px 0 34px -2px #888'}}
     >
 
       {
@@ -42,7 +43,9 @@ export const SideNav = ({navCollapsed, sideNavTheme, routeInfo, hideGroupTitle, 
           </div>
 
           <div>
-            Project X
+            {
+              props.project!=null?props.project.projectName:""
+            }
           </div>
         </div>:null
       }
@@ -57,10 +60,11 @@ export const SideNav = ({navCollapsed, sideNavTheme, routeInfo, hideGroupTitle, 
   )
 }
 
-const mapStateToProps = ({ theme, navigationReducer }) => {
+const mapStateToProps = ({ theme, navigationReducer, projectReducer }) => {
   const { navCollapsed, sideNavTheme } =  theme;
   const { navigation } = navigationReducer;
-  return { navCollapsed, sideNavTheme, navigation }
+  const { project } = projectReducer;
+  return { navCollapsed, sideNavTheme, navigation, project }
 };
 
 const mapDispatchToProps = (dispatch) => {

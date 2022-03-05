@@ -15,25 +15,25 @@ const columns = [
         title: 'Project Name',
         dataIndex: 'name',
         key: 'name',
-        width: '40%'
+        width: '30%'
     },
     {
         title: 'Your Scrum Role',
         dataIndex: 'scrum_role',
         key: 'scrum_role',
-        width: '20%'
+        width: '10%'
     },
     {
         title: 'Created Date',
         dataIndex: 'created_date',
         key: 'created_date',
-        width: '10%'
+        width: '20%'
     },
     {
         title: 'Modified Date',
         dataIndex: 'modified_date',
         key: 'modified_date',
-        width: '10%'
+        width: '20%'
     },
     {
         title: 'View',
@@ -67,10 +67,20 @@ class ProjectSet extends React.Component {
         if(projects!=null && projects!="" && projects!=undefined) {
             projects.map(val => {
 
+                let created = val.project.createdDate;
+                let splitCreated = created.split("T");
+                let splitCreatedTime = splitCreated[1].split(".");
+                created = `${splitCreated[0]} ${splitCreatedTime[0]}`;
+
+                let modified = val.project.modifiedDate;
+                let splitModified = modified.split("T");
+                let splitModifiedTime = splitCreated[1].split(".");
+                modified = `${splitModified[0]} ${splitModifiedTime[0]}`;
+
                 let obj = {
                     name:val.project.projectName,
-                    created_date:val.project.createdDate,
-                    modified_date:val.project.modifiedDate,
+                    created_date:`Created on ${created}`,
+                    modified_date:`Modified on ${modified}`,
                     scrum_role:<Tag color={'geekblue'} key={val.project.id}>
                     {val.role}
                     </Tag>,
@@ -84,7 +94,7 @@ class ProjectSet extends React.Component {
         }
 
         return(
-                <Card>
+                <Card style={{border: "1px solid black"}}>
                     <div className="mt-3">
                         <div className={'project-corporate-header'}>
                             <div className={'project-corporate-header-logo'}>
