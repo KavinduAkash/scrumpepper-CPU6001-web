@@ -65,10 +65,14 @@ export const HeaderNav = props => {
     props.history.push("/auth/login");
   }
 
+  const gotToProfile = () => {
+    props.history.push("/app/profile");
+  }
+
   let menu = (
       <Menu>
         <Menu.Item>
-          <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+          <a onClick={gotToProfile}>
             Profile
           </a>
         </Menu.Item>
@@ -101,7 +105,7 @@ export const HeaderNav = props => {
               <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                 <UserOutlined /> My Account <DownOutlined />
               </a>
-            </Dropdown>,
+            </Dropdown>
 
           </div>
           <NavSearch active={searchActive} close={onSearchClose}/>

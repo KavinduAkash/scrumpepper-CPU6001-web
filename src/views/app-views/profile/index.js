@@ -1,5 +1,5 @@
 import React from 'react'
-import {Row, Col, Card, Avatar, Button, notification} from 'antd';
+import {Row, Col, Card, Avatar, Button, notification, Form, Input, message, Checkbox} from 'antd';
 import AvatarStatus from 'components/shared-components/AvatarStatus';
 import PageHeaderAlt from 'components/layout-components/PageHeaderAlt'
 import Flex from 'components/shared-components/Flex'
@@ -92,17 +92,19 @@ const Group = () => (
 export class Profile extends React.Component {
 
     state = {
-        info : {
-            id : 0,
-            username : '',
-            first_name : '',
-            last_name : '',
-            email : '',
-            contact : '',
-            website : '',
-            created_date : '',
-            status : ''
-        }
+        id : 0,
+        username : '',
+        first_name : '',
+        last_name : '',
+        email : '',
+        contact : '',
+        website : '',
+        created_date : '',
+        status : '',
+        passwordx: '',
+        conform_password: '',
+        change: false,
+        loading: false
     };
 
     componentDidMount() {
@@ -115,6 +117,7 @@ export class Profile extends React.Component {
     }
 
     loadData = () => {
+        this.setState({loading: true});
         let headers = {
             'Content-Type':'application/json',
             'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
@@ -128,6 +131,8 @@ export class Profile extends React.Component {
                 console.log(response);
                 let data = response.data.body;
                 let info = {
+                }
+                this.setState({
                     id : data.id,
                     username : data.refNo,
                     first_name : data.firstName,
@@ -137,11 +142,105 @@ export class Profile extends React.Component {
                     website : '',
                     created_date : data.createdDate,
                     status : data.statusType
-                }
-                this.setState({
-                    info: info
                 })
+                this.setState({loading: false});
+            }).catch(async error => {
+            this.setState({loading: false});
 
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+
+        });
+
+    };
+
+    onChangeFirstName = e => {
+        this.setState({first_name: e.target.value});
+    };
+    onChangeLastName = e => {
+        this.setState({last_name: e.target.value});
+    };
+    onChangeUsername = e => {
+        this.setState({username: e.target.value});
+    };
+    onChangeMobile = e => {
+        this.setState({contact: e.target.value});
+    };
+    onChangeWebsite = e => {
+        this.setState({website: e.target.value});
+    };
+
+    onChangePassword = e => {
+        this.setState({passwordx: e.target.value});
+    };
+
+    onChangeConformPassword = e => {
+        this.setState({conform_password: e.target.value});
+    };
+
+    onChangePasswordCheckbox = e => {
+        this.setState({change: !this.state.change, password: "", conform_password: ""})
+    }
+
+    onUpdate = () => {
+        if(this.state.first_name=="") {
+            message.error("Please, enter first name");
+        } else if(this.state.last_name=="") {
+            message.error("Please, enter last name");
+        } else if(this.state.change) {
+            if(this.state.passwordx==="") {
+                message.error("Please, enter password");
+            } else {
+                if (this.state.conform_password === "") {
+                    message.error("Please, enter conform password");
+                } else {
+                    if (this.state.conform_password === this.state.passwordx) {
+                        this.updateData();
+                    } else {
+                        message.error("Password and conform password does not match");
+                    }
+                }
+            }
+        } else {
+            this.updateData();
+        }
+    }
+
+    updateData = () => {
+        this.setState({loading: true});
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let method = "put";
+
+        let body = {
+            id: this.state.id,
+            refNo: this.state.username,
+            firstName: this.state.first_name,
+            lastName: this.state.last_name,
+            contactNumber: this.state.contact,
+            password: this.state.passwordx===""?null:this.state.passwordx,
+            statusType: this.state.status,
+        }
+
+        axios[method](`http://localhost:8080/v1/user/update`, body, {headers: headers})
+            .then(async response => {
+                if(response.status===200) {
+                    if(response.data.success) {
+                        message.success("Your details updated successfully");
+                        this.setState({
+                            change: false,
+                            password: "",
+                            conform_password: ""
+                        })
+                        this.loadData();
+                    }
+                }
+                this.setState({loading: false});
             }).catch(async error => {
             this.setState({loading: false});
 
@@ -157,28 +256,22 @@ export class Profile extends React.Component {
     render() {
         const avatarSize = 150;
 
-        let email = this.state.info.email;
+        let email = this.state.email;
         if(email.length>20) {
             email = email.substring(0, 20) + "...";
         }
 
         return (
             <>
-                <PageHeaderAlt background="/img/others/img-22.jpg" cssClass="bg-primary" overlap>
-                    <div className="container text-center">
-                        <div className="py-5 my-md-5">
-                        </div>
-                    </div>
-                </PageHeaderAlt>
                 <div className="container my-4">
                     {/*<ProfileInfo avatarSize={avatarSize} info = {this.state.info} />*/}
 
-                    <Card>
+                    <Card style={{border: "1px solid black"}}>
                         <Row justify="center">
-                            <Col sm={24} md={23} lg={23}>
+                            <Col sm={24} md={24} lg={24}>
                                 <div>
-                                    <div className="rounded p-2 bg-white shadow-sm mx-auto" style={{'marginTop': '-3.5rem', 'maxWidth': `${avatarSize + 16}px`}}>
-                                        <Avatar shape="square" size={avatarSize} src="/img/avatars/thumb-16.png" />
+                                    <div className="rounded p-2 bg-white shadow-sm mx-auto" style={{border: "1px solid black", 'marginTop': '-3.5rem', 'maxWidth': `${avatarSize + 16}px`}}>
+                                        <Avatar shape="square" size={avatarSize} src="/img/avatars/user-vector.jpg" />
                                     </div>
 
                                     <Flex alignItems="center"
@@ -186,66 +279,62 @@ export class Profile extends React.Component {
                                           className="mb-5 mt-3 text-center"
                                           justifyContent={'center'}
                                     >
-                                        <h2 className="mb-0 mt-md-0 mt-2">{this.state.info.first_name} {this.state.info.last_name}</h2>
-                                        <div className="ml-md-3 mt-3 mt-md-0">
-                                            {/*<Button size="small" type="primary">Follow</Button>*/}
-                                            <Button size="small" className="ml-2">Edit</Button>
-                                        </div>
+                                        <h2 className="mb-0 mt-md-0 mt-2">{this.state.first_name} {this.state.last_name}</h2>
+                                        {/*<div className="ml-md-3 mt-3 mt-md-0">*/}
+                                        {/*</div>*/}
                                     </Flex>
-
-                                    <div className="ml-md-4 w-100">
-                                        <Row gutter="16"
-                                             style={{justifyContent:'center'}}
-                                        >
-                                            <Col xs={24} sm={24} md={8}>
-                                                <Row className="mb-2">
-                                                    <Col xs={12} sm={12} md={9}>
-                                                        <Icon type={MailOutlined} className="text-primary font-size-md"/>
-                                                        <span className="text-muted ml-2">Email:</span>
-                                                    </Col>
-                                                    <Col xs={12} sm={12} md={15}>
-                                                        <span className="font-weight-semibold">{email}</span>
-                                                    </Col>
-                                                </Row>
-                                                <Row>
-                                                    <Col xs={12} sm={12} md={9}>
-                                                        <Icon type={PhoneOutlined} className="text-primary font-size-md"/>
-                                                        <span className="text-muted ml-2">Phone:</span>
-                                                    </Col>
-                                                    <Col xs={12} sm={12} md={15}>
-                                                        <span className="font-weight-semibold">
-                                                            {
-                                                                (this.state.info.contact==null || this.state.info.contact=='' || this.state.info.contact==undefined)?
-                                                                    ' - ':
-                                                                    this.state.info.contact
-                                                            }
-                                                        </span>
-                                                    </Col>
-                                                </Row>
+                                    <div>
+                                        <Row style={{justifyContent: 'center'}}>
+                                            <Col className={"m-2"} md={11} lg={11} xl={11}>
+                                                <span>First Name</span><span className={'required-text'}>*</span>
+                                                <Input placeholder="First Name" value={this.state.first_name} onChange={this.onChangeFirstName} />
                                             </Col>
-                                            <Col xs={24} sm={24} md={8}>
-                                                <Row className="mb-2 mt-2 mt-md-0 ">
-                                                    <Col xs={12} sm={12} md={9}>
-                                                        <Icon type={UserOutlined} className="text-primary font-size-md"/>
-                                                        <span className="text-muted ml-2">Username:</span>
+                                            <Col className={"m-2"} md={11} lg={11} xl={11}>
+                                                <span>Last Name</span><span className={'required-text'}>*</span>
+                                                <Input placeholder="Last Name" value={this.state.last_name} onChange={this.onChangeLastName} />
+                                            </Col>
+                                        </Row>
+                                        <Row style={{justifyContent: 'center'}}>
+                                            <Col className={"m-2"} md={6} lg={6} xl={6}>
+                                                <span>Ref Name</span><span className={'required-text'}>*</span>
+                                                <Input placeholder="Ref Name" value={this.state.username} disabled={true} onChange={this.onChangeUsername} />
+                                            </Col>
+                                            <Col className={"m-2"} md={16} lg={16} xl={16}>
+                                                <span>Email</span><span className={'required-text'}>*</span>
+                                                <Input type={'email'} placeholder="email" disabled={true} value={this.state.email}/>
+                                            </Col>
+                                        </Row>
+                                        <Row style={{justifyContent: 'center'}}>
+                                            <Col className={"m-2"} md={11} lg={11} xl={11}>
+                                                <span>Mobile</span>
+                                                <Input placeholder="Mobile" value={this.state.contact} onChange={this.onChangeMobile}/>
+                                            </Col>
+                                            <Col className={"m-2"} md={11} lg={11} xl={11}>
+                                                <span>Website</span>
+                                                <Input placeholder="www.example.com" value={this.state.website} onChange={this.onChangeWebsite}/>
+                                            </Col>
+                                        </Row>
+                                        <Row style={{justifyContent: 'center'}}>
+                                            <Col className={"mt-2"} md={22} lg={22} xl={22}>
+                                                <Checkbox onChange={this.onChangePasswordCheckbox}>Change Password</Checkbox>
+                                            </Col>
+                                        </Row>
+                                        {
+                                            this.state.change?
+                                                <Row style={{justifyContent: 'center'}}>
+                                                    <Col className={"m-2"} md={11} lg={11} xl={11}>
+                                                        <span>Password</span>
+                                                        <Input.Password autoComplete="new-password" placeholder={'New Password'} value={this.state.passwordx} onChange={this.onChangePassword} />
                                                     </Col>
-                                                    <Col xs={12} sm={12} md={15}>
-                                                        <span className="font-weight-semibold">{this.state.info.username}</span>
+                                                    <Col className={"m-2"} md={11} lg={11} xl={11}>
+                                                        <span>Conform Password</span> {this.state.password!==""?<span className={'required-text'}>*</span>:null}
+                                                        <Input.Password placeholder={'Conform Password'} value={this.state.conform_password} onChange={this.onChangeConformPassword} />
                                                     </Col>
-                                                </Row>
-                                                <Row className="mb-2">
-                                                    <Col xs={12} sm={12} md={9}>
-                                                        <Icon type={GlobalOutlined} className="text-primary font-size-md"/>
-                                                        <span className="text-muted ml-2">Website:</span>
-                                                    </Col>
-                                                    <Col xs={12} sm={12} md={15}>
-                                                        <span className="font-weight-semibold">{
-                                                            (this.state.info.website==null || this.state.info.website=='' || this.state.info.website==undefined)?
-                                                                ' - ':
-                                                                this.state.info.website
-                                                        }</span>
-                                                    </Col>
-                                                </Row>
+                                                </Row>:null
+                                        }
+                                        <Row style={{justifyContent: 'center'}}>
+                                            <Col className={"text-right"} md={22} lg={22} xl={22}>
+                                                <Button type={'primary'} onClick={this.onUpdate}>Update</Button>
                                             </Col>
                                         </Row>
                                     </div>
@@ -254,18 +343,15 @@ export class Profile extends React.Component {
                         </Row>
                     </Card>
 
-
-
-                    <Row gutter="16">
-                        {/*<Col xs={24} sm={24} md={8}>*/}
-                        {/*    <Connection />*/}
-                        {/*    <Group />*/}
-                        {/*</Col>*/}
-                        {/*<Col xs={24} sm={24} md={16}>*/}
-                        {/*    <Experiences />*/}
-                        {/*    <Interested />*/}
-                        {/*</Col>*/}
-                    </Row>
+                    {
+                        this.state.loading?
+                            <div className="loading-overlay-2">
+                                <div className="bounce-loader">
+                                    <img src={'/img/preloader.gif'} alt=""/>
+                                </div>
+                            </div>
+                            :null
+                    }
                 </div>
             </>
         )

@@ -9,7 +9,10 @@ import {
   BookOutlined,
   BellOutlined,
   ClockCircleOutlined,
-  MailOutlined
+  MailOutlined,
+  UserOutlined,
+  DesktopOutlined,
+  ProfileOutlined
 } from '@ant-design/icons';
 import { APP_PREFIX_PATH } from 'configs/AppConfig'
 
@@ -26,7 +29,7 @@ export const dashBoardNavTree = [
     key: 'project',
     path: `${APP_PREFIX_PATH}/project`,
     title: 'project',
-    icon: DashboardOutlined,
+    icon: ProfileOutlined ,
     breadcrumb: false,
     submenu: []
   },
@@ -34,22 +37,22 @@ export const dashBoardNavTree = [
     key: 'corporate',
     path: `${APP_PREFIX_PATH}/corporate`,
     title: 'corporate',
-    icon: DashboardOutlined,
+    icon: DesktopOutlined ,
     breadcrumb: false,
     submenu: []
   },
-  {
-  key: 'profile',
-  path: `${APP_PREFIX_PATH}/profile`,
-  title: 'profile',
-  icon: DashboardOutlined,
-  breadcrumb: false,
-  submenu: []
-  },
+  // {
+  // key: 'profile',
+  // path: `${APP_PREFIX_PATH}/profile`,
+  // title: 'profile',
+  // icon: UserOutlined ,
+  // breadcrumb: false,
+  // submenu: []
+  // },
   {
     key: 'invitations',
     path: `${APP_PREFIX_PATH}/invitation`,
-    title: 'invitations',
+    title: 'Invitations',
     icon: MailOutlined,
     breadcrumb: false,
     submenu: []

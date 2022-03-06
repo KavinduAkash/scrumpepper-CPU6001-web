@@ -280,7 +280,7 @@ class Corporate extends React.Component{
                 </Col>
                 <Col sm={24} md={12} lg = {6} xl={6}>
                     <Card
-                        style={{ width: 300, marginTop: 16 }}
+                        style={{ width: 600, marginTop: 16 }}
                     >
                         <Skeleton loading={true} avatar active>
                             <Meta
@@ -316,9 +316,10 @@ class Corporate extends React.Component{
                        <div><span>Status: </span>{val.corporate.statusType}</div>
                    </div>
 
-                    let data = <Col sm={24} md={12} lg = {6} xl={6}>
+                    let data = <Col sm={24} md={12} lg = {12} xl={12}>
                         <Card
-                            style={{ width: 300, marginTop: 16 }}
+                            hoverable
+                            style={{ width: 600, marginTop: 16, minHeight:150, border: '1px solid black', cursor: 'pointer' }}
                             onClick={()=>this.onClickCorporateCard(val.corporate.id)}
                         >
                             <Skeleton loading={false} avatar active>
