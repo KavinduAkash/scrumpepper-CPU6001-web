@@ -1,6 +1,6 @@
 import React from "react";
 import {Avatar, Button, Card, Table, Tag, Tooltip} from "antd";
-import { RightCircleOutlined } from '@ant-design/icons';
+import { EyeOutlined  } from '@ant-design/icons';
 
 import './project-set.scss'
 import {withRouter} from "react-router-dom";
@@ -85,7 +85,7 @@ class ProjectSet extends React.Component {
                     {val.role}
                     </Tag>,
                     view: <Tooltip title="View">
-                        <Button shape="circle" icon={<RightCircleOutlined />} onClick={()=>this.move_to_project_view(val.project, this.props.val.corporate.id)} />
+                        <Button type={"text"} style={{color:'#3e79f7'}} onClick={()=>this.move_to_project_view(val.project, this.props.val.corporate.id)}><EyeOutlined /></Button>
                     </Tooltip>
                 }
 

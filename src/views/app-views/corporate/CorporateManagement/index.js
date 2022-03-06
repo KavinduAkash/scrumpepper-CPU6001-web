@@ -14,7 +14,7 @@ import {
     Form,
     Upload, Image, Select, message, Tag
 } from "antd";
-import { UserOutlined, AppleOutlined, PlusOutlined } from '@ant-design/icons';
+import { UserOutlined, AppleOutlined, PlusOutlined, HomeOutlined, TeamOutlined, ProfileOutlined } from '@ant-design/icons';
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import * as corporate_actions from "../../../../redux/actions/Corporate";
@@ -38,12 +38,6 @@ const columns = [
         dataIndex: 'name',
         key: 'name',
         width: '50%',
-    },
-    {
-        title: 'Team',
-        dataIndex: 'team',
-        key: 'team',
-        width: '30%',
     },
     {
         title: 'Created Date',
@@ -512,12 +506,12 @@ class CorporateManagementView extends React.Component {
         let projects = [];
         this.state.projects.map(val => {
             let project = val.project;
-            let projectMember = val.projectMember;
+            let createdDate = project.createdDate;
+            createdDate = createdDate.split("T")[0];
             let obj = {
                key: project.id,
                name: project.projectName,
-               team: projectMember.size,
-               date: project.createdDate,
+               date: createdDate,
            }
             projects.push(obj);
         });
@@ -544,11 +538,8 @@ class CorporateManagementView extends React.Component {
             );
         }
 
-        console.log("VVVVVVVVV: ", this.state.temporary_selected_employees_list);
-
             let temporary_selected_employees_list = [];
             this.state.temporary_selected_employees_list.map((val, index) => {
-                console.log("hhhhhhhhhhhhhhhhhhhhh: ", this.state.temporary_selected_employees_list);
                 let obj = {
                     key: index,
                     name: val.member.user.firstName + " " + val.member.user.lastName,
@@ -562,9 +553,6 @@ class CorporateManagementView extends React.Component {
                 }
                 temporary_selected_employees_list.push(obj);
             });
-
-        console.log("-------------------------------");
-        console.log(mapped_corporate_employee_results);
 
 
 
@@ -693,7 +681,7 @@ class CorporateManagementView extends React.Component {
 
                  {/*tab 1*/}
                  <TabPane
-                     tab={<span><AppleOutlined />Home</span>}
+                     tab={<span><HomeOutlined />Home</span>}
                      key="1"
                  >
 
@@ -758,35 +746,6 @@ class CorporateManagementView extends React.Component {
                                  </Row>
                              </Card>
                          </Col>
-
-                         <Col sm={24} md={24} lg={24} xl={24}>
-                             <h4>Members</h4>
-                         </Col>
-                         <Col sm={24} md={24} lg={24} xl={24}>
-                             <Card
-                                 style={{ width: '100%' }}
-                             >
-                                 <Row>
-                                     <Col sm={20} md={20} lg={20} xl={20}>
-                                         <Avatar.Group maxCount={5} maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}>
-                                             {
-                                                 employees
-                                             }
-                                         </Avatar.Group>
-                                     </Col>
-                                     <Col sm={4} md={4} lg={4} xl={4}>
-                                         <Button
-                                             type="primary"
-                                             size={''}
-                                             className={'sp-main-btn'}
-                                             // onClick={this.openCorporateCreateModal}
-                                         >
-                                             Manage Members
-                                         </Button>
-                                     </Col>
-                                 </Row>
-                             </Card>
-                         </Col>
                      </Row>
 
 
@@ -794,7 +753,7 @@ class CorporateManagementView extends React.Component {
 
                  {/*tab 2*/}
                  <TabPane
-                     tab={<span><AppleOutlined />Members</span>}
+                     tab={<span><TeamOutlined  />Members</span>}
                      key="2"
                  >
                      <Row>
@@ -827,7 +786,7 @@ class CorporateManagementView extends React.Component {
 
                  {/*tab 3*/}
                  <TabPane
-                     tab={<span><AppleOutlined />
+                     tab={<span><ProfileOutlined  />
                      {
                          this.state.access_type=="CORPORATE_SUPER" || this.state.access_type=="CORPORATE_ADMIN" ? "Corporate Projects" : "My Projects"
                      }
