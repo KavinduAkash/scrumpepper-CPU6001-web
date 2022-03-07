@@ -19,6 +19,7 @@ import * as spinner_actions from "../../../../redux/actions/Spinner";
 import * as navigation_actions from "../../../../redux/actions/Navigation";
 import * as project_actions from "../../../../redux/actions/Project";
 import {connect} from "react-redux";
+import * as BaseUrl from "../../../../server/base_urls";
 
 // ChartJS.register(
 //     CategoryScale,
@@ -106,7 +107,7 @@ class ProjectReportsVelocity extends React.Component {
         };
         let request_body = {}
         let method = "get";
-        axios[method](`http://localhost:8080/v1/project-report/sprint-velocity/${projectId}`, request_body, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}project-report/sprint-velocity/${projectId}`, request_body, {headers: headers})
             .then(async response => {
                 if(response.data.success) {
                     this.setState({velocity: response.data.body});

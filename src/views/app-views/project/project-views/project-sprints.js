@@ -148,7 +148,7 @@ class ProjectSprints extends React.Component {
 
             let method = "post";
 
-            axios[method](`http://localhost:8080/v1/user-story?id=${0}`, request_body, {headers: headers})
+            axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user-story?id=${0}`, request_body, {headers: headers})
                 .then(async response => {
 
                     if(response.data.success) {
@@ -193,7 +193,7 @@ class ProjectSprints extends React.Component {
 
             let method = "post";
 
-            axios[method](`http://localhost:8080/v1/user-story?id=${0}`, request_body, {headers: headers})
+            axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user-story?id=${0}`, request_body, {headers: headers})
                 .then(async response => {
 
                     if(response.data.success) {

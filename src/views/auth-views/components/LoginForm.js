@@ -18,6 +18,7 @@ import { motion } from "framer-motion"
 import axios from "axios";
 import Cookies from 'js-cookie';
 import {withRouter} from "react-router-dom";
+import * as BaseUrl  from '../../../server/base_urls';
 
 class LoginForm extends React.Component{
 	state = {
@@ -48,7 +49,7 @@ class LoginForm extends React.Component{
 		formData.append('username',this.state.username);
 		formData.append('password',this.state.password);
 
-		axios[method](`http://localhost:8080/v1/authorize`, method !== 'get'? formData : {headers: headers}, {headers: headers})
+		axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}authorize`, method !== 'get'? formData : {headers: headers}, {headers: headers})
 			.then(async response => {
 
 				let user = response.data.user;

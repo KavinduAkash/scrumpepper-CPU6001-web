@@ -10,6 +10,7 @@ import * as project_actions from "../../../../redux/actions/Project";
 import * as document_actions from "../../../../redux/actions/Documents";
 import * as poker_actions from "../../../../redux/actions/Poker";
 import {connect} from "react-redux";
+import * as BaseUrl from "../../../../server/base_urls";
 
 const dataSource = [
     {
@@ -77,7 +78,7 @@ class ProjectTeams extends React.Component {
             'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
         };
         let method = "get";
-        axios[method](`http://localhost:8080/v1/project-member/get-team?id=${this.props.projectReducer.project.id}`, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}project-member/get-team?id=${this.props.projectReducer.project.id}`, {headers: headers})
             .then(async response => {
                 if(response.data.success) {
                     this.setState({team: response.data.body});
@@ -114,7 +115,7 @@ class ProjectTeams extends React.Component {
         let req_obj = {
         };
 
-        axios.post(`http://localhost:8080/v1/user/search?keyword=${value}&corporate=${this.props.corporateReducer.corporate_id}&project=${this.props.projectReducer.project.id}`, req_obj, {headers})
+        axios.post(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user/search?keyword=${value}&corporate=${this.props.corporateReducer.corporate_id}&project=${this.props.projectReducer.project.id}`, req_obj, {headers})
             .then(res => {
                 console.log(res.data);
                 if(res.data.success) {

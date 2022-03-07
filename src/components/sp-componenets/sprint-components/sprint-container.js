@@ -8,6 +8,8 @@ import SprintEditModal from "./sprint-edit-modal";
 import Cookies from "js-cookie";
 import axios from "axios";
 import * as Swal from "sweetalert2";
+import * as BaseUrl from "../../../server/base_urls";
+
 const { SubMenu } = Menu;
 const { Option } = Select;
 const menu = (
@@ -188,7 +190,7 @@ class SprintContainer extends React.Component {
         };
         let request_body = {}
         let method = "patch";
-        axios[method](`http://localhost:8080/v1/sprint/start?id=${this.props.sprint.id}`, request_body, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}sprint/start?id=${this.props.sprint.id}`, request_body, {headers: headers})
             .then(async response => {
                 if(response.data.success) {
                     this.props.loadSprints();
@@ -225,7 +227,7 @@ class SprintContainer extends React.Component {
             status: e
         }
         let method = "patch";
-        axios[method](`http://localhost:8080/v1/user-story`, request_body, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user-story`, request_body, {headers: headers})
             .then(async response => {
                 if(response.data.success) {
                     this.props.loadSprints();

@@ -25,6 +25,8 @@ import Flex from 'components/shared-components/Flex'
 import Cookies from "js-cookie";
 import axios from "axios";
 import Loading from "../../../../components/shared-components/Loading";
+import * as BaseUrl from "../../../../server/base_urls";
+
 const { Meta } = Card;
 
 const size = 'small';
@@ -190,7 +192,7 @@ class CorporateManagementView extends React.Component {
             corporateId: this.props.corporateReducer.corporate_id
         };
 
-        axios.post('http://localhost:8080/v1/corporate/corporates-details', req_obj, {headers})
+        axios.post(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}corporate/corporates-details`, req_obj, {headers})
             .then(res => {
                 console.log(res.data);
                 if(res.data.success) {
@@ -267,7 +269,7 @@ class CorporateManagementView extends React.Component {
             search: value
         };
 
-        axios.post('http://localhost:8080/v1/corporate/employee/search', req_obj, {headers})
+        axios.post(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}corporate/employee/search`, req_obj, {headers})
             .then(res => {
                 console.log(res.data);
                 this.setState({corporate_employee_results:res.data.body})
@@ -296,7 +298,7 @@ class CorporateManagementView extends React.Component {
         let req_obj = {
         };
 
-        axios.post(`http://localhost:8080/v1/user/search?keyword=${value}&corporate=${this.props.corporateReducer.corporate_id}&project=${0}`, req_obj, {headers})
+        axios.post(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user/search?keyword=${value}&corporate=${this.props.corporateReducer.corporate_id}&project=${0}`, req_obj, {headers})
             .then(res => {
                 console.log(res.data);
                 if(res.data.success) {
@@ -324,7 +326,7 @@ class CorporateManagementView extends React.Component {
             'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
         };
 
-        axios.post(`http://localhost:8080/v1/corporate/employee/create`, val, {headers})
+        axios.post(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}corporate/employee/create`, val, {headers})
             .then(res => {
                 console.log(res.data);
                 if(res.data.success) {

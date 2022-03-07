@@ -162,7 +162,7 @@ class ProjectReportsBurnup extends React.Component {
         };
         let request_body = {}
         let method = "get";
-        axios[method](`http://localhost:8080/v1/project-report/burnup/${id}`, request_body, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}project-report/burnup/${id}`, request_body, {headers: headers})
             .then(async response => {
                 if(response.data.success) {
                     this.setState({burnUp: response.data.body});

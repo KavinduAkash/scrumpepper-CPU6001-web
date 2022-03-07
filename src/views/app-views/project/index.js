@@ -10,7 +10,6 @@ import * as BaseUrl from '../../../server/base_urls'
 import {connect} from "react-redux";
 import * as actionCreator from '../../../redux/actions/Navigation'
 
-
 class Project extends React.Component {
 
     state = {

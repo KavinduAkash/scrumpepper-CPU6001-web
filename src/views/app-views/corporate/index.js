@@ -22,6 +22,7 @@ import Cookies from "js-cookie";
 import * as corporate_actions from '../../../redux/actions/Corporate';
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
+import * as BaseUrl from "../../../server/base_urls";
 
 const { Meta } = Card;
 
@@ -102,7 +103,7 @@ class Corporate extends React.Component{
             'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
         };
 
-        axios.get('http://localhost:8080/v1/corporate/my-corporates', {headers})
+        axios.get(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}corporate/my-corporates`, {headers})
             .then(res => {
                 console.log(res.data);
                 this.setState({my_corporates: res.data.body});
@@ -164,7 +165,7 @@ class Corporate extends React.Component{
             },
         };
 
-        axios.post('http://localhost:8080/v1/corporate/A2b4-8a486269971ed2326920', data, config)
+        axios.post(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}corporate/A2b4-8a486269971ed2326920`, data, config)
             .then(res => {
                 console.log(res.data.url);
                 console.log(res)
@@ -204,7 +205,7 @@ class Corporate extends React.Component{
 
         let method = "post";
 
-        axios[method](`http://localhost:8080/v1/corporate/create`, request_body, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}corporate/create`, request_body, {headers: headers})
             .then(async response => {
 
                 if(response.data.success) {
@@ -245,9 +246,7 @@ class Corporate extends React.Component{
 
 
     onClickCorporateCard = value => {
-        console.log("XXXXXXXXXXXXXXXXXXX");
         let corporateHandler = this.props.corporateHandler(value);
-        console.log("XXXXXXXXXXXXXXXXXXX ", corporateHandler);
         this.moveToCorporateMange();
     };
 

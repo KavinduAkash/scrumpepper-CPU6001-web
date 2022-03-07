@@ -14,6 +14,7 @@ import {
 import {withRouter} from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
+import * as BaseUrl from "../../../server/base_urls";
 
 const Experiences = () => (
     <Card title="Experiences">
@@ -125,7 +126,7 @@ export class Profile extends React.Component {
 
         let method = "get";
 
-        axios[method](`http://localhost:8080/v1/user/details`, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user/details`, {headers: headers})
             .then(async response => {
 
                 console.log(response);
@@ -227,7 +228,7 @@ export class Profile extends React.Component {
             statusType: this.state.status,
         }
 
-        axios[method](`http://localhost:8080/v1/user/update`, body, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user/update`, body, {headers: headers})
             .then(async response => {
                 if(response.status===200) {
                     if(response.data.success) {

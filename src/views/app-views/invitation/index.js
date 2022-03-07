@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Table, Tag} from "antd";
 import Cookies from "js-cookie";
 import axios from "axios";
-
+import * as BaseUrl from "../../../server/base_urls";
 
 const dataSource = [
     {
@@ -60,7 +60,7 @@ class Invitation extends React.Component {
 
         let method = "get";
 
-        axios[method](`http://localhost:8080/v1/corporate/employee/invitations`, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}corporate/employee/invitations`, {headers: headers})
             .then(async response => {
                 console.log(response);
                 if(response.data.success) {
@@ -97,7 +97,7 @@ class Invitation extends React.Component {
             invitationStatus: value.status
         }
 
-        axios[method](`http://localhost:8080/v1/corporate/employee/approve`, body, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}corporate/employee/approve`, body, {headers: headers})
             .then(async response => {
                 console.log(response);
                 if(response.data.success) {

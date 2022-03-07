@@ -8,6 +8,7 @@ import { motion } from "framer-motion"
 import axios from "axios";
 import Cookies from "js-cookie";
 import { notification } from 'antd';
+import * as BaseUrl from '../../../server/base_urls';
 
 const rules = {
 	user_name: [
@@ -87,7 +88,7 @@ export const RegisterForm = (props) => {
 
 			let method = "post";
 
-			axios[method](`http://localhost:8080/v1/user/register`, request_body, {headers: headers})
+			axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user/register`, request_body, {headers: headers})
 				.then(async response => {
 
 					// let user = response.data.user;
