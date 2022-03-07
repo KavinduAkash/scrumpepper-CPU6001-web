@@ -629,11 +629,6 @@ class CorporateManagementView extends React.Component {
                          </Row>
                      </Form>
                  </div>
-
-
-
-
-
              </Modal>
 
 
@@ -768,16 +763,6 @@ class CorporateManagementView extends React.Component {
                                      Add Corporate Employee
                                  </Button>
                              </Col>
-                         <Col sm={24} md={24} lg={24} xl={24} className={'text-center'}>
-                             <AutoComplete
-                                 dropdownClassName="certain-category-search-dropdown"
-                                 dropdownMatchSelectWidth={500}
-                                 style={{ minWidth: '80%' }}
-                                 options={options}
-                             >
-                                 <Input.Search size="large" placeholder="input here" />
-                             </AutoComplete>
-                         </Col>
                          <Col sm={24} md={24} lg={24} xl={24} className={'text-center w-100 mt-5'}>
                                      <Table dataSource={employee_list} columns={this.state.access_type=="CORPORATE_SUPER" || this.state.access_type=="CORPORATE_ADMIN"?member_columns_admin:member_columns_employee}/>
                          </Col>
