@@ -1,6 +1,6 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
-import {Table} from "antd";
+import {AutoComplete, Button, Input, Modal, Table, Tag} from "antd";
 import Cookies from "js-cookie";
 import axios from "axios";
 import * as Swal from "sweetalert2";
@@ -39,10 +39,27 @@ const columns = [
     },
 ];
 
+const addProjectMembersColumns = [
+    {
+        title: 'User',
+        dataIndex: 'user',
+        key: 'user',
+        width: '80%',
+    },
+    {
+        title: '',
+        dataIndex: 'action',
+        key: 'action',
+        width: '20%',
+    }
+];
+
 class ProjectTeams extends React.Component {
 
     state = {
-        team: []
+        team: [],
+        addProjectMembers: false,
+        add_corporate_employee_options: []
     }
 
     componentDidMount() {
@@ -75,6 +92,49 @@ class ProjectTeams extends React.Component {
         });
     }
 
+    onSearchUsers = e => {
+        let value  = e.target.value;
+        this._onSearchUsers(value);
+    };
+
+    _onSearchUsers = value => {
+        let res = [];
+
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let req_obj = {
+        };
+
+        axios.post(`http://localhost:8080/v1/user/search?keyword=${value}&corporate=${this.props.corporateReducer.corporate_id}&project=${this.props.projectReducer.project.id}`, req_obj, {headers})
+            .then(res => {
+                console.log(res.data);
+                if(res.data.success) {
+                    this.setState({
+                        add_corporate_employee_options: res.data.body
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            });
+    }
+
+    addProjectMemberModalVisibility = e => {
+        this.setState({addProjectMembers: e});
+        if(e) {
+            this._onSearchUsers("");
+        }
+    }
+
     render() {
 
         let managerTeam = [];
@@ -91,9 +151,67 @@ class ProjectTeams extends React.Component {
             }
         });
 
+
+        let list_add_employee_options = [];
+        if(this.state.add_corporate_employee_options!=null && this.state.add_corporate_employee_options!="" && this.state.add_corporate_employee_options!= undefined) {
+            this.state.add_corporate_employee_options.map((result, index)=>{
+                let obj = {
+                    key: index,
+                    user: <div>
+                        <div>{`${result.firstName} ${result.lastName}`}</div>
+                        <div><span>{`${result.refNo}`}</span>{`${" | "}`}<span>{`${result.email}`}</span></div>
+                    </div>,
+                    action: (result.yourCorporate)? <Tag color="purple">Member</Tag>
+                        :
+                        <Button
+                            type="primary"
+                            onClick={()=>this.sendInvitations({
+                                userId: result.id,
+                                corporateId: this.props.corporateReducer.corporate_id,
+                                email: result.email,
+                                accessType: 'CORPORATE_EMPLOYEE'
+                            })}
+                        >
+                            Add
+                        </Button>
+                };
+                list_add_employee_options.push(obj);
+            })
+        }
+
+
+
+
+
         return(
             <div>
+
+                <Modal
+                    title={`Add Corporate Employee`}
+                    centered
+                    visible={this.state.addProjectMembers}
+                    onCancel={() => this.addProjectMemberModalVisibility(false)}
+                    width={600}
+                    footer={null}
+                >
+                    <div className={'text-center'}>
+                        <AutoComplete
+                            dropdownClassName="certain-category-search-dropdown"
+                            dropdownMatchSelectWidth={500}
+                            style={{ minWidth: '80%' }}
+                        >
+                            <Input.Search size="large" placeholder="input here" onChange={this.onSearchUsers}/>
+                        </AutoComplete>
+
+                        <Table dataSource={list_add_employee_options} columns={addProjectMembersColumns}/>
+                    </div>
+                </Modal>
+
                 <h3>Team</h3>
+                <br/>
+                <div>
+                    <Button onClick={()=>this.addProjectMemberModalVisibility(true)}>Add Member</Button>
+                </div>
                 <div>
                     <div>
                         <h5>Managers</h5>

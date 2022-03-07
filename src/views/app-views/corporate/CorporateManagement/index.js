@@ -654,12 +654,7 @@ class CorporateManagementView extends React.Component {
                         </AutoComplete>
 
                         <Table dataSource={list_add_employee_options} columns={add_new_corporate_employee_columns}/>
-
-
                     </div>
-
-
-
              </Modal>
 
 
