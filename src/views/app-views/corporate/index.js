@@ -12,9 +12,9 @@ import {
     Form,
     message,
     Upload,
-    notification
+    notification, Tag
 } from 'antd';
-import { EditOutlined, EllipsisOutlined, SettingOutlined, LoadingOutlined } from '@ant-design/icons';
+import { EditOutlined, EllipsisOutlined, SettingOutlined, LoadingOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
 import '../../../assets/less/custom-styles/sp-button.scss'
 import axios from "axios";
@@ -311,23 +311,19 @@ class Corporate extends React.Component{
                 show_skeleton = false;
                this.state.my_corporates.map(val => {
                    let x = <div>
-                       <div><span>Your Role: </span>{val.corporateAccessType}</div>
-                       <div><span>Status: </span>{val.corporate.statusType}</div>
+                       <div><Tag color={'geekblue'} key={val.corporate.id}>{val.corporateAccessType}</Tag><Tag icon={<CheckCircleOutlined />} color="success">{val.corporate.statusType}</Tag></div>
                    </div>
 
-                    let data = <Col sm={24} md={12} lg = {12} xl={12}>
+                    let data = <Col sm={24} md={8} lg = {8} xl={8}>
                         <Card
                             hoverable
-                            style={{ width: 600, marginTop: 16, minHeight:150, border: '1px solid black', cursor: 'pointer' }}
+                            style={{ width: 350, marginTop: 16, minHeight:100, border: '1px solid black', cursor: 'pointer' }}
                             onClick={()=>this.onClickCorporateCard(val.corporate.id)}
                         >
-                            <Skeleton loading={false} avatar active>
-                                <Meta
-                                    avatar={<Avatar src={val.corporate.corporateLogo} />}
-                                    title={val.corporate.name}
-                                    description={x}
-                                />
-                            </Skeleton>
+                            <Meta
+                                title={val.corporate.name}
+                                description={x}
+                            />
 
                         </Card>
                     </Col>;
