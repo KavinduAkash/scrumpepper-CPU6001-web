@@ -1,6 +1,6 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
-import {AutoComplete, Button, Input, Modal, Table, Tag} from "antd";
+import {AutoComplete, Button, Input, message, Modal, Table, Tag} from "antd";
 import Cookies from "js-cookie";
 import axios from "axios";
 import * as Swal from "sweetalert2";
@@ -11,6 +11,7 @@ import * as document_actions from "../../../../redux/actions/Documents";
 import * as poker_actions from "../../../../redux/actions/Poker";
 import {connect} from "react-redux";
 import * as BaseUrl from "../../../../server/base_urls";
+import { UserOutlined, AppleOutlined, PlusOutlined, HomeOutlined, TeamOutlined, ProfileOutlined } from '@ant-design/icons';
 
 const dataSource = [
     {
@@ -136,6 +137,41 @@ class ProjectTeams extends React.Component {
         }
     }
 
+    addTeamMember = e => {
+        let res = [];
+
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let req_obj = {
+            projectId: this.props.projectReducer.project.id,
+            corporateEmployeeId: e.userId,
+            scrumRole: "TEAM_MEMBER"
+        };
+
+        axios.patch(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}project-member/add/user`, req_obj, {headers})
+            .then(res => {
+                console.log(res.data);
+                if(res.data.success) {
+                    this.setState({addProjectMembers: false});
+                    message.success('Project member added successfully');
+                    this.getTeam();
+                }
+            })
+            .catch(err => {
+                message.error('Something went wrong');
+                console.log(err)
+            });
+    }
+
     render() {
 
         let managerTeam = [];
@@ -166,7 +202,7 @@ class ProjectTeams extends React.Component {
                         :
                         <Button
                             type="primary"
-                            onClick={()=>this.sendInvitations({
+                            onClick={()=>this.addTeamMember({
                                 userId: result.id,
                                 corporateId: this.props.corporateReducer.corporate_id,
                                 email: result.email,
@@ -188,7 +224,7 @@ class ProjectTeams extends React.Component {
             <div>
 
                 <Modal
-                    title={`Add Corporate Employee`}
+                    title={`Add Project Member`}
                     centered
                     visible={this.state.addProjectMembers}
                     onCancel={() => this.addProjectMemberModalVisibility(false)}
@@ -210,8 +246,11 @@ class ProjectTeams extends React.Component {
 
                 <h3>Team</h3>
                 <br/>
-                <div>
-                    <Button onClick={()=>this.addProjectMemberModalVisibility(true)}>Add Member</Button>
+                <div style={{textAlign: 'right'}}>
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={()=>this.addProjectMemberModalVisibility(true)}>Add Member</Button>
                 </div>
                 <div>
                     <div>

@@ -33,7 +33,7 @@ const RegisterTwo = props => {
 					<div className="d-flex flex-column justify-content-between h-100 px-4" style={backgroundStyle}>
 						<div className="text-right">
 							{/*<img src="/img/logo-white.png" alt="logo"/>*/}
-							<img src="/img/scrumpepper-logo-dark.png" alt="logo"/>
+							<img src="/img/sp-logo1.png" alt="logo"/>
 						</div>
 						<Row justify="center">
 							<Col xs={0} sm={0} md={0} lg={20}>

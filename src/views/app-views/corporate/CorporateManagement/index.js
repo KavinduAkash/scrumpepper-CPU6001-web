@@ -34,6 +34,38 @@ const size = 'small';
 const { TabPane } = Tabs;
 const { Option } = AutoComplete;
 
+const rules = {
+    corporate_name: [
+        {
+            required: true,
+            message: 'Please input corporate name'
+        }
+    ],
+    address: [
+        {
+            required: true,
+            message: 'Please input address'
+        }
+    ],
+    contact_number_1: [
+        {
+            required: true,
+            message: 'Please input contact number 1'
+        }
+    ],
+    email: [
+        {
+            required: true,
+            message: 'Please input corporate email address'
+        },
+        {
+            type: 'email',
+            message: 'Please enter a validate email!'
+        }
+    ],
+}
+
+
 const columns = [
     {
         title: 'Project Name',
@@ -169,6 +201,14 @@ class CorporateManagementView extends React.Component {
         temporary_selected_employees_list_x: [],
         project_name: '',
 
+        // create a corporate
+        name: '',
+        address: '',
+        contactNumber1: '',
+        contactNumber2: '',
+        email: '',
+        corporate_long: null,
+
     };
 
 
@@ -205,7 +245,12 @@ class CorporateManagementView extends React.Component {
                         corporate:corporate,
                         access_type:accessType,
                         employee_list:employeeList,
-                        projects:projects
+                        projects:projects,
+                        name: corporate.name,
+                        address: corporate.address,
+                        contactNumber1: corporate.contactNumber1,
+                        contactNumber2: corporate.contactNumber2,
+                        email: corporate.email,
                     })
                 }
             })
@@ -492,14 +537,16 @@ class CorporateManagementView extends React.Component {
                 name: val.user.firstName + " " + val.user.lastName,
                 email: val.user.email,
                 role: val.corporateAccessType,
-                action:  <div>
+                action:  (this.state.access_type==="CORPORATE_SUPER" || this.state.access_type==="CORPORATE_ADMIN")?<div>
                     <Button type="text" primary style={{color:'#3e79f7'}}>
                         Update
                     </Button>
                     <Button type="text" danger>
                         Remove
                     </Button>
-                </div>
+                </div>:<Button type="text" primary style={{color:'#3e79f7'}}>
+                    View
+                </Button>
             }
             employee_list.push(obj);
             employees.push(<Avatar style={{ backgroundColor: '#f56a00' }}>{val.user.firstName.charAt(0)}</Avatar>);
@@ -678,67 +725,193 @@ class CorporateManagementView extends React.Component {
                  >
 
 
-                     <Row>
-                         <Col sm={24} md={24} lg={24} xl={24}>
-                             <h4>Corporate</h4>
-                         </Col>
-                         <Col sm={24} md={24} lg={24} xl={24}>
-                             <Card
-                                 style={{ width: '100%' }}
-                             >
-                                 <Row>
-                                     <Col sm={24} md={24} lg={4} xl={4} className={'text-center w-100'}>
-                                         {
-                                             (this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?
-                                                 <Avatar size={100} src={this.state.corporate.corporateLogo} />:
-                                                 <Avatar size={100} icon={<UserOutlined />} />
-                                         }
+                     {/*<Row>*/}
+                     {/*    <Col sm={24} md={24} lg={24} xl={24}>*/}
+                     {/*        <h4>Corporate</h4>*/}
+                     {/*    </Col>*/}
+                     {/*    <Col sm={24} md={24} lg={24} xl={24}>*/}
+                     {/*        <Card*/}
+                     {/*            style={{ width: '100%' }}*/}
+                     {/*        >*/}
+                     {/*            <Row>*/}
+                     {/*                <Col sm={24} md={24} lg={4} xl={4} className={'text-center w-100'}>*/}
+                     {/*                    {*/}
+                     {/*                        (this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?*/}
+                     {/*                            <Avatar size={100} src={this.state.corporate.corporateLogo} />:*/}
+                     {/*                            <Avatar size={100} icon={<UserOutlined />} />*/}
+                     {/*                    }*/}
+                     {/*                </Col>*/}
+                     {/*                <Col sm={24} md={24} lg={20} xl={20}>*/}
+                     {/*                    <Row className={'ww'}>*/}
+                     {/*                        <Col sm={24} md={24} lg={24} xl={24}>*/}
+                     {/*                            <Flex alignItems="center"*/}
+                     {/*                                  mobileFlex={true}*/}
+                     {/*                                  className="mb-3 text-center"*/}
+                     {/*                            >*/}
+                     {/*                                <h2>*/}
+                     {/*                                    {(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.name:null}*/}
+                     {/*                                </h2>*/}
+                     {/*                                <Button size="small" className="ml-2">Edit</Button>*/}
+                     {/*                            </Flex>*/}
+                     {/*                        </Col>*/}
+                     {/*                    </Row>*/}
+                     {/*                    <Row>*/}
+                     {/*                        <Col sm={24} md={24} lg={12} xl={12}>*/}
+                     {/*                            <table className={'info-tbl'}>*/}
+                     {/*                                <tr>*/}
+                     {/*                                    <td className={'topic'}>Email</td>*/}
+                     {/*                                    <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.email:null}</td>*/}
+                     {/*                                </tr>*/}
+                     {/*                                <tr>*/}
+                     {/*                                    <td className={'topic'}>Address</td>*/}
+                     {/*                                    <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.address:null}</td>*/}
+                     {/*                                </tr>*/}
+                     {/*                            </table>*/}
+                     {/*                        </Col>*/}
+                     {/*                        <Col sm={24} md={24} lg={12} xl={12}>*/}
+                     {/*                            <table className={'info-tbl'}>*/}
+                     {/*                                <tr>*/}
+                     {/*                                    <td className={'topic'}>Contact 1</td>*/}
+                     {/*                                    <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.contactNumber1:null}</td>*/}
+                     {/*                                </tr>*/}
+                     {/*                                <tr>*/}
+                     {/*                                    <td className={'topic'}>Contact 2</td>*/}
+                     {/*                                    <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.contactNumber2:" - "}</td>*/}
+                     {/*                                </tr>*/}
+                     {/*                            </table>*/}
+                     {/*                        </Col>*/}
+                     {/*                    </Row>*/}
+                     {/*                </Col>*/}
+                     {/*            </Row>*/}
+                     {/*        </Card>*/}
+                     {/*    </Col>*/}
+                     {/*</Row>*/}
+
+
+
+
+
+
+
+
+                     {/*--------------------------------------------------------------------------------------------------------*/}
+
+                     <Form layout="vertical"
+                           // onFinish={this.handleSubmitCreateCorporate}
+                     >
+
+                         {/*<Row>*/}
+                         {/*    <Col sm={24} md={24} lg={24} xl={24}>*/}
+                         {/*        <Upload*/}
+                         {/*            name="avatar"*/}
+                         {/*            listType="picture-card"*/}
+                         {/*            className="avatar-uploader"*/}
+                         {/*            showUploadList={false}*/}
+                         {/*            customRequest={this.avatarUpload}*/}
+                         {/*            beforeUpload={this.beforeUpload}*/}
+                         {/*            onChange={this.handleChange}*/}
+                         {/*        >*/}
+                         {/*            {this.state.imageUrl ? <img src={this.state.imageUrl} alt="avatar" style={{ width: '100%' }} /> : "sss"}*/}
+                         {/*        </Upload>*/}
+                         {/*    </Col>*/}
+                         {/*</Row>*/}
+
+                         <Row>
+                             <Col sm={24} md={24} lg={24} xl={24}>
+                                 <Form.Item
+                                     name="corporate_name"
+                                     label="Corporate Name"
+                                     rules={rules.corporate_name}
+                                     hasFeedback
+                                 >
+                                     <Input placeholder={'Corporate Name'} value={this.state.name!=""?this.state.name:""} onChange={this.onChangeCorporateName} />
+                                 </Form.Item>
+                             </Col>
+                         </Row>
+
+                         <Row>
+                             <Col sm={24} md={24} lg={24} xl={24}>
+                                 <Form.Item
+                                     name="address"
+                                     label="Corporate Address"
+                                     rules={rules.address}
+                                     hasFeedback
+                                 >
+                                     <Input.TextArea placeholder={'Corporate Address'} value={this.state.address} onChange={this.onChangeCorporateAddress} />
+                                 </Form.Item>
+                             </Col>
+                         </Row>
+
+                         <Row>
+                             <Col sm={24} md={24} lg={24} xl={24}>
+                                 <Form.Item
+                                     name="email"
+                                     label="Corporate Email"
+                                     rules={rules.email}
+                                     hasFeedback
+                                 >
+                                     <Input placeholder={'Corporate Email'} value={this.state.email} onChange={this.onChangeCorporateEmail} />
+                                 </Form.Item>
+                             </Col>
+                         </Row>
+
+                         <Row>
+                             <Col sm={24} md={11} lg={11} xl={11}>
+                                 <Form.Item
+                                     name="contact_number_1"
+                                     label="Contact Number 1"
+                                     rules={rules.contact_number_1}
+                                     hasFeedback
+                                 >
+                                     <Input placeholder={'Corporate Contact Number 1'} value={this.state.contactNumber1} onChange={this.onChangeCorporateContact1} />
+                                 </Form.Item>
+                             </Col>
+                             <Col md={1} lg={1} xl={1}></Col>
+                             <Col sm={24} md={11} lg={11} xl={11}>
+                                 <Form.Item
+                                     name="contact_number_2"
+                                     label="Contact Number 2"
+                                     // rules={rules.contact_number_2}
+                                     hasFeedback
+                                 >
+                                     <Input placeholder={'Corporate Contact Number 2'} value={this.state.contactNumber2} onChange={this.onChangeCorporateContact2} />
+                                 </Form.Item>
+                             </Col>
+                         </Row>
+
+                         <Row>
+                             <Col sm={24} md={24} lg={24} xl={24}>
+                                 <Form.Item>
+                                     <Col sm={24} md={24} lg = {24} xl={24} className={'text-right'}>
+                                         <Button
+                                             type="primary"
+                                             size={size}
+                                             className={'sp-main-btn'}
+                                             loading={this.state.loading_button}
+                                             // onClick={this.handleSubmitCreateCorporate}
+                                             htmlType={"submit"}
+                                         >
+                                             Create the corporate
+                                         </Button>
                                      </Col>
-                                     <Col sm={24} md={24} lg={20} xl={20}>
-                                         <Row className={'ww'}>
-                                             <Col sm={24} md={24} lg={24} xl={24}>
-                                                 <Flex alignItems="center"
-                                                       mobileFlex={true}
-                                                       className="mb-3 text-center"
-                                                 >
-                                                     <h2>
-                                                         {(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.name:null}
-                                                     </h2>
-                                                     <Button size="small" className="ml-2">Edit</Button>
-                                                 </Flex>
-                                             </Col>
-                                         </Row>
-                                         <Row>
-                                             <Col sm={24} md={24} lg={12} xl={12}>
-                                                 <table className={'info-tbl'}>
-                                                     <tr>
-                                                         <td className={'topic'}>Email</td>
-                                                         <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.email:null}</td>
-                                                     </tr>
-                                                     <tr>
-                                                         <td className={'topic'}>Address</td>
-                                                         <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.address:null}</td>
-                                                     </tr>
-                                                 </table>
-                                             </Col>
-                                             <Col sm={24} md={24} lg={12} xl={12}>
-                                                 <table className={'info-tbl'}>
-                                                     <tr>
-                                                         <td className={'topic'}>Contact 1</td>
-                                                         <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.contactNumber1:null}</td>
-                                                     </tr>
-                                                     <tr>
-                                                         <td className={'topic'}>Contact 2</td>
-                                                         <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.contactNumber2:" - "}</td>
-                                                     </tr>
-                                                 </table>
-                                             </Col>
-                                         </Row>
-                                     </Col>
-                                 </Row>
-                             </Card>
-                         </Col>
-                     </Row>
+                                 </Form.Item>
+                             </Col>
+                         </Row>
+
+                     </Form>
+
+                     {/*--------------------------------------------------------------------------------------------------------*/}
+
+
+
+
+
+
+
+
+
+
+
 
 
                  </TabPane>
@@ -749,17 +922,21 @@ class CorporateManagementView extends React.Component {
                      key="2"
                  >
                      <Row>
-                             <Col sm={24} md={24} lg = {24} xl={24} className={'text-right'}>
-                                 <Button
-                                     type="primary"
-                                     icon={<PlusOutlined />}
-                                     size={size}
-                                     className={'sp-main-btn'}
-                                     onClick={()=>this.addCorporateEmployeeModalVisibility(true)}
-                                 >
-                                     Add Corporate Employee
-                                 </Button>
-                             </Col>
+
+                         {
+                             (this.state.access_type==="CORPORATE_SUPER" || this.state.access_type==="CORPORATE_ADMIN")?
+                                 <Col sm={24} md={24} lg = {24} xl={24} className={'text-right'}>
+                                     <Button
+                                         type="primary"
+                                         icon={<PlusOutlined />}
+                                         size={size}
+                                         className={'sp-main-btn'}
+                                         onClick={()=>this.addCorporateEmployeeModalVisibility(true)}
+                                     >
+                                         Add Corporate Member
+                                     </Button>
+                                 </Col>:null
+                         }
                          <Col sm={24} md={24} lg={24} xl={24} className={'text-center w-100 mt-5'}>
                                      <Table dataSource={employee_list} columns={this.state.access_type=="CORPORATE_SUPER" || this.state.access_type=="CORPORATE_ADMIN"?member_columns_admin:member_columns_employee}/>
                          </Col>
@@ -776,17 +953,20 @@ class CorporateManagementView extends React.Component {
                      key="3"
                  >
                      <Row>
-                         <Col sm={24} md={24} lg = {24} xl={24} className={'text-right'}>
-                             <Button
-                                 type="primary"
-                                 icon={<PlusOutlined />}
-                                 size={size}
-                                 className={'sp-main-btn'}
-                                 onClick={()=>this.setCreateProjectModalVisibility(true)}
-                             >
-                                 Create a Project
-                             </Button>
-                         </Col>
+                         {
+                             (this.state.access_type==="CORPORATE_SUPER" || this.state.access_type==="CORPORATE_ADMIN")?
+                                 <Col sm={24} md={24} lg = {24} xl={24} className={'text-right'}>
+                                     <Button
+                                         type="primary"
+                                         icon={<PlusOutlined />}
+                                         size={size}
+                                         className={'sp-main-btn'}
+                                         onClick={()=>this.setCreateProjectModalVisibility(true)}
+                                     >
+                                         Create a Project
+                                     </Button>
+                                 </Col>:null
+                         }
                      </Row>
                      <Row>
                          <Col sm={24} md={24} lg={24} xl={24} className={'text-center mt-5'}>

@@ -163,7 +163,6 @@ class ProjectReportsVelocity extends React.Component {
 
         return(
             <div>
-                this is project reports
                 <div>
                     <h3>Sprint Velocity</h3>
                     {
