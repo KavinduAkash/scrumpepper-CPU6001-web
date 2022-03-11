@@ -5,7 +5,8 @@ import { useSelector } from 'react-redux';
 import {Logo} from "../../../../components/layout-components/Logo";
 
 const backgroundStyle = {
-	backgroundImage: 'url(/img/others/img-17.jpg)',
+	// backgroundImage: 'url(/img/others/img-17.jpg)',
+	backgroundImage: 'url(/img/others/login-bg-1.png)',
 	backgroundRepeat: 'no-repeat',
 	backgroundSize: 'cover'
 }

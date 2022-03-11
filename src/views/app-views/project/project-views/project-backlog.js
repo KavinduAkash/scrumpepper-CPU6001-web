@@ -127,7 +127,6 @@ class ProjectBacklog extends React.Component {
 
         return(
             <div>
-                {this.props.projectReducer.id}
                 <div>
                     <h3>Backlog</h3>
                 </div>

@@ -142,6 +142,7 @@ class LoginForm extends React.Component{
 					</Form.Item>
 					<Form.Item
 						name="password"
+						label="Password"
 						// label={
 							// <div
 							// 	className={`${showForgetPassword ? 'd-flex justify-content-between w-100 align-items-center' : ''}`}>
