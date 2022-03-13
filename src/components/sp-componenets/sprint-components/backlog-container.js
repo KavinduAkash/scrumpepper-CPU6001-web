@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Col, Dropdown, Menu, Row, Select, Table, Tag, Tooltip} from "antd";
+import {Button, Checkbox, Col, Dropdown, Menu, Row, Select, Table, Tag, Tooltip} from "antd";
 import './sprint-container.scss'
 import { MinusCircleOutlined, WarningOutlined, NodeIndexOutlined, ArrowRightOutlined, DeleteOutlined, EyeOutlined, UnorderedListOutlined, EditOutlined, EllipsisOutlined, CheckCircleOutlined, SyncOutlined, ClockCircleOutlined, MenuOutlined, SelectOutlined, AlertOutlined, PlusOutlined, CaretRightOutlined } from '@ant-design/icons';
 import {SortableContainer, SortableElement, SortableHandle} from "react-sortable-hoc";
@@ -116,6 +116,13 @@ class BacklogContainer extends React.Component {
             }
         ],
         toggle: true,
+        show_all_stories: false
+    }
+
+    changeShowAllStories = e => {
+        this.setState({
+            show_all_stories: e.target.checked,
+        })
     }
 
 // Table ---------------------------------------------------------------------------------------------------------------
@@ -177,7 +184,7 @@ class BacklogContainer extends React.Component {
         let dataSource = [];
         if(userStories!=null & userStories!='' & userStories!=undefined) {
             userStories.map((r, i)=>{
-                story_count = story_count + 1;
+
                 let isOtherSprints = (r.otherSprints!=null & r.otherSprints!='' & r.otherSprints!=undefined)?r.otherSprints.length>0?true:false:false;
 
                 let menu = (
@@ -244,7 +251,15 @@ class BacklogContainer extends React.Component {
                         </Dropdown>,
                     index: 0
                 }
-                dataSource.push(obj);
+                if(!this.state.show_all_stories) {
+                    if(r.sprint==null) {
+                        story_count = story_count + 1;
+                        dataSource.push(obj);
+                    }
+                } else {
+                    story_count = story_count + 1;
+                    dataSource.push(obj);
+                }
             })
         }
 
@@ -265,6 +280,15 @@ class BacklogContainer extends React.Component {
                                 <span className={'title'}>{`${'Backlog'}`}</span>
                             </Col>
                             <Col xs={12} sm={12} md={12} lg={12} xl={12} className={'section2'}>
+                                <span>
+                                    <Checkbox
+                                        checked={this.state.show_all_stories}
+                                        disabled={false}
+                                        onChange={this.changeShowAllStories}
+                                    >
+                                        {'All stories'}
+                                   </Checkbox>
+                                </span>
                                 <span><Tag icon={<UnorderedListOutlined />} color="default">{`${story_count}`}</Tag></span>
                             </Col>
                         </Row>
