@@ -4,7 +4,7 @@ import { APP_NAME } from 'configs/AppConfig';
 export default function Footer() {
 	return (
 		<footer className="footer">
-			<span>Copyright  &copy;  {`${new Date().getFullYear()}`} <span className="font-weight-semibold">{`${APP_NAME}`}</span> All rights reserved.</span>
+			<span>Copyright  &copy;  {`${new Date().getFullYear()}`} <span className="font-weight-semibold">{`Scrum Pepper By Kavindu Akash`}</span> All rights reserved.</span>
 		</footer>
 	)
 }

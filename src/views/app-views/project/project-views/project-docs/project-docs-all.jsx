@@ -10,6 +10,7 @@ import {connect} from "react-redux";
 import Cookies from "js-cookie";
 import axios from "axios";
 import * as BaseUrl from "../../../../../server/base_urls";
+import { PlusOutlined } from '@ant-design/icons';
 
 const columns = [
     {
@@ -124,7 +125,7 @@ class ProjectDocsAll extends React.Component {
                 <div></div>
                 <br/>
                 <div style={{textAlign: 'right'}}>
-                    <Button type="primary" onClick={()=>this.openCreateNewDoc(true)}>New Document</Button>
+                    <Button type="primary" onClick={()=>this.openCreateNewDoc(true)}><PlusOutlined />New Document</Button>
                 </div>
                 <br/>
                 <div>

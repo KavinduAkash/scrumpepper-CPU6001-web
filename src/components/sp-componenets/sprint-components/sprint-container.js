@@ -323,7 +323,7 @@ class SprintContainer extends React.Component {
             dataSource.push(obj);
             if(r.statusType=='TODO') {todo = todo + 1}
             if(r.statusType=='PROCESSING') {process = process + 1}
-            if(r.statusType=='DONE') {done = done + 1}
+            if(r.statusType=='COMPLETED') {done = done + 1}
         })
 
         return (

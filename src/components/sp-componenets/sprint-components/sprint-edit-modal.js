@@ -203,7 +203,7 @@ class SprintEditModal extends React.Component {
 
         return(
             <Modal
-                title="Basic Modal"
+                title={ type=='CREATE'?"Create a sprint": "Update the sprint"}
                 visible={this.props.isEditVisible}
                 onCancel={this.onClose}
                 footer={false}
@@ -252,7 +252,7 @@ class SprintEditModal extends React.Component {
                     <Form.Item className={'text-right'}>
                         {
                             type=='CREATE'?
-                                <Button type="primary" onClick={this.createSprint}>Submit</Button>
+                                <Button type="primary" onClick={this.createSprint}>Create</Button>
                                 :
                                 <Button type="primary" onClick={this.updateSprint}>Update</Button>
                         }

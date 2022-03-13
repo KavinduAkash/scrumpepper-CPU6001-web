@@ -303,17 +303,12 @@ class ProjectSppPokerPlay extends React.Component {
                         {
                             cards
                         }
-                        
-                        {/*<span className={"poker-card"}>1</span>*/}
-                        {/*<span className={"poker-card select-poker-card"}>2</span>*/}
-                        {/*<span className={"poker-card"}>3</span>*/}
-                        {/*<span className={"poker-card"}>5</span>*/}
-                        {/*<span className={"poker-card"}>8</span>*/}
+
                     </div>
                     
                     
                     
-                    <div className={'vote-display'}>
+                    <div className={'vote-display text-center'}>
                         <div className={'vote-display-row'}>
                             <span className={'item'}>
                                 <span className={'card'}>1</span>
@@ -347,7 +342,7 @@ class ProjectSppPokerPlay extends React.Component {
                                 <Button type={'primary'}>Retry</Button>
                             </span>
                         </div>
-                        <div className={'vote-display-tbl'}>
+                        <div className={'vote-display-tbl text-center'} style={{margin: "auto"}}>
                             <Table dataSource={result_options} columns={columns} />
                         </div>
 m

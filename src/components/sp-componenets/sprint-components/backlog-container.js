@@ -115,7 +115,7 @@ class BacklogContainer extends React.Component {
                 index: 1
             }
         ],
-        toggle: true
+        toggle: true,
     }
 
 // Table ---------------------------------------------------------------------------------------------------------------
@@ -172,12 +172,12 @@ class BacklogContainer extends React.Component {
 
 
 
-
+        let story_count = 0;
         let userStories = this.props.user_stories;
         let dataSource = [];
         if(userStories!=null & userStories!='' & userStories!=undefined) {
             userStories.map((r, i)=>{
-
+                story_count = story_count + 1;
                 let isOtherSprints = (r.otherSprints!=null & r.otherSprints!='' & r.otherSprints!=undefined)?r.otherSprints.length>0?true:false:false;
 
                 let menu = (
@@ -265,7 +265,7 @@ class BacklogContainer extends React.Component {
                                 <span className={'title'}>{`${'Backlog'}`}</span>
                             </Col>
                             <Col xs={12} sm={12} md={12} lg={12} xl={12} className={'section2'}>
-                                <span><Tag icon={<UnorderedListOutlined />} color="default">{`${0}`}</Tag></span>
+                                <span><Tag icon={<UnorderedListOutlined />} color="default">{`${story_count}`}</Tag></span>
                             </Col>
                         </Row>
                     </div>

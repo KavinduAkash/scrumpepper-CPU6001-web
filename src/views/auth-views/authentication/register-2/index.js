@@ -38,8 +38,8 @@ const RegisterTwo = props => {
 						<Row justify="center">
 							<Col xs={0} sm={0} md={0} lg={20}>
 								<img className="img-fluid mb-5" src="/img/others/img-19.png" alt=""/>
-								<h1 className="text-white">Welcome to emilus</h1>
-								<p className="text-white">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper nisl erat, vel convallis elit fermentum pellentesque.</p>
+								<h1 className="text-white">Welcome to Scrum Pepper</h1>
+								{/*<p className="text-white">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper nisl erat, vel convallis elit fermentum pellentesque.</p>*/}
 							</Col>
 						</Row>
 						<div className="d-flex justify-content-end pb-4">

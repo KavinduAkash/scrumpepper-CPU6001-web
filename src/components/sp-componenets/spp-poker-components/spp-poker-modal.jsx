@@ -146,7 +146,7 @@ class SppPokerModal extends React.Component{
 
         return(
             <Modal
-                title="Basic Modal"
+                title="Create New Poker Room"
                 visible={this.props.isEditVisible}
                 onCancel={this.onClose}
                 footer={false}
@@ -159,7 +159,7 @@ class SppPokerModal extends React.Component{
                         <Form.Item
                             label="Note"
                         >
-                            <Input.TextArea placeholder="input placeholder" value={this.state.goal} onChange={this.onChangeDescription} />
+                            <Input.TextArea placeholder="Note of the room" value={this.state.goal} onChange={this.onChangeDescription} />
                         </Form.Item>
 
                         <Form.Item

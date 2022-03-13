@@ -12,6 +12,7 @@ import * as project_actions from "../../../../../redux/actions/Project";
 import * as document_actions from "../../../../../redux/actions/Documents";
 import * as poker_actions from "../../../../../redux/actions/Poker";
 import {connect} from "react-redux";
+import { PlusOutlined } from '@ant-design/icons';
 
 const columns = [
     {
@@ -138,8 +139,6 @@ class ProjectSppPokerAll extends React.Component {
         })
         return(
             <div>
-                <div style={{fontWeight: 'bold'}}>All Poker Rooms</div>
-                <br/>
                 <h3>SPP Poker</h3>
                 {
                     this.state.isEdit?
@@ -147,7 +146,7 @@ class ProjectSppPokerAll extends React.Component {
                     : null
                 }
                 <div style={{textAlign: 'right'}}>
-                    <Button type="primary" onClick={()=>this.handle_modal(null, true)}>New Room</Button>
+                    <Button type="primary" onClick={()=>this.handle_modal(null, true)}><PlusOutlined />New Room</Button>
                 </div>
                 <br/>
                 <div>

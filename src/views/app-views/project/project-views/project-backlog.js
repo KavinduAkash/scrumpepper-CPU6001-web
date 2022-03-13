@@ -20,7 +20,8 @@ class ProjectBacklog extends React.Component {
       user_stories: [],
       sprints: [],
       selected_user_story: null,
-      isEdit: false
+      isEdit: false,
+      story_count: 0
     };
 
     componentDidMount() {
@@ -49,6 +50,7 @@ class ProjectBacklog extends React.Component {
                 if(response.data.success) {
                     this.setState({user_stories: []})
                     this.setState({user_stories: response.data.body})
+                    this.setState({story_count: response.data.body.length})
                 }
 
             }).catch(async error => {
