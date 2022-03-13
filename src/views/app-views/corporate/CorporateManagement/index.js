@@ -17,14 +17,11 @@ import {
 import { UserOutlined, AppleOutlined, PlusOutlined, HomeOutlined, TeamOutlined, ProfileOutlined } from '@ant-design/icons';
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
-import * as corporate_actions from "../../../../redux/actions/Corporate";
 import * as spinner_actions from "../../../../redux/actions/Spinner";
 import '../../../../assets/less/custom-styles/common.scss'
 import './corporatae-manage.scss'
-import Flex from 'components/shared-components/Flex'
 import Cookies from "js-cookie";
 import axios from "axios";
-import Loading from "../../../../components/shared-components/Loading";
 import * as BaseUrl from "../../../../server/base_urls";
 
 const { Meta } = Card;
@@ -65,7 +62,6 @@ const rules = {
     ],
 }
 
-
 const columns = [
     {
         title: 'Project Name',
@@ -80,7 +76,6 @@ const columns = [
         width: '20%',
     }
 ];
-
 
 const member_columns_admin = [
     {
@@ -163,7 +158,6 @@ const create_project_columns_employee = [
     }
 ];
 
-
 const add_new_corporate_employee_columns = [
     {
         title: 'User',
@@ -178,6 +172,12 @@ const add_new_corporate_employee_columns = [
         width: '20%',
     }
 ];
+
+const validateEmail = (email) => {
+    return email.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
 
 class CorporateManagementView extends React.Component {
 
@@ -202,21 +202,24 @@ class CorporateManagementView extends React.Component {
         project_name: '',
 
         // create a corporate
+        id: 0,
         name: '',
         address: '',
         contactNumber1: '',
         contactNumber2: '',
         email: '',
         corporate_long: null,
+        status_type: '',
 
     };
-
 
     componentDidMount() {
         this.loadCorporateDetails();
     }
 
     loadCorporateDetails = () => {
+        this.props.handleSpinner(true);
+
         if(Cookies.get('68e78905f4c')=="" ||
             Cookies.get('68e78905f4c')==null ||
             Cookies.get('68e78905f4c')==undefined) {
@@ -246,21 +249,22 @@ class CorporateManagementView extends React.Component {
                         access_type:accessType,
                         employee_list:employeeList,
                         projects:projects,
+                        id: corporate.id,
                         name: corporate.name,
                         address: corporate.address,
                         contactNumber1: corporate.contactNumber1,
                         contactNumber2: corporate.contactNumber2,
                         email: corporate.email,
+                        status_type: corporate.statusType
                     })
                 }
+                this.props.handleSpinner(false);
             })
             .catch(err => {
+                this.props.handleSpinner(false);
                 console.log(err)
             });
     };
-
-
-
 
     renderTitle = (title) => (
         <span>
@@ -275,7 +279,6 @@ class CorporateManagementView extends React.Component {
     </a>
   </span>
     );
-
 
     renderItem = (title, count) => ({
         value: title,
@@ -294,6 +297,53 @@ class CorporateManagementView extends React.Component {
         ),
     });
 
+    updateCorporateDetails = () => {
+        this.state.name===''?message.error('Corporate name can not be empty'):
+            this.state.address===''?message.error('Corporate address can not be empty'):
+                this.state.email===''?message.error('Corporate email can not be empty'):
+                    !validateEmail(this.state.email)?message.error('Invalid corporate email'):
+                        this.state.contactNumber1===''?message.error('Corporate contact 1 can not be empty'):
+                            this.updateCorporateDetails_()
+    }
+
+    updateCorporateDetails_ = () => {
+        this.props.handleSpinner(true);
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let req_obj = {
+            id: this.state.id,
+            name: this.state.name,
+            address: this.state.address,
+            contactNumber1: this.state.contactNumber1,
+            contactNumber2: this.state.contactNumber1,
+            email: this.state.email,
+            corporateLogo: null,
+            statusType: this.state.status_type,
+        };
+
+        axios.put(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}corporate/update`, req_obj, {headers})
+            .then(res => {
+                console.log(res.data);
+                if(res.data.success) {
+                    message.success("Corporate's details updated successfully");
+                    this.loadCorporateDetails();
+                }
+                this.props.handleSpinner(false);
+            })
+            .catch(err => {
+                this.props.handleSpinner(false);
+                console.log(err)
+            });
+    }
 
     onSearchCorporateEmployees = value => {
         let res = [];
@@ -398,7 +448,6 @@ class CorporateManagementView extends React.Component {
     addCorporateEmployeeModalVisibility = value => {
         this.setState({add_corporate_employee_modal: value});
     };
-
 
     onSelectNewCorporateEmployeeToAdd = employee => {
         this.setState({temporary_selected_employee: employee});
@@ -525,9 +574,7 @@ class CorporateManagementView extends React.Component {
                 list_add_employee_options.push(obj);
             })
         }
-        let options = [
-
-        ];
+        let options = [];
 
         let employees = [];
         let employee_list = [];
@@ -565,8 +612,6 @@ class CorporateManagementView extends React.Component {
             projects.push(obj);
         });
 
-
-
         let mapped_corporate_employee_results = [];
         if(this.state.corporate_employee_results!=null && this.state.corporate_employee_results!="" && this.state.corporate_employee_results!=undefined) {
             this.state.corporate_employee_results.map((val) => {
@@ -587,8 +632,8 @@ class CorporateManagementView extends React.Component {
             );
         }
 
-            let temporary_selected_employees_list = [];
-            this.state.temporary_selected_employees_list.map((val, index) => {
+        let temporary_selected_employees_list = [];
+        this.state.temporary_selected_employees_list.map((val, index) => {
                 let obj = {
                     key: index,
                     name: val.member.user.firstName + " " + val.member.user.lastName,
@@ -603,9 +648,14 @@ class CorporateManagementView extends React.Component {
                 temporary_selected_employees_list.push(obj);
             });
 
+        let corporate_name = this.state.name;
+        let corporate_address = this.state.address;
+        let corporate_email =  this.state.email;
+        let corporate_contact_1 = this.state.contactNumber1;
+        let corporate_contact_2 = this.state.contactNumber2;
+        console.log("corporate_contact_2: ", corporate_contact_2);
 
-
-
+        let is_admin_editable = (this.state.access_type==="CORPORATE_SUPER" || this.state.access_type==="CORPORATE_ADMIN");
 
         return (
          <>
@@ -681,10 +731,6 @@ class CorporateManagementView extends React.Component {
              </Modal>
 
 
-
-
-
-
              <Modal
                  title={`Add Corporate Employee`}
                  centered
@@ -706,217 +752,197 @@ class CorporateManagementView extends React.Component {
                     </div>
              </Modal>
 
-
-
-
-
-
-
-
-
              <div className={'page-margin-handler'}>
+
+                 <div className={'text-right'}>
+                    <span style={{fontWeight: 'bold'}}>Your Role: </span><Tag color={'geekblue'} key={ this.state.access_type }>{ this.state.access_type }</Tag>
+                 </div>
 
              <Tabs defaultActiveKey="1">
 
-                 {/*tab 1*/}
+{/*=================tab 1============================================================================================*/}
                  <TabPane
                      tab={<span><HomeOutlined />Home</span>}
                      key="1"
                  >
 
+                     {
+                         is_admin_editable?
+                             <Form layout="vertical"
+                                   className={'mt-3'}
+                             >
 
-                     {/*<Row>*/}
-                     {/*    <Col sm={24} md={24} lg={24} xl={24}>*/}
-                     {/*        <h4>Corporate</h4>*/}
-                     {/*    </Col>*/}
-                     {/*    <Col sm={24} md={24} lg={24} xl={24}>*/}
-                     {/*        <Card*/}
-                     {/*            style={{ width: '100%' }}*/}
-                     {/*        >*/}
-                     {/*            <Row>*/}
-                     {/*                <Col sm={24} md={24} lg={4} xl={4} className={'text-center w-100'}>*/}
-                     {/*                    {*/}
-                     {/*                        (this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?*/}
-                     {/*                            <Avatar size={100} src={this.state.corporate.corporateLogo} />:*/}
-                     {/*                            <Avatar size={100} icon={<UserOutlined />} />*/}
-                     {/*                    }*/}
-                     {/*                </Col>*/}
-                     {/*                <Col sm={24} md={24} lg={20} xl={20}>*/}
-                     {/*                    <Row className={'ww'}>*/}
-                     {/*                        <Col sm={24} md={24} lg={24} xl={24}>*/}
-                     {/*                            <Flex alignItems="center"*/}
-                     {/*                                  mobileFlex={true}*/}
-                     {/*                                  className="mb-3 text-center"*/}
-                     {/*                            >*/}
-                     {/*                                <h2>*/}
-                     {/*                                    {(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.name:null}*/}
-                     {/*                                </h2>*/}
-                     {/*                                <Button size="small" className="ml-2">Edit</Button>*/}
-                     {/*                            </Flex>*/}
-                     {/*                        </Col>*/}
-                     {/*                    </Row>*/}
-                     {/*                    <Row>*/}
-                     {/*                        <Col sm={24} md={24} lg={12} xl={12}>*/}
-                     {/*                            <table className={'info-tbl'}>*/}
-                     {/*                                <tr>*/}
-                     {/*                                    <td className={'topic'}>Email</td>*/}
-                     {/*                                    <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.email:null}</td>*/}
-                     {/*                                </tr>*/}
-                     {/*                                <tr>*/}
-                     {/*                                    <td className={'topic'}>Address</td>*/}
-                     {/*                                    <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.address:null}</td>*/}
-                     {/*                                </tr>*/}
-                     {/*                            </table>*/}
-                     {/*                        </Col>*/}
-                     {/*                        <Col sm={24} md={24} lg={12} xl={12}>*/}
-                     {/*                            <table className={'info-tbl'}>*/}
-                     {/*                                <tr>*/}
-                     {/*                                    <td className={'topic'}>Contact 1</td>*/}
-                     {/*                                    <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.contactNumber1:null}</td>*/}
-                     {/*                                </tr>*/}
-                     {/*                                <tr>*/}
-                     {/*                                    <td className={'topic'}>Contact 2</td>*/}
-                     {/*                                    <td className={'value-gap'}>{(this.state.corporate!=null && this.state.corporate!="" && this.state.corporate!=undefined)?this.state.corporate.contactNumber2:" - "}</td>*/}
-                     {/*                                </tr>*/}
-                     {/*                            </table>*/}
-                     {/*                        </Col>*/}
-                     {/*                    </Row>*/}
-                     {/*                </Col>*/}
-                     {/*            </Row>*/}
-                     {/*        </Card>*/}
-                     {/*    </Col>*/}
-                     {/*</Row>*/}
+                                 {/*<Row>*/}
+                                 {/*    <Col sm={24} md={24} lg={24} xl={24}>*/}
+                                 {/*        <Upload*/}
+                                 {/*            name="avatar"*/}
+                                 {/*            listType="picture-card"*/}
+                                 {/*            className="avatar-uploader"*/}
+                                 {/*            showUploadList={false}*/}
+                                 {/*            customRequest={this.avatarUpload}*/}
+                                 {/*            beforeUpload={this.beforeUpload}*/}
+                                 {/*            onChange={this.handleChange}*/}
+                                 {/*        >*/}
+                                 {/*            {this.state.imageUrl ? <img src={this.state.imageUrl} alt="avatar" style={{ width: '100%' }} /> : "sss"}*/}
+                                 {/*        </Upload>*/}
+                                 {/*    </Col>*/}
+                                 {/*</Row>*/}
 
-
-
-
-
-
-
-
-                     {/*--------------------------------------------------------------------------------------------------------*/}
-
-                     <Form layout="vertical"
-                           // onFinish={this.handleSubmitCreateCorporate}
-                     >
-
-                         {/*<Row>*/}
-                         {/*    <Col sm={24} md={24} lg={24} xl={24}>*/}
-                         {/*        <Upload*/}
-                         {/*            name="avatar"*/}
-                         {/*            listType="picture-card"*/}
-                         {/*            className="avatar-uploader"*/}
-                         {/*            showUploadList={false}*/}
-                         {/*            customRequest={this.avatarUpload}*/}
-                         {/*            beforeUpload={this.beforeUpload}*/}
-                         {/*            onChange={this.handleChange}*/}
-                         {/*        >*/}
-                         {/*            {this.state.imageUrl ? <img src={this.state.imageUrl} alt="avatar" style={{ width: '100%' }} /> : "sss"}*/}
-                         {/*        </Upload>*/}
-                         {/*    </Col>*/}
-                         {/*</Row>*/}
-
-                         <Row>
-                             <Col sm={24} md={24} lg={24} xl={24}>
-                                 <Form.Item
-                                     name="corporate_name"
-                                     label="Corporate Name"
-                                     rules={rules.corporate_name}
-                                     hasFeedback
-                                 >
-                                     <Input placeholder={'Corporate Name'} value={this.state.name!=""?this.state.name:""} onChange={this.onChangeCorporateName} />
-                                 </Form.Item>
-                             </Col>
-                         </Row>
-
-                         <Row>
-                             <Col sm={24} md={24} lg={24} xl={24}>
-                                 <Form.Item
-                                     name="address"
-                                     label="Corporate Address"
-                                     rules={rules.address}
-                                     hasFeedback
-                                 >
-                                     <Input.TextArea placeholder={'Corporate Address'} value={this.state.address} onChange={this.onChangeCorporateAddress} />
-                                 </Form.Item>
-                             </Col>
-                         </Row>
-
-                         <Row>
-                             <Col sm={24} md={24} lg={24} xl={24}>
-                                 <Form.Item
-                                     name="email"
-                                     label="Corporate Email"
-                                     rules={rules.email}
-                                     hasFeedback
-                                 >
-                                     <Input placeholder={'Corporate Email'} value={this.state.email} onChange={this.onChangeCorporateEmail} />
-                                 </Form.Item>
-                             </Col>
-                         </Row>
-
-                         <Row>
-                             <Col sm={24} md={11} lg={11} xl={11}>
-                                 <Form.Item
-                                     name="contact_number_1"
-                                     label="Contact Number 1"
-                                     rules={rules.contact_number_1}
-                                     hasFeedback
-                                 >
-                                     <Input placeholder={'Corporate Contact Number 1'} value={this.state.contactNumber1} onChange={this.onChangeCorporateContact1} />
-                                 </Form.Item>
-                             </Col>
-                             <Col md={1} lg={1} xl={1}></Col>
-                             <Col sm={24} md={11} lg={11} xl={11}>
-                                 <Form.Item
-                                     name="contact_number_2"
-                                     label="Contact Number 2"
-                                     // rules={rules.contact_number_2}
-                                     hasFeedback
-                                 >
-                                     <Input placeholder={'Corporate Contact Number 2'} value={this.state.contactNumber2} onChange={this.onChangeCorporateContact2} />
-                                 </Form.Item>
-                             </Col>
-                         </Row>
-
-                         <Row>
-                             <Col sm={24} md={24} lg={24} xl={24}>
-                                 <Form.Item>
-                                     <Col sm={24} md={24} lg = {24} xl={24} className={'text-right'}>
-                                         <Button
-                                             type="primary"
-                                             size={size}
-                                             className={'sp-main-btn'}
-                                             loading={this.state.loading_button}
-                                             // onClick={this.handleSubmitCreateCorporate}
-                                             htmlType={"submit"}
+                                 <Row>
+                                     <Col sm={24} md={24} lg={24} xl={24}>
+                                         <Form.Item
+                                             label="Corporate Name"
+                                             rules={rules.corporate_name}
+                                             hasFeedback
+                                             required={is_admin_editable}
                                          >
-                                             Create the corporate
-                                         </Button>
+                                             <Input placeholder={'Corporate Name'} value={corporate_name} disabled={!is_admin_editable} onChange={this.onChangeCorporateName} />
+                                         </Form.Item>
                                      </Col>
-                                 </Form.Item>
-                             </Col>
-                         </Row>
+                                 </Row>
 
-                     </Form>
+                                 <Row>
+                                     <Col sm={24} md={24} lg={24} xl={24}>
+                                         <Form.Item
+                                             label="Corporate Address"
+                                             rules={rules.address}
+                                             required={is_admin_editable}
+                                             hasFeedback
+                                         >
+                                             <Input.TextArea placeholder={'Corporate Address'} value={corporate_address} disabled={!is_admin_editable} onChange={this.onChangeCorporateAddress} />
+                                         </Form.Item>
+                                     </Col>
+                                 </Row>
 
-                     {/*--------------------------------------------------------------------------------------------------------*/}
+                                 <Row>
+                                     <Col sm={24} md={24} lg={24} xl={24}>
+                                         <Form.Item
+                                             label="Corporate Email"
+                                             rules={rules.email}
+                                             required={is_admin_editable}
+                                             hasFeedback
+                                         >
+                                             <Input placeholder={'Corporate Email'} value={corporate_email} disabled={!is_admin_editable} onChange={this.onChangeCorporateEmail} />
+                                         </Form.Item>
+                                     </Col>
+                                 </Row>
 
+                                 <Row>
+                                     <Col sm={24} md={11} lg={11} xl={11}>
+                                         <Form.Item
+                                             label="Contact Number 1"
+                                             rules={rules.contact_number_1}
+                                             required={is_admin_editable}
+                                             hasFeedback
+                                         >
+                                             <Input placeholder={'Corporate Contact Number 1'} value={corporate_contact_1} disabled={!is_admin_editable} onChange={this.onChangeCorporateContact1} />
+                                         </Form.Item>
+                                     </Col>
+                                     <Col md={1} lg={1} xl={1}></Col>
+                                     <Col sm={24} md={11} lg={11} xl={11}>
+                                         <Form.Item
+                                             label="Contact Number 2"
+                                             // rules={rules.contact_number_2}
+                                             hasFeedback
+                                         >
+                                             <Input placeholder={'Corporate Contact Number 2'} value={corporate_contact_2} disabled={!is_admin_editable} onChange={this.onChangeCorporateContact2} />
+                                         </Form.Item>
+                                     </Col>
+                                 </Row>
+                                 {
+                                     is_admin_editable?
+                                         <Row>
+                                             <Col sm={24} md={24} lg={24} xl={24}>
+                                                 <Form.Item>
+                                                     <Col sm={24} md={24} lg = {24} xl={24} className={'text-right'}>
+                                                         <Button
+                                                             type="primary"
+                                                             size={size}
+                                                             className={'sp-main-btn'}
+                                                             loading={this.state.loading_button}
+                                                             onClick={this.updateCorporateDetails}
+                                                             htmlType={"submit"}
+                                                         >
+                                                             Save Changes
+                                                         </Button>
+                                                     </Col>
+                                                 </Form.Item>
+                                             </Col>
+                                         </Row>
+                                         :
+                                         null
+                                 }
+                             </Form>
+                             :
+                             <Form layout="vertical"
+                                   className={'mt-3'}
+                             >
+                                 <Row>
+                                     <Col sm={24} md={24} lg={24} xl={24}>
+                                         <Form.Item
+                                             label="Corporate Name"
+                                             rules={rules.corporate_name}
+                                             hasFeedback
+                                             required={is_admin_editable}
+                                         >
+                                             <div className={'text-fix-data'}>{ corporate_name }</div>
+                                         </Form.Item>
+                                     </Col>
+                                 </Row>
 
+                                 <Row>
+                                     <Col sm={24} md={24} lg={24} xl={24}>
+                                         <Form.Item
+                                             label="Corporate Address"
+                                             rules={rules.address}
+                                             required={is_admin_editable}
+                                             hasFeedback
+                                         >
+                                             <div className={'text-fix-data'}>{ corporate_address }</div>
+                                         </Form.Item>
+                                     </Col>
+                                 </Row>
 
+                                 <Row>
+                                     <Col sm={24} md={24} lg={24} xl={24}>
+                                         <Form.Item
+                                             label="Corporate Email"
+                                             rules={rules.email}
+                                             required={is_admin_editable}
+                                             hasFeedback
+                                         >
+                                             <div className={'text-fix-data'}>{ corporate_email }</div>
+                                         </Form.Item>
+                                     </Col>
+                                 </Row>
 
-
-
-
-
-
-
-
-
-
+                                 <Row>
+                                     <Col sm={24} md={11} lg={11} xl={11}>
+                                         <Form.Item
+                                             label="Contact Number 1"
+                                             rules={rules.contact_number_1}
+                                             required={is_admin_editable}
+                                             hasFeedback
+                                         >
+                                             <div className={'text-fix-data'}>{ corporate_contact_1 }</div>
+                                         </Form.Item>
+                                     </Col>
+                                     <Col md={1} lg={1} xl={1}></Col>
+                                     <Col sm={24} md={11} lg={11} xl={11}>
+                                         <Form.Item
+                                             label="Contact Number 2"
+                                             // rules={rules.contact_number_2}
+                                             hasFeedback
+                                         >
+                                             <div className={'text-fix-data'}>{ (corporate_contact_2!=null & corporate_contact_2!="")?corporate_contact_2:" - " }</div>
+                                         </Form.Item>
+                                     </Col>
+                                 </Row>
+                             </Form>
+                     }
                  </TabPane>
 
-                 {/*tab 2*/}
+{/*=================tab 2============================================================================================*/}
                  <TabPane
                      tab={<span><TeamOutlined  />Members</span>}
                      key="2"
@@ -943,7 +969,7 @@ class CorporateManagementView extends React.Component {
                      </Row>
                  </TabPane>
 
-                 {/*tab 3*/}
+{/*=================tab 3============================================================================================*/}
                  <TabPane
                      tab={<span><ProfileOutlined  />
                      {
