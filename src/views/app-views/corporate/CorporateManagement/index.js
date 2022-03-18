@@ -23,6 +23,7 @@ import './corporatae-manage.scss'
 import Cookies from "js-cookie";
 import axios from "axios";
 import * as BaseUrl from "../../../../server/base_urls";
+import * as Swal from "sweetalert2";
 
 const { Meta } = Card;
 
@@ -376,7 +377,11 @@ class CorporateManagementView extends React.Component {
     };
 
     onSearchUsers = e => {
-        let value  = e.target.value;
+        let value = e.target.value;
+        this._onSearchUsers(value);
+    }
+
+    _onSearchUsers = value => {
         let res = [];
 
         if(Cookies.get('68e78905f4c')=="" ||
@@ -447,6 +452,7 @@ class CorporateManagementView extends React.Component {
 
     addCorporateEmployeeModalVisibility = value => {
         this.setState({add_corporate_employee_modal: value});
+        this._onSearchUsers("");
     };
 
     onSelectNewCorporateEmployeeToAdd = employee => {
@@ -545,6 +551,35 @@ class CorporateManagementView extends React.Component {
             message.error('Please enter project name');
         }
     };
+
+    removeCorporateMember = (id) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                Swal.fire(
+                    'Cancelled',
+                    'Your imaginary file is safe :)',
+                    'error'
+                )
+            }
+        })
+    }
 
     render() {
 

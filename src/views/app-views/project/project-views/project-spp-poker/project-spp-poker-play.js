@@ -1,7 +1,7 @@
 import React from "react";
 import './poker-styles.scss'
-import {Button, Col, Row, Table} from "antd";
-import { UnorderedListOutlined } from '@ant-design/icons';
+import {AutoComplete, Button, Col, Input, Modal, Row, Table, Tag} from "antd";
+import { UnorderedListOutlined, CheckCircleOutlined, SyncOutlined, SaveOutlined, RedoOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import * as spinner_actions from "../../../../../redux/actions/Spinner";
 import * as navigation_actions from "../../../../../redux/actions/Navigation";
 import * as project_actions from "../../../../../redux/actions/Project";
@@ -20,6 +20,20 @@ const fib = [
     ]
 ]
 var stompClient =null;
+
+const us_columns = [
+    {
+        title: 'User Story',
+        dataIndex: 'user_story',
+        key: 'user_story',
+    },
+    {
+        title: '',
+        dataIndex: 'action',
+        key: 'action',
+    },
+];
+
 const columns = [
     {
         title: 'Name',
@@ -45,14 +59,18 @@ class ProjectSppPokerPlay extends React.Component {
             message: ''
         },
         value: [],
-        selected_value: -1
+        selected_value: -1,
+        openUserStoryModal: false,
+        selected_user_story: 0
     }
 
     componentDidMount() {
         let room = this.props.pokerReducer.room;
         let sprint_id = 0;
-        if(room.sprint!=null) {
-            sprint_id = room.sprint.id;
+        if(room!=null && room!=undefined) {
+            if(room.sprint!=null) {
+                sprint_id = room.sprint.id;
+            }
         }
         let userData1 = this.state.userData;
         let x = {...userData1,"userid": this.props.userReducer.user.id};
@@ -89,7 +107,7 @@ class ProjectSppPokerPlay extends React.Component {
 
                 if(response.data.success) {
 
-                    this.setState({user_stories: response.data.body})
+                    this.setState({user_stories: response.data.body, selected_user_story: response.data.body[0].id})
                     console.log("Room-p: ", response.data.body);
                 }
 
@@ -122,7 +140,7 @@ class ProjectSppPokerPlay extends React.Component {
 
                 if(response.data.success) {
 
-                    this.setState({user_stories: response.data.body});
+                    this.setState({user_stories: response.data.body, selected_user_story: response.data.body[0].id});
                     console.log("Room-s: ", response.data.body);
 
 
@@ -215,11 +233,14 @@ class ProjectSppPokerPlay extends React.Component {
     }
 
     sendPrivateValue=(vote)=>{
+
+        console.log("Selected User Story: ", this.state.selected_user_story);
+
         if (stompClient) {
             var chatMessage = {
                 voter_id: this.state.userData.userid,
                 room_ref: this.state.ref,
-                candidate_id: 1,
+                candidate_id: this.state.selected_user_story,
                 vote: vote
             };
 
@@ -234,7 +255,16 @@ class ProjectSppPokerPlay extends React.Component {
         }
     }
 
+    openUserStoriesModal = e => {
+        this._openUserStoriesModal(e);
+    }
+
+    _openUserStoriesModal = e => {
+        this.setState({openUserStoryModal: e});
+    }
+
 // ---------------------------------------------------------------------------------------------------------------------
+
 
     render() {
 
@@ -246,30 +276,91 @@ class ProjectSppPokerPlay extends React.Component {
         });
 
 
+        let result_count = [];
+
+        fib[0].map((result, index)=>{
+            let obj = {
+                value: result,
+                count: 0
+            }
+            result_count.push(obj);
+        })
+
         let result_options = [];
-        if(this.state.value!=null) {
-            this.state.value.map((result, index)=>{
+        console.log("result_count: ", result_count)
+        if(result_count.length>0) {
+            if(this.state.value!=null) {
+                this.state.value.map((result, index)=>{
+                    let obj = {
+                        key: index,
+                        name: `${result.firstName} ${result.lastName}`,
+                        vote: result.vote
+                    }
+                    let i = result_count.findIndex((obj => obj.value == result.vote));
+                    result_count[i].count = result_count[i].count + 1;
+                    result_options.push(obj);
+                })
+            }
+        }
+
+        let userStories = this.state.user_stories;
+        let ccs = "";
+        let us_list = [];
+        if(userStories!=null & userStories!="" & userStories!=undefined) {
+            ccs = userStories[0].title;
+            userStories.map((result, index)=>{
                 let obj = {
                     key: index,
-                    name: `${result.firstName} ${result.lastName}`,
-                    vote: result.vote
+                    user_story: result.title,
+                    action: <Button type={'text'}>Vote</Button>
                 }
-                result_options.push(obj);
+                us_list.push(obj);
             })
         }
 
 
-        let userStories = this.state.user_stories;
-        let ccs = ""
-        if(userStories!=null & userStories!="" & userStories!=undefined) {
-            ccs = userStories[0].title;
+        let open = this.state.openUserStoryModal;
+        if(this.state.selected_user_story==0) {
+            open = true
         }
 
         return(
             <div>
+
+                <Modal
+                    title={`User Stories`}
+                    centered
+                    visible={open}
+                    onCancel={() => this._openUserStoriesModal(false)}
+                    width={600}
+                    footer={null}
+                >
+                    <div className={'text-center'}>
+                        <Table dataSource={us_list} columns={us_columns}/>
+                    </div>
+                </Modal>
+
                 <div><span>All Poker Rooms</span><span>{`${" > "}`}</span><span style={{fontWeight: 'bold'}}>{this.state.ref}</span></div>
                 <br/>
-                <div>{`Connect: ${this.state.userData.connected}`}</div>
+                <div>
+                    {
+                        this.state.userData.connected?
+                            <Tag icon={<CheckCircleOutlined />} color="success">
+                                Connected
+                            </Tag>
+                            :
+                            <div>
+                                <Tag icon={<SyncOutlined spin />} color="processing">
+                                    Connecting...
+                                </Tag>
+                                <div>
+                                    ( Please wait. Still you are connecting to the SPP Poker Server. )
+                                </div>
+                            </div>
+
+                    }
+
+                </div>
                 {/*<div>{`value: ${this.state.value}`}</div>*/}
                 <br/>
                 <div>
@@ -282,13 +373,14 @@ class ProjectSppPokerPlay extends React.Component {
                         {/*</div>*/}
                         <div className={'user-story-display'}>
                             <div className={'btn-panel'}>
-                                <Button type={'text'}><UnorderedListOutlined /></Button>
+                                <Button type={'text'} onClick={()=>this.openUserStoriesModal(true)}><UnorderedListOutlined /></Button>
                             </div>
                             {/*<div className={'btn-panel-2'}>*/}
                             {/*    <Button type={'primary'}>Start</Button>*/}
                             {/*</div>*/}
-
-                            <div>
+                            <div
+                                style={{textAlign: 'center', fontWeight: 'bolder'}}
+                            >
                                 {
                                     ccs
                                 }
@@ -310,43 +402,28 @@ class ProjectSppPokerPlay extends React.Component {
                     
                     <div className={'vote-display text-center'}>
                         <div className={'vote-display-row'}>
-                            <span className={'item'}>
-                                <span className={'card'}>1</span>
-                                <span>-</span>
-                                <span>2</span>
-                            </span>
-                            <span className={'item'}>
-                                <span className={'card'}>1</span>
-                                <span>-</span>
-                                <span>2</span>
-                            </span>
-                            <span className={'item'}>
-                                <span className={'card'}>1</span>
-                                <span>-</span>
-                                <span>2</span>
-                            </span>
-                            <span className={'item'}>
-                                <span className={'card'}>1</span>
-                                <span>-</span>
-                                <span>2</span>
-                            </span>
-                            <span className={'item'}>
-                                <span className={'card'}>1</span>
-                                <span>-</span>
-                                <span>2</span>
-                            </span>
-                            <span className={'item-2'}>
-                                <Button type={'primary'}>Save</Button>
-                            </span>
-                            <span className={'item-2'}>
-                                <Button type={'primary'}>Retry</Button>
-                            </span>
+                            {
+                                result_count.map((result, index)=>
+                                        <span className={'item'} key={index}>
+                                            <span className={'card'}>{result.value}</span>
+                                            <span>-</span>
+                                            <span>{result.count}</span>
+                                        </span>
+                                )
+                            }
+
+                            <div className={'mt-3'}>
+                                <span className={'item-2'}>
+                                    <Button type={'primary'}><SaveOutlined /> Save</Button>
+                                </span>
+                            </div>
+
                         </div>
                         <div className={'vote-display-tbl text-center'} style={{margin: "auto"}}>
                             <Table dataSource={result_options} columns={columns} />
                         </div>
-m
                     </div>
+
                 </div>
             </div>
         );
