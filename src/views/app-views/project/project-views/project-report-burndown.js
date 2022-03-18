@@ -220,7 +220,6 @@ class ProjectReportsBurndown extends React.Component {
 
         return(
             <div>
-                this is project reports
                 <div>
                     <h3>Burn down</h3>
                     <br/>

@@ -16,6 +16,7 @@ import ProjectTeam from "./project/project-views/project-teams";
 import ProjectNotifications from "./project/project-views/project-notifications";
 import ProjectDocs from "./project/project-views/project-docs";
 import ProjectSettings from "./project/project-views/project-settings";
+import ProjectTeamPerformance from "./project/project-views/project-team-performance";
 
 export const AppViews = () => {
   return (
@@ -36,6 +37,7 @@ export const AppViews = () => {
           <Route path={`${APP_PREFIX_PATH}/project/reports-burnup`} component={ProjectReportsBurnup} />
           <Route path={`${APP_PREFIX_PATH}/project/reports-burndown`} component={ProjectReportsBurndown} />
           <Route path={`${APP_PREFIX_PATH}/project/reports-velocity`} component={ProjectReportsVelocity} />
+          <Route path={`${APP_PREFIX_PATH}/project/team-performance`} component={ProjectTeamPerformance} />
           <Route path={`${APP_PREFIX_PATH}/project/team`} component={ProjectTeam} />
           <Route path={`${APP_PREFIX_PATH}/project/notifications`} component={ProjectNotifications} />
           <Route path={`${APP_PREFIX_PATH}/project/docs`} component={ProjectDocs} />

@@ -136,6 +136,14 @@ export const projectManagementNavTree = [
         icon: AreaChartOutlined,
         breadcrumb: false,
         submenu: []
+      },
+      {
+        key: 'Team Performance',
+        path: `${APP_PREFIX_PATH}/project/team-performance`,
+        title: 'Team Performance',
+        icon: AreaChartOutlined,
+        breadcrumb: false,
+        submenu: []
       }
     ]
   },
