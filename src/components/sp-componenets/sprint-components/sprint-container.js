@@ -9,6 +9,8 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import * as Swal from "sweetalert2";
 import * as BaseUrl from "../../../server/base_urls";
+import * as spinner_actions from "../../../redux/actions/Spinner";
+import {connect} from "react-redux";
 
 const { SubMenu } = Menu;
 const { Option } = Select;
@@ -129,6 +131,10 @@ class SprintContainer extends React.Component {
         toggle: false
     }
 
+    componentDidMount() {
+        console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPP: ", this.props.corporateReducer)
+    }
+
 // Table ---------------------------------------------------------------------------------------------------------------
     DraggableContainer = props => (
         <SortableBody
@@ -210,6 +216,58 @@ class SprintContainer extends React.Component {
             }, 2000);
         });
     }
+// Start sprint --------------------------------------------------------------------------------------------------------
+    endSprint = () => {
+        let isNotComplete = false;
+        this.props.sprint.userStory.map((r, i)=>{
+            if(r.statusType==="TODO" || r.statusType==="PROCESSING") {
+                isNotComplete = true;
+            }
+        })
+        if(isNotComplete) {
+            Swal.fire(
+                '',
+                'Some user stories are not completed yet. Complete them or move to another sprint before end the sprint',
+                'error'
+            )
+        } else {
+            this._endSprint();
+        }
+    }
+
+    _endSprint = () => {
+        this.setState({loading: true});
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+        let request_body = {}
+        let method = "patch";
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}sprint/end?id=${this.props.sprint.id}`, request_body, {headers: headers})
+            .then(async response => {
+                if(response.data.success) {
+                    this.props.loadSprints();
+                    Swal.fire(
+                        'Success',
+                        'Sprint ended successfully!',
+                        'success'
+                    )
+                }
+                this.setState({loading: false});
+            }).catch(async error => {
+            this.setState({loading: false});
+
+            this.setState({showMessage:1});
+            setTimeout(() => {
+                this.setState({showMessage:0});
+            }, 2000);
+        });
+    }
 
     onChangeUserStoryStatus = (e, i) => {
         this.setState({loading: true});
@@ -262,7 +320,7 @@ class SprintContainer extends React.Component {
                     <Menu.Item style={{color:'#1976D2'}} onClick={()=>this.props.openEdit(r, i, this.props.sprint)}><EyeOutlined /> View</Menu.Item>
                     <Menu.ItemGroup title="Move to sprint">
                         {
-                            isOtherSprints?r.otherSprints.map((rx, index)=><Menu.Item key={index} onClick={()=>this.props.move_user_story(r.id, rx.id)}><ArrowRightOutlined />Move to {rx.sprintName}</Menu.Item>):<Tag icon={<MinusCircleOutlined />} color="default">
+                            isOtherSprints?r.otherSprints.map((rx, index)=><Menu.Item key={index} onClick={()=>this.props.move_user_story(r.id, rx.id, this.props.sprint.statusType)}><ArrowRightOutlined />Move to {rx.sprintName}</Menu.Item>):<Tag icon={<MinusCircleOutlined />} color="default">
                                 No Sprints
                             </Tag>
                         }
@@ -344,7 +402,11 @@ class SprintContainer extends React.Component {
                                 {
                                     this.props.sprint.statusType=="TODO"?
                                     <span className={'action-1'}><Button type="primary" size={'small'} onClick={this.startSprint}>Start Sprint</Button></span>:
-                                        this.props.sprint.statusType=="PROCESSING"?"PROCESSING":""
+                                        this.props.sprint.statusType=="PROCESSING"?
+                                            (this.props.myRole==="PRODUCT_OWNER" || this.props.myRole==="SCRUM_MASTER")?
+                                                <Button danger size={'small'} onClick={this.endSprint}>End Sprint</Button>
+                                                :
+                                            <span>PROCESSING</span>:""
                                 }
 
                                 <span className={'action-1'}>
@@ -409,4 +471,17 @@ class SprintContainer extends React.Component {
 
 }
 
-export default SprintContainer;
+const mapStateToProps = (state) => ({
+
+    corporateReducer: state.corporateReducer,
+
+});
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        // corporateHandler: (data) => dispatch(corporate_actions.storeCorporateId(data)),
+        handleSpinner: (data) => dispatch(spinner_actions.handlerSpinner(data))
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SprintContainer);

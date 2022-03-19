@@ -4,13 +4,27 @@ import * as navigation_actions from "../../../../redux/actions/Navigation";
 import * as project_actions from "../../../../redux/actions/Project";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
-import {Collapse, Alert, Select, message} from 'antd';
+import {Collapse, Alert, Select, message, Table} from 'antd';
 import Cookies from "js-cookie";
 import axios from "axios";
 import * as BaseUrl from "../../../../server/base_urls";
 
 const { Panel } = Collapse;
 const { Option } = Select;
+
+const columns = [
+    {
+        title: 'Name',
+        dataIndex: 'name',
+        key: 'name',
+    },
+    {
+        title: 'Responsibility',
+        dataIndex: 'responsibility',
+        key: 'responsibility',
+    },
+];
+
 
 class ProjectTeamPerformance extends React.Component {
 
@@ -104,10 +118,19 @@ class ProjectTeamPerformance extends React.Component {
 
         let member_responsibility = [];
         this.state.member_performance.map((result, index)=>{
+            let us = [];
+            result.userStories.map((r, i)=>{
+                let u = {
+                    key: i,
+                    name: r.userStory.title,
+                    responsibility: `${r.responsibility}%`,
+                }
+                us.push(u);
+            })
             let obj = {
                 name: `${result.projectMember.corporateEmployee.user.firstName} ${result.projectMember.corporateEmployee.user.lastName}`,
                 responsibility: result.responsibility,
-                userStories: []
+                userStories: us
             };
             member_responsibility.push(obj);
         })
@@ -138,6 +161,7 @@ class ProjectTeamPerformance extends React.Component {
                         {
                             member_responsibility.map((result, index)=>
                                 <Panel header={result.name} key={index} extra={<span>{`Max Responsibility: ${result.responsibility}%`}</span>}>
+                                    <Table header={false} pagination={false} dataSource={result.userStories} columns={columns} className={'project-set-tbl'} />
                                 </Panel>
                             )
                         }

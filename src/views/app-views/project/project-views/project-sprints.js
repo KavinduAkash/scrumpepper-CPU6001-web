@@ -23,11 +23,49 @@ class ProjectSprints extends React.Component {
         sprint_list: [],
         loading: false,
         user_story_modal: false,
-        current_sprint: null
+        current_sprint: null,
+        myRole: null
     }
 
     componentDidMount() {
-        this.getAllSprints();
+        this.getMyRole();
+    }
+
+// Scrum Role fetching -------------------------------------------------------------------------------------------------------
+    getMyRole = () => {
+        this.setState({loading: true});
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let method = "get";
+
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}project-member/me?id=${this.props.projectReducer.id}`, {headers: headers})
+            .then(async response => {
+                if(response.status==200) {
+                    if(response.data.success) {
+                        this.setState({
+                            myRole: response.data.body
+                        })
+                        this.getAllSprints();
+                        this.setState({loading: false});
+                    } else {
+                        message.error(response.msg);
+                        this.setState({loading: false});
+                    }
+                }
+            })
+            .catch(async error => {
+                this.setState({loading: false});
+                message.error('Something went wrong!');
+            });
     }
 
 // Data fetching -------------------------------------------------------------------------------------------------------
@@ -85,42 +123,41 @@ class ProjectSprints extends React.Component {
         this.handleModal('UPDATE', true);
     }
 // Move to Sprint ------------------------------------------------------------------------------------------------------
-    move_to_sprint = (userStoryId, sprintId) => {
+    move_to_sprint = (userStoryId, sprintId, status) => {
+            if (Cookies.get('68e78905f4c') == "" ||
+                Cookies.get('68e78905f4c') == null ||
+                Cookies.get('68e78905f4c') == undefined) {
+                this.props.history.push("/auth/login");
+            }
 
-        if(Cookies.get('68e78905f4c')=="" ||
-            Cookies.get('68e78905f4c')==null ||
-            Cookies.get('68e78905f4c')==undefined) {
-            this.props.history.push("/auth/login");
-        }
+            let headers = {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + Cookies.get('68e78905f4c')
+            };
 
-        let headers = {
-            'Content-Type':'application/json',
-            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
-        };
+            let method = "patch";
 
-        let method = "patch";
+            let body = {
+                userStoryId: userStoryId,
+                sprintId: sprintId
+            }
 
-        let body = {
-            userStoryId: userStoryId,
-            sprintId: sprintId
-        }
+            axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user-story/move`, body, {headers: headers})
+                .then(async response => {
 
-        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}user-story/move`, body, {headers: headers})
-            .then(async response => {
+                    if (response.data.success) {
+                        message.success('User story moved to sprint successfully');
+                        this.getAllSprints();
+                    }
 
-                if(response.data.success) {
-                    message.success('User story moved to sprint successfully');
-                    this.getAllSprints();
-                }
+                }).catch(async error => {
+                this.setState({loading: false});
+                this.setState({showMessage: 1});
+                setTimeout(() => {
+                    this.setState({showMessage: 0});
+                }, 2000);
 
-            }).catch(async error => {
-            this.setState({loading: false});
-            this.setState({showMessage:1});
-            setTimeout(() => {
-                this.setState({showMessage:0});
-            }, 2000);
-
-        });
+            });
     };
 
 // Create New User Story -----------------------------------------------------------------------------------------------
@@ -260,7 +297,7 @@ class ProjectSprints extends React.Component {
                 <h3>Sprints</h3>
                 <div>
                     {
-                        this.state.sprint_list.map((r, i)=><SprintContainer sprint={r} key={i} updateSprint={this.openSprintUpdateModal} openEdit={this.openEdit} openNewUserStory={this.onChangeUserStoryModal} move_user_story={this.move_to_sprint} loadSprints={this.getAllSprints} />)
+                        this.state.sprint_list.map((r, i)=><SprintContainer sprint={r} key={i} updateSprint={this.openSprintUpdateModal} openEdit={this.openEdit} openNewUserStory={this.onChangeUserStoryModal} myRole={this.state.myRole} move_user_story={this.move_to_sprint} loadSprints={this.getAllSprints} />)
                     }
                     <div>
                         <Button type="primary" onClick={this.openSprintCreateModal}><PlusOutlined />Create Sprint</Button>
