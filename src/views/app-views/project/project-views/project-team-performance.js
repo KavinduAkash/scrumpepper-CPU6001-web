@@ -130,6 +130,7 @@ class ProjectTeamPerformance extends React.Component {
             let obj = {
                 name: `${result.projectMember.corporateEmployee.user.firstName} ${result.projectMember.corporateEmployee.user.lastName}`,
                 responsibility: result.responsibility,
+                totalResponsibility: result.totalResponsibility,
                 userStories: us
             };
             member_responsibility.push(obj);
@@ -160,7 +161,7 @@ class ProjectTeamPerformance extends React.Component {
                     <Collapse defaultActiveKey={['0']} >
                         {
                             member_responsibility.map((result, index)=>
-                                <Panel header={result.name} key={index} extra={<span>{`Max Responsibility: ${result.responsibility}%`}</span>}>
+                                <Panel header={result.name} key={index} extra={<span>{`Max Responsibility: ${result.totalResponsibility}% - Done: ${result.responsibility}%`}</span>}>
                                     <Table header={false} pagination={false} dataSource={result.userStories} columns={columns} className={'project-set-tbl'} />
                                 </Panel>
                             )
