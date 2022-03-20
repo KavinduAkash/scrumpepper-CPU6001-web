@@ -161,7 +161,7 @@ class ProjectTeamPerformance extends React.Component {
                     <Collapse defaultActiveKey={['0']} >
                         {
                             member_responsibility.map((result, index)=>
-                                <Panel header={result.name} key={index} extra={<span>{`Max Responsibility: ${result.totalResponsibility}% - Done: ${result.responsibility}%`}</span>}>
+                                <Panel header={result.name} key={index} extra={<span><span>{`Max Responsibility: ${result.totalResponsibility}% `}</span> - <span style={{color: 'green'}}>{`Done: ${result.responsibility}%`}</span></span>}>
                                     <Table header={false} pagination={false} dataSource={result.userStories} columns={columns} className={'project-set-tbl'} />
                                 </Panel>
                             )
