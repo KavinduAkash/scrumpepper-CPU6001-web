@@ -212,6 +212,19 @@ class CorporateManagementView extends React.Component {
         corporate_long: null,
         status_type: '',
 
+        // member update
+        u_open: false,
+        u_id: 0,
+        u_first_name: '',
+        u_last_name: '',
+        u_email: '',
+        u_contact: '',
+        u_ref: '',
+        u_created: '',
+        u_accepted: '',
+        u_role: '',
+        u_status: ''
+
     };
 
     componentDidMount() {
@@ -536,10 +549,12 @@ class CorporateManagementView extends React.Component {
                 'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
             };
 
-            axios.post('http://localhost:8080/v1/project/create', req_body, {headers})
+            axios.post(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}project/create`, req_body, {headers})
                 .then(res => {
                     console.log(res.data);
                     this.props.handleSpinner(false);
+                    this.setState({create_project_modal: false});
+                    this.loadCorporateDetails();
                 })
                 .catch(err => {
                     console.log(err)
@@ -581,6 +596,70 @@ class CorporateManagementView extends React.Component {
         })
     }
 
+    update_member = (e, status) => {
+        if(status) {
+            this.setState({
+                u_open: status,
+                u_id: e.id,
+                u_first_name: e.user.firstName,
+                u_last_name: e.user.lastName,
+                u_email: e.user.email,
+                u_contact: e.user.contactNumber?e.user.contactNumber:" - ",
+                u_ref: e.user.refNo,
+                u_created: e.createdDate,
+                u_accepted: e.acceptedDate,
+                u_role: e.corporateAccessType,
+                u_status: e.statusType
+            })
+        } else {
+            this.setState({
+                u_open: false,
+                u_id: 0,
+                u_first_name: '',
+                u_last_name: '',
+                u_email: '',
+                u_contact: '',
+                u_ref: '',
+                u_created: '',
+                u_accepted: '',
+                u_role: '',
+                u_status: ''
+            })
+            this.loadCorporateDetails()
+        }
+    }
+
+    onChange_member_role = e => {
+        this.setState({
+            u_role: e
+        })
+    }
+
+    action_update_member = () => {
+        this.props.handleSpinner(true);
+        let req_body={
+            memberId: this.state.u_id,
+            accessType: this.state.u_role,
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        axios.patch(`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}corporate/employee/update`, req_body, {headers})
+            .then(res => {
+                this.update_member(null, false);
+                message.success("Member updated successfully!");
+                this.props.handleSpinner(false);
+            })
+            .catch(err => {
+                console.log(err)
+                this.props.handleSpinner(false);
+            });
+    };
+
+
     render() {
 
         let list_add_employee_options = [];
@@ -620,7 +699,7 @@ class CorporateManagementView extends React.Component {
                 email: val.user.email,
                 role: val.corporateAccessType,
                 action:  (this.state.access_type==="CORPORATE_SUPER" || this.state.access_type==="CORPORATE_ADMIN")?<div>
-                    <Button type="text" primary style={{color:'#3e79f7'}}>
+                    <Button type="text" primary style={{color:'#3e79f7'}} onClick={()=>this.update_member(val, true)}>
                         Update
                     </Button>
                     <Button type="text" danger>
@@ -691,6 +770,12 @@ class CorporateManagementView extends React.Component {
         console.log("corporate_contact_2: ", corporate_contact_2);
 
         let is_admin_editable = (this.state.access_type==="CORPORATE_SUPER" || this.state.access_type==="CORPORATE_ADMIN");
+
+        let corporate_roles = [
+          'CORPORATE_SUPER',
+          'CORPORATE_ADMIN',
+          'CORPORATE_EMPLOYEE',
+        ];
 
         return (
          <>
@@ -766,6 +851,121 @@ class CorporateManagementView extends React.Component {
              </Modal>
 
 
+             <Modal
+                 title={`Update Corporate Member`}
+                 centered
+                 visible={this.state.u_open}
+                 onCancel={()=>this.update_member(null, false)}
+                 width={600}
+                 footer={null}
+             >
+
+                 <Form layout="vertical"
+                       className={'mt-3'}
+                 >
+                     <Row style={{justifyContent: 'center'}}>
+                         <Col sm={11} md={11} lg={11} xl={11} style={{margin:'1px'}}>
+                             <Form.Item
+                                 label="First Name"
+                                 required={false}
+                             >
+                                 <div className={'text-fix-data'}>{ this.state.u_first_name }</div>
+                             </Form.Item>
+                         </Col>
+                         <Col sm={11} md={11} lg={11} xl={11} style={{margin:'1px'}}>
+                             <Form.Item
+                                 label="Last Name"
+                                 required={false}
+                             >
+                                 <div className={'text-fix-data'}>{ this.state.u_last_name }</div>
+                             </Form.Item>
+                         </Col>
+                         <Col sm={22} md={22} lg={22} xl={22} style={{margin:'1px'}}>
+                             <Form.Item
+                                 label="Email"
+                                 required={false}
+                             >
+                                 <div className={'text-fix-data'}>{ this.state.u_email }</div>
+                             </Form.Item>
+                         </Col>
+                         <Col sm={11} md={11} lg={11} xl={11} style={{margin:'1px'}}>
+                             <Form.Item
+                                 label="Contact"
+                                 required={false}
+                             >
+                                 <div className={'text-fix-data'}>{ this.state.u_contact }</div>
+                             </Form.Item>
+                         </Col>
+                         <Col sm={11} md={11} lg={11} xl={11} style={{margin:'1px'}}>
+                             <Form.Item
+                                 label="Ref"
+                                 required={false}
+                             >
+                                 <div className={'text-fix-data'}>{ this.state.u_ref }</div>
+                             </Form.Item>
+                         </Col>
+                         <Col sm={11} md={11} lg={11} xl={11} style={{margin:'1px'}}>
+                             <Form.Item
+                                 label="Invitation Created Date"
+                                 required={false}
+                             >
+                                 <div className={'text-fix-data'}>{ this.state.u_created }</div>
+                             </Form.Item>
+                         </Col>
+                         <Col sm={11} md={11} lg={11} xl={11} style={{margin:'1px'}}>
+                             <Form.Item
+                                 label="Invitation Accepted Date"
+                                 required={false}
+                             >
+                                 <div className={'text-fix-data'}>{ this.state.u_accepted }</div>
+                             </Form.Item>
+                         </Col>
+                         <Col sm={11} md={11} lg={11} xl={11} style={{margin:'1px'}}>
+                             <Form.Item
+                                 label="Corporate Role"
+                                 required={false}
+                             >
+                                 <Select
+                                     value={this.state.u_role}
+                                     style={{
+                                         width: '100%',
+                                         border: '1px solid gray',
+                                         borderRadius: '11px'
+                                     }}
+                                         onChange={this.onChange_member_role}
+                                 >
+                                     {
+                                         corporate_roles.map((result, index)=><Option value={result}>{result}</Option>)
+                                     }
+                                 </Select>
+                             </Form.Item>
+                         </Col>
+                         <Col sm={11} md={11} lg={11} xl={11} style={{margin:'1px'}}>
+                             <Form.Item
+                                 label="Status"
+                                 required={false}
+                             >
+                                 <div className={'text-fix-data'}>{ this.state.u_status }</div>
+                             </Form.Item>
+                         </Col>
+                         <Col sm={22} md={22} lg = {22} xl={22} className={'text-right mt-3'}>
+                             <Button
+                                 type="primary"
+                                 size={size}
+                                 className={'sp-main-btn'}
+                                 onClick={this.action_update_member}
+                             >
+                                 Save Changes
+                             </Button>
+                         </Col>
+                     </Row>
+                 </Form>
+
+
+             </Modal>
+
+
+             {/*Add member modal*/}
              <Modal
                  title={`Add Corporate Employee`}
                  centered

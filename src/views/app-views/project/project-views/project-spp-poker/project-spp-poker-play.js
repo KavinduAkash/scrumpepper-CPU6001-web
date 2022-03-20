@@ -1,6 +1,6 @@
 import React from "react";
 import './poker-styles.scss'
-import {AutoComplete, Button, Col, Input, Modal, Row, Table, Tag} from "antd";
+import {AutoComplete, Button, Col, Input, message, Modal, Row, Table, Tag} from "antd";
 import { UnorderedListOutlined, CheckCircleOutlined, SyncOutlined, SaveOutlined, RedoOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import * as spinner_actions from "../../../../../redux/actions/Spinner";
 import * as navigation_actions from "../../../../../redux/actions/Navigation";
@@ -61,7 +61,10 @@ class ProjectSppPokerPlay extends React.Component {
         value: [],
         selected_value: -1,
         openUserStoryModal: false,
-        selected_user_story: 0
+        selected_user_story: 0,
+        index: 0,
+
+        myRole: "TEAM_MEMBER"
     }
 
     componentDidMount() {
@@ -85,6 +88,7 @@ class ProjectSppPokerPlay extends React.Component {
         } else {
             this.load_project_data(room.project.id);
         }
+        this.getMyRole();
         this.registerUser();
     }
 
@@ -266,6 +270,55 @@ class ProjectSppPokerPlay extends React.Component {
 // ---------------------------------------------------------------------------------------------------------------------
 
 
+    changeCurrentUSPrev = () => {
+        if(this.state.index!==0) {
+            this.setState({index: this.state.index - 1})
+        }
+    }
+
+    changeCurrentUSNext = () => {
+        let userStories = this.state.user_stories;
+        let length = userStories.length;
+        if(this.state.index!==length-1) {
+            this.setState({index: this.state.index + 1})
+        }
+    }
+
+    getMyRole = () => {
+        this.setState({loading: true});
+        if(Cookies.get('68e78905f4c')=="" ||
+            Cookies.get('68e78905f4c')==null ||
+            Cookies.get('68e78905f4c')==undefined) {
+            this.props.history.push("/auth/login");
+        }
+
+        let headers = {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + Cookies.get('68e78905f4c')
+        };
+
+        let method = "get";
+
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(BaseUrl.URL_TYPE)}project-member/me?id=${this.props.projectReducer.id}`, {headers: headers})
+            .then(async response => {
+                if(response.status==200) {
+                    if(response.data.success) {
+                        this.setState({
+                            myRole: response.data.body
+                        })
+                        this.setState({loading: false});
+                    } else {
+                        message.error(response.msg);
+                        this.setState({loading: false});
+                    }
+                }
+            })
+            .catch(async error => {
+                this.setState({loading: false});
+                message.error('Something went wrong!');
+            });
+    }
+
     render() {
 
         let cards = [];
@@ -307,12 +360,18 @@ class ProjectSppPokerPlay extends React.Component {
         let ccs = "";
         let us_list = [];
         if(userStories!=null & userStories!="" & userStories!=undefined) {
-            ccs = userStories[0].title;
+            ccs = <div>
+                <div>{userStories[this.state.index].title}</div>
+                <br/>
+                <div>
+                    Points: {userStories[this.state.index].points}
+                </div>
+            </div>;
             userStories.map((result, index)=>{
                 let obj = {
                     key: index,
                     user_story: result.title,
-                    action: <Button type={'text'}>Vote</Button>
+                    action: <span>{result.points}</span>
                 }
                 us_list.push(obj);
             })
@@ -360,6 +419,10 @@ class ProjectSppPokerPlay extends React.Component {
 
                     }
 
+                    <div className={'text-right'}>
+                        <span style={{fontWeight: 'bold'}}>Your Role: </span><Tag color={'geekblue'} key={ this.state.myRole }>{ this.state.myRole }</Tag>
+                    </div>
+
                 </div>
                 {/*<div>{`value: ${this.state.value}`}</div>*/}
                 <br/>
@@ -384,6 +447,18 @@ class ProjectSppPokerPlay extends React.Component {
                                 {
                                     ccs
                                 }
+
+
+                                {
+                                    (this.state.myRole=="SCRUM_MASTER" || this.state.myRole=="PRODUCT_OWNER")?
+                                        <div className="slideshow-container mt-2">
+                                            <a className="prev m-4" onClick={this.changeCurrentUSPrev}>❮</a>
+                                            <Button>Start</Button>
+                                            <a className="next m-4" onClick={this.changeCurrentUSNext}>❯</a>
+                                        </div>
+                                        : null
+                                }
+
                             </div>
 
                         </div>

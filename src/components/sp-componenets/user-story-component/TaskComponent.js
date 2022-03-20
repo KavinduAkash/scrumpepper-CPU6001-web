@@ -73,6 +73,7 @@ class Task extends React.Component {
 
     render() {
 
+        let task_id = this.state.task_id;
         let task_name = this.state.task_name;
         let task_status = this.state.taskStatus;
         console.log("Status: ", task_status);
@@ -93,7 +94,7 @@ class Task extends React.Component {
                 <Row className={'sp-task-container'}>
                     <Col sm={2} md={2} lg={2} xl={2} className={'sp-task-ref'}>
                         <div>
-                            TX-1
+                            TX-{task_id}
                         </div>
                     </Col>
                     <Col sm={12} md={12} lg={12} xl={12} className={'sp-task-text'}>

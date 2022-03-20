@@ -12,7 +12,7 @@ import {
     Form,
     message,
     Upload,
-    notification, Tag
+    notification, Tag, Empty
 } from 'antd';
 import { EditOutlined, EllipsisOutlined, SettingOutlined, LoadingOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
@@ -218,6 +218,7 @@ class Corporate extends React.Component{
                     console.log(response);
                     this.resetCorporateInputs();
                     this.setState({visible: false, loading_button: false})
+                    this.loadMyCorporates();
                 }
 
             }).catch(async error => {
@@ -351,22 +352,6 @@ class Corporate extends React.Component{
 
                             <Row>
                                 <Col sm={24} md={24} lg={24} xl={24}>
-                                    <Upload
-                                        name="avatar"
-                                        listType="picture-card"
-                                        className="avatar-uploader"
-                                        showUploadList={false}
-                                        customRequest={this.avatarUpload}
-                                        beforeUpload={this.beforeUpload}
-                                        onChange={this.handleChange}
-                                    >
-                                        {this.state.imageUrl ? <img src={this.state.imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                                    </Upload>
-                                </Col>
-                            </Row>
-
-                            <Row>
-                                <Col sm={24} md={24} lg={24} xl={24}>
                                     <Form.Item
                                         name="corporate_name"
                                         label="Corporate Name"
@@ -457,31 +442,62 @@ class Corporate extends React.Component{
                 </Modal>
 
                 {/*=============================== corporates =================================*/}
-                <div>
 
-                    <Row>
-                        <Col sm={24} md={24} lg = {24} xl={24} className={'text-right'}>
-                            <Button
-                                type="primary"
-                                icon={<PlusOutlined />}
-                                size={size}
-                                className={'sp-main-btn'}
-                                onClick={this.openCorporateCreateModal}
-                            >
-                                Create a corporate
-                            </Button>
-                        </Col>
-                    </Row>
+                            <div>
 
-                    {
-                        show_skeleton?
-                            skeleton:
-                            <Row>{my_corporate_list}</Row>
+                                <Row>
+                                    <Col sm={24} md={24} lg = {24} xl={24} className={'text-right'}>
+                                        <Button
+                                            type="primary"
+                                            icon={<PlusOutlined />}
+                                            size={size}
+                                            className={'sp-main-btn'}
+                                            onClick={this.openCorporateCreateModal}
+                                        >
+                                            Create a corporate
+                                        </Button>
+                                    </Col>
+                                </Row>
+                                {
+                                    (this.state.my_corporates != null & this.state.my_corporates != "" & this.state.my_corporates != undefined) ?
+                                        (this.state.my_corporates.length > 0) ?
+                                            <div>
+                                                {
+                                                    show_skeleton ?
+                                                        skeleton :
+                                                        <Row>{my_corporate_list}</Row>
 
-                    }
+                                                }
+                                            </div>
+                                            :
+                                            <Empty
+                                                image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                                imageStyle={{
+                                                    height: 60,
+                                                }}
+                                                description={
+                                                    <span>
+                                    No <a href="#API">Corporates</a> yet.
+                                </span>
+                                                }
+                                            >
+                                            </Empty>
+                                        :
+                                        <Empty
+                                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                            imageStyle={{
+                                                height: 60,
+                                            }}
+                                            description={
+                                                <span>
+                                    No <a href="#API">Corporates</a> yet.
+                                </span>
+                                            }
+                                        >
+                                        </Empty>
 
-
-                </div>
+                                }
+                            </div>
             </>
         )
     }
