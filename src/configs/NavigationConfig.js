@@ -162,14 +162,14 @@ export const projectManagementNavTree = [
         breadcrumb: false,
         submenu: []
       },
-      {
-        key: 'Notifications',
-        path: `${APP_PREFIX_PATH}/project/notifications`,
-        title: 'Notifications',
-        icon: BellOutlined,
-        breadcrumb: false,
-        submenu: []
-      },
+      // {
+      //   key: 'Notifications',
+      //   path: `${APP_PREFIX_PATH}/project/notifications`,
+      //   title: 'Notifications',
+      //   icon: BellOutlined,
+      //   breadcrumb: false,
+      //   submenu: []
+      // },
       {
         key: 'Docs',
         path: `${APP_PREFIX_PATH}/project/docs`,
@@ -178,14 +178,14 @@ export const projectManagementNavTree = [
         breadcrumb: false,
         submenu: []
       },
-      {
-        key: 'Settings',
-        path: `${APP_PREFIX_PATH}/project/settings`,
-        title: 'Settings',
-        icon: SettingOutlined,
-        breadcrumb: false,
-        submenu: []
-      },
+      // {
+      //   key: 'Settings',
+      //   path: `${APP_PREFIX_PATH}/project/settings`,
+      //   title: 'Settings',
+      //   icon: SettingOutlined,
+      //   breadcrumb: false,
+      //   submenu: []
+      // },
     ]
   },
 ]

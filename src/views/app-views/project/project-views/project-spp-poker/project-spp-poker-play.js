@@ -1,7 +1,7 @@
 import React from "react";
 import './poker-styles.scss'
 import {AutoComplete, Button, Col, Input, message, Modal, Row, Table, Tag} from "antd";
-import { UnorderedListOutlined, CheckCircleOutlined, SyncOutlined, SaveOutlined, RedoOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { UnorderedListOutlined, CheckCircleOutlined, SyncOutlined, SaveOutlined, RedoOutlined, ArrowRightOutlined, EyeOutlined } from '@ant-design/icons';
 import * as spinner_actions from "../../../../../redux/actions/Spinner";
 import * as navigation_actions from "../../../../../redux/actions/Navigation";
 import * as project_actions from "../../../../../redux/actions/Project";
@@ -16,7 +16,7 @@ import SockJS from 'sockjs-client';
 
 const fib = [
     [
-        0,1,2,3,5,8,13,21,34,55,89,"?"
+        0,1,2,3,5,8,13,21,34,55,89
     ]
 ]
 var stompClient =null;
@@ -63,8 +63,12 @@ class ProjectSppPokerPlay extends React.Component {
         openUserStoryModal: false,
         selected_user_story: 0,
         index: 0,
+        us_change: false,
+        us_save: false,
 
-        myRole: "TEAM_MEMBER"
+        myRole: "TEAM_MEMBER",
+
+        voting: true
     }
 
     componentDidMount() {
@@ -144,7 +148,7 @@ class ProjectSppPokerPlay extends React.Component {
 
                 if(response.data.success) {
 
-                    this.setState({user_stories: response.data.body, selected_user_story: response.data.body[0].id});
+                    this.setState({user_stories: response.data.body, selected_user_story: response.data.body[this.state.index].id});
                     console.log("Room-s: ", response.data.body);
 
 
@@ -177,14 +181,72 @@ class ProjectSppPokerPlay extends React.Component {
         let x = {...userData1,"connected": true}
         this.setState({userData: x});
         stompClient.subscribe('/user/'+this.state.ref+'/private', this.onPrivateMessage);
+        stompClient.subscribe('/user/'+this.state.ref+'/private-ustory', this.onUSMessage);
+        stompClient.subscribe('/user/'+this.state.ref+'/private-save', this.onUSPointsMessage);
+        stompClient.subscribe('/user/'+this.state.ref+'/private-voting', this.onUSVoting);
         this.userJoin();
+    }
+
+    onUSVoting = (payload)=>{
+        console.log(payload);
+        var payloadData = JSON.parse(payload.body);
+
+        this.setState({
+            voting: payloadData,
+        })
+
+        setTimeout(this.updateUs, 3000);
+    }
+
+    onUSMessage = (payload)=>{
+        console.log(payload);
+        var payloadData = JSON.parse(payload.body);
+
+        console.log("VALUE---------2: ", payloadData);
+
+        let index = this.state.user_stories.findIndex(p => p.id == payloadData);
+
+        this.setState({
+            selected_user_story: payloadData,
+            index: index,
+            us_change: true
+        })
+
+        setTimeout(this.updateUs, 3000);
+    }
+
+    onUSPointsMessage = (payload)=>{
+        console.log(payload);
+        var payloadData = JSON.parse(payload.body);
+
+        console.log("VALUE++++++++++3: ", payloadData);
+
+        this.setState({
+            us_save: true
+        })
+
+        setTimeout(this.updatePointsUs, 2000);
+    }
+
+    updateUs = () => {
+        this.setState({
+            us_change: false
+        })
+        this.load_sprint_data(this.props.pokerReducer.room.sprint.id);
+    }
+
+    updatePointsUs = () => {
+        this.setState({
+            us_save: false
+        })
+        this.load_sprint_data(this.props.pokerReducer.room.sprint.id);
     }
 
     onPrivateMessage = (payload)=>{
         console.log(payload);
         var payloadData = JSON.parse(payload.body);
 
-        console.log("VALUE: ", payloadData);
+        console.log("VALUE==============1: ", payloadData);
 
         this.setState({
             value: payloadData.votes
@@ -259,6 +321,81 @@ class ProjectSppPokerPlay extends React.Component {
         }
     }
 
+    sendPrivateValueUS=(vote)=>{
+
+        console.log("Selected User Story id: ", this.state.user_stories[vote].id);
+
+        if (stompClient) {
+            var chatMessage = {
+                voter_id: this.state.userData.userid,
+                room_ref: this.state.ref,
+                candidate_id: this.state.user_stories[vote].id,
+                vote: 0
+            };
+
+            // if(userData.username !== tab){
+            //     privateChats.get(tab).push(chatMessage);
+            //     setPrivateChats(new Map(privateChats));
+            // }
+            stompClient.send("/app/private-us", {}, JSON.stringify(chatMessage));
+            let userData1 = this.state.userData;
+            // let x = {...userData1,"message": ""};
+            // this.setState({userData: x, selected_value: vote});
+            console.log("PKKKKKKKKK: ", userData1);
+            this.sendVoting(true);
+        }
+    }
+
+    sendPrivatePoints=(vote, max_eq)=>{
+
+        if(!max_eq) {
+            if(vote!=null) {
+
+                if (stompClient) {
+                    var chatMessage = {
+                        room_ref: this.state.ref,
+                        candidate_id: this.state.user_stories[this.state.index].id,
+                        vote: vote.value
+                    };
+
+                    // if(userData.username !== tab){
+                    //     privateChats.get(tab).push(chatMessage);
+                    //     setPrivateChats(new Map(privateChats));
+                    // }
+                    stompClient.send("/app/private-points", {}, JSON.stringify(chatMessage));
+                    let userData1 = this.state.userData;
+                    // let x = {...userData1,"message": ""};
+                    // this.setState({userData: x, selected_value: vote});
+                    console.log("PKKKKKKKKK: ", userData1);
+                }
+
+            } else {
+                message.warn("There is a conflict between final estimation points. Some points have equal count of votes.");
+            }
+        }
+
+    }
+
+    sendVoting=(val)=>{
+                if (stompClient) {
+                    var chatMessage = {
+                        room_ref: this.state.ref,
+                        voting: val
+                    };
+
+                    // if(userData.username !== tab){
+                    //     privateChats.get(tab).push(chatMessage);
+                    //     setPrivateChats(new Map(privateChats));
+                    // }
+                    stompClient.send("/app/private-vote", {}, JSON.stringify(chatMessage));
+                    let userData1 = this.state.userData;
+                    // let x = {...userData1,"message": ""};
+                    // this.setState({userData: x, selected_value: vote});
+                    console.log("PKKKKKKKKK: ", userData1);
+                }
+        }
+
+
     openUserStoriesModal = e => {
         this._openUserStoriesModal(e);
     }
@@ -330,6 +467,7 @@ class ProjectSppPokerPlay extends React.Component {
 
 
         let result_count = [];
+        let top_count = 0;
 
         fib[0].map((result, index)=>{
             let obj = {
@@ -382,6 +520,24 @@ class ProjectSppPokerPlay extends React.Component {
         if(this.state.selected_user_story==0) {
             open = true
         }
+
+        let max = 0;
+        let max_v = 0;
+        let max_obj = fib[0][0];
+        let max_eq = false;
+
+        result_count.map(r=>{
+            if(r.count>max) {
+                max = r.count;
+                max_v = r.value;
+                max_obj = r;
+                max_eq = false;
+            } else {
+                if (r.count == max) {
+                    max_eq = true;
+                }
+            }
+        });
 
         return(
             <div>
@@ -453,7 +609,7 @@ class ProjectSppPokerPlay extends React.Component {
                                     (this.state.myRole=="SCRUM_MASTER" || this.state.myRole=="PRODUCT_OWNER")?
                                         <div className="slideshow-container mt-2">
                                             <a className="prev m-4" onClick={this.changeCurrentUSPrev}>❮</a>
-                                            <Button>Start</Button>
+                                            <Button style={{border: '1px solid gray'}} onClick={()=>this.sendPrivateValueUS(this.state.index)}>Start</Button>
                                             <a className="next m-4" onClick={this.changeCurrentUSNext}>❯</a>
                                         </div>
                                         : null
@@ -472,10 +628,20 @@ class ProjectSppPokerPlay extends React.Component {
                         }
 
                     </div>
+                    {
+                        (this.state.myRole=="SCRUM_MASTER" || this.state.myRole=="PRODUCT_OWNER")?(this.state.voting)?
+                            <div className={'vote-display text-center'}>
+                        <span className={'item-2'}>
+                                            <Button type={'primary'} onClick={()=>this.sendVoting(false)}><EyeOutlined /> See Result</Button>
+                                        </span>
+                            </div>
+                            :
+                            null
+                            :
+                            null
+                    }
                     
-                    
-                    
-                    <div className={'vote-display text-center'}>
+                    <div className={'vote-display text-center'} style={(this.state.voting)?{filter: 'blur(10px)'}:null}>
                         <div className={'vote-display-row'}>
                             {
                                 result_count.map((result, index)=>
@@ -488,9 +654,15 @@ class ProjectSppPokerPlay extends React.Component {
                             }
 
                             <div className={'mt-3'}>
-                                <span className={'item-2'}>
-                                    <Button type={'primary'}><SaveOutlined /> Save</Button>
-                                </span>
+
+                                {
+                                    (this.state.myRole=="SCRUM_MASTER" || this.state.myRole=="PRODUCT_OWNER")?
+                                        <span className={'item-2'}>
+                                            <Button type={'primary'} onClick={()=>this.sendPrivatePoints(max_obj, max_eq)}><SaveOutlined /> Save</Button>
+                                        </span>
+                                        :null
+                                }
+
                             </div>
 
                         </div>
@@ -500,6 +672,29 @@ class ProjectSppPokerPlay extends React.Component {
                     </div>
 
                 </div>
+
+                {
+                    this.state.us_change?
+                        <div className="loading-overlay-2">
+                            <div className="bounce-loader">
+                                <img src={'/img/preloader.gif'} alt=""/>
+                                <div>User story changed</div>
+                            </div>
+                        </div>
+                        :null
+                }
+
+                {
+                    this.state.us_save?
+                        <div className="loading-overlay-2">
+                            <div className="bounce-loader">
+                                <img src={'https://martielbeatty.com/wp-content/uploads/2018/03/green-tick-png-green-tick-icon-image-14141-1000.png'} alt="" width={50}/>
+                                <div>Estimation saved</div>
+                            </div>
+                        </div>
+                        :null
+                }
+
             </div>
         );
     }
