@@ -171,7 +171,7 @@ class ProjectSppPokerPlay extends React.Component {
     }
 
     connect =()=>{
-        let Sock = new SockJS('http://localhost:8081/ws');
+        let Sock = new SockJS(`${BaseUrl.SCRUM_PEPPER_POKER_BASE_URL}/ws`);
         stompClient = over(Sock);
         stompClient.connect({},this.onConnected, this.onError);
     }
@@ -274,7 +274,7 @@ class ProjectSppPokerPlay extends React.Component {
         let body = {
         }
 
-        axios[method](`http://localhost:8081/v1/votex/private-message-just-connect?ref=${this.state.ref}`, body, {headers: headers})
+        axios[method](`${BaseUrl.SCRUM_PEPPER_API_URL(2)}votex/private-message-just-connect?ref=${this.state.ref}`, body, {headers: headers})
             .then(async response => {
                 console.log(response);
                 if(response.data.success) {
